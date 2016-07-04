@@ -9,6 +9,10 @@
 
     <artifactId>deployment</artifactId>
     <dependencies>
+        <dependency>
+            <groupId>ru.phi.modules</groupId>
+            <artifactId>rest-api</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

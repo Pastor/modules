@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
@@ -29,19 +30,19 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        super.configure(web);
+        web.ignoring()
+                .antMatchers("/resources/*")
+                .antMatchers(HttpMethod.POST, "/rest/v1/login")
+                .antMatchers(HttpMethod.GET, "/rest/v1/token");
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).
-                and().
-                authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/rest/v1/login").permitAll()
-                .antMatchers(HttpMethod.GET, "/rest/v1/token").permitAll()
-                .antMatchers("/rest/**").authenticated().
-                and().
-                anonymous().disable()
+                and().authorizeRequests()
+                .antMatchers("/rest/*").authenticated().
+                and()
+                .anonymous().disable()
                 .securityContext()
                 .and()
                 .headers().disable()

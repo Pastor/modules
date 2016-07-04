@@ -15,6 +15,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.UUID;
 
+import static java.text.MessageFormat.format;
+
+@SuppressWarnings("unused")
 @Service("securityTokenService.v1")
 final class SecurityAuthenticateService implements AuthenticateService {
 
@@ -26,10 +29,14 @@ final class SecurityAuthenticateService implements AuthenticateService {
 
     @Transactional(readOnly = true)
     @Override
-    public User authenticate(Optional<String> key) throws AuthenticationException {
-        final Token token = tokenRepository.findByKey(key.get());
+    public User authenticate(String key) throws AuthenticationException {
+        Optional<String> opKey = Optional.ofNullable(key);
+        if (!opKey.isPresent())
+            throw new AuthenticationException("Empty token");
+        final String tokenKey = opKey.get();
+        final Token token = tokenRepository.findByKey(tokenKey);
         if (token == null)
-            throw new AuthenticationException();
+            throw new AuthenticationException(format("Token \"{0}\" not found", tokenKey));
         return token.getUser();
     }
 

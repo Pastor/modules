@@ -30,12 +30,14 @@ final class TokenAuthenticateProvider implements AuthenticationProvider {
         if (!token.isPresent())
             throw new BadCredentialsException("Empty token");
         final User user;
+        final String tokenKey = token.get();
         try {
-            user = service.authenticate(token);
+            user = service.authenticate(tokenKey);
         } catch (ru.phi.modules.exceptions.AuthenticationException e) {
             throw new BadCredentialsException("", e);
         }
-        final AuthenticationWithToken withToken = new AuthenticationWithToken(user, user.getUsername(), user.getPassword(), Sets.newHashSet());
+        final AuthenticationWithToken withToken = new AuthenticationWithToken(user,
+                user.getUsername(), user.getPassword(), Sets.newHashSet());
         withToken.setDetails(user);
         return withToken;
     }

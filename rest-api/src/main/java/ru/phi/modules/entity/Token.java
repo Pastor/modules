@@ -20,11 +20,13 @@ import java.time.LocalDateTime;
 public final class Token extends AbstractEntity {
     @NotNull
     @NonNull
+    @Column(name = "expected_at", nullable = false)
     @JsonProperty("expected_at")
     private LocalDateTime expiredAt;
 
     @NotNull
     @NonNull
+    @Column(name = "key", nullable = false)
     @JsonProperty("key")
     private String key;
 

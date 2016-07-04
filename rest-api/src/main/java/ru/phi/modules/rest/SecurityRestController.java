@@ -7,6 +7,7 @@ import ru.phi.modules.api.AuthenticateService;
 import ru.phi.modules.entity.Token;
 import ru.phi.modules.exceptions.AuthenticationException;
 
+@SuppressWarnings("unused")
 @RequestMapping("/rest/v1/")
 @RestController
 final class SecurityRestController {
