@@ -4,6 +4,7 @@ package ru.phi.modules.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.Proxy;
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -18,6 +19,10 @@ import java.util.Set;
 @NoArgsConstructor
 @Proxy(lazy = false)
 public final class User extends AbstractEntity {
+
+    @Email(message = "Не верно введен email адрес")
+    @Column(name = "email")
+    private String email;
 
     @NotNull
     @NonNull

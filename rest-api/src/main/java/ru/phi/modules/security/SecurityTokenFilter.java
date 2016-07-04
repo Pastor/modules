@@ -3,22 +3,22 @@ package ru.phi.modules.security;
 import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.filter.GenericFilterBean;
+import ru.phi.modules.api.ExceptionService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
 
 import static org.slf4j.MDC.remove;
@@ -29,9 +29,11 @@ final class SecurityTokenFilter extends GenericFilterBean {
     private static final String USER_SESSION_KEY = "user";
 
     private final AuthenticationManager manager;
+    private final ExceptionService service;
 
-    SecurityTokenFilter(AuthenticationManager manager) {
+    SecurityTokenFilter(AuthenticationManager manager, ExceptionService service) {
         this.manager = manager;
+        this.service = service;
     }
 
     @SuppressWarnings("ThrowFromFinallyBlock")
@@ -39,17 +41,19 @@ final class SecurityTokenFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request,
                          ServletResponse response,
                          FilterChain chain) throws IOException, ServletException {
-        try {
-            final Optional<String> token = Optional.ofNullable(request.getParameter("token"));
-            if (token.isPresent()) {
+        final Optional<String> token = Optional.ofNullable(request.getParameter("token"));
+        if (token.isPresent()) {
+            try {
                 processTokenAuthentication(token);
+                addSessionContextToLogging();
+            } catch (Exception ex) {
+                service.write((HttpServletResponse) response, ex, HttpStatus.UNAUTHORIZED);
+            } finally {
+                remove(TOKEN_SESSION_KEY);
+                remove(USER_SESSION_KEY);
             }
-            addSessionContextToLogging();
-            chain.doFilter(request, response);
-        } finally {
-            remove(TOKEN_SESSION_KEY);
-            remove(USER_SESSION_KEY);
         }
+        chain.doFilter(request, response);
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")

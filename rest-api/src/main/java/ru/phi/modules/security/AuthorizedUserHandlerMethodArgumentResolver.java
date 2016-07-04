@@ -2,8 +2,6 @@ package ru.phi.modules.security;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebArgumentResolver;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -11,6 +9,8 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import ru.phi.modules.entity.User;
+
+import java.util.Optional;
 
 @SuppressWarnings("unused")
 @Component("authorizedUser.v1")
@@ -27,13 +27,11 @@ final class AuthorizedUserHandlerMethodArgumentResolver implements HandlerMethod
                                   NativeWebRequest webRequest,
                                   WebDataBinderFactory binderFactory) throws Exception {
         if (this.supportsParameter(parameter)) {
-            final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//            final Principal principal = webRequest.getUserPrincipal();
-//            if (principal == null)
-//                return null;
-            if (authentication == null)
-                throw new BadCredentialsException("Token empty");
-            return ((AuthenticationWithToken) authentication).user;
+            final Optional<User> user = Utilities.currentUser();
+            if (user.isPresent()) {
+                return user.get();
+            }
+            throw new BadCredentialsException("Нет авторизации");
         } else {
             return WebArgumentResolver.UNRESOLVED;
         }

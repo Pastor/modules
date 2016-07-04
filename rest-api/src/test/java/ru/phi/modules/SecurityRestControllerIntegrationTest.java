@@ -1,5 +1,6 @@
 package ru.phi.modules;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
@@ -16,9 +17,11 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
+import ru.phi.modules.entity.Error;
 import ru.phi.modules.entity.Token;
 import ru.phi.modules.entity.User;
 import ru.phi.modules.exceptions.AuthenticationException;
+import ru.phi.modules.repository.ErrorRepository;
 import ru.phi.modules.repository.UserRepository;
 
 import java.io.IOException;
@@ -36,6 +39,12 @@ public class SecurityRestControllerIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ErrorRepository errorRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Value("${local.server.port}")
     private int port;
 
@@ -44,15 +53,25 @@ public class SecurityRestControllerIntegrationTest {
             setErrorHandler(new ResponseErrorHandler() {
                 @Override
                 public boolean hasError(ClientHttpResponse response) throws IOException {
-                    return true;
+                    final HttpStatus statusCode = response.getStatusCode();
+                    return statusCode.is4xxClientError() ||
+                            statusCode.is5xxServerError();
                 }
 
                 @Override
                 public void handleError(ClientHttpResponse response) throws IOException {
                     final HttpStatus statusCode = response.getStatusCode();
                     if (statusCode == HttpStatus.UNAUTHORIZED ||
-                            statusCode == HttpStatus.FORBIDDEN)
+                            statusCode == HttpStatus.FORBIDDEN) {
+                        try {
+                            final Error error = objectMapper.readerFor(Error.class).readValue(response.getBody());
+                            log.error("{}", error);
+                        } catch (Exception ex) {
+                            //Nothing
+                        }
                         throw new AuthenticationException();
+                    }
+
                 }
             });
         }
@@ -69,6 +88,7 @@ public class SecurityRestControllerIntegrationTest {
     @After
     public void tearDown() throws Exception {
         userRepository.deleteAll();
+        errorRepository.deleteAll();
     }
 
     @Test(expected = AuthenticationException.class)
@@ -109,8 +129,8 @@ public class SecurityRestControllerIntegrationTest {
 
     @Test(expected = AuthenticationException.class)
     public void faultToken() throws Exception {
-        final ResponseEntity<User> userEntity = template.getForEntity("http://localhost:" + port + "/rest/v1/user?token={token}",
-                User.class, "000000000000000000000000000000000000");
+        final ResponseEntity<Error> userEntity = template.getForEntity("http://localhost:" + port + "/rest/v1/user?token={token}",
+                Error.class, "000000000000000000000000000000000000");
         assertEquals(userEntity.getStatusCode(), HttpStatus.UNAUTHORIZED);
     }
 

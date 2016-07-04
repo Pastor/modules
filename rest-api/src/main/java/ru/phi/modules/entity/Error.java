@@ -8,9 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.hibernate.annotations.Proxy;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -31,7 +29,16 @@ public final class Error extends AbstractEntity {
     @JsonProperty("description")
     private String description;
 
-    @Column(name = "stack_trace")
+    @Column(name = "status")
+    @JsonProperty("status")
+    private String status;
+
+    @Column(name = "stack_trace", length = 4096)
     @JsonIgnore
     private String trace;
+
+    @JsonIgnore
+    @PrimaryKeyJoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private User user;
 }

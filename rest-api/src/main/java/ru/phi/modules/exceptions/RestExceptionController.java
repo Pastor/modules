@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import ru.phi.modules.api.ExceptionService;
 import ru.phi.modules.entity.Error;
 import ru.phi.modules.repository.ErrorRepository;
 
@@ -29,12 +30,7 @@ import java.io.StringWriter;
 @Order(Ordered.LOWEST_PRECEDENCE)
 final class RestExceptionController extends ResponseEntityExceptionHandler {
     @Autowired
-    private ErrorRepository repository;
-
-    @PostConstruct
-    private void construct() {
-        repository.findAll();
-    }
+    private ExceptionService service;
 
     @ExceptionHandler({BadCredentialsException.class, AuthenticationException.class})
     public @ResponseBody ResponseEntity<Object> handleUnauthorizedException(Exception ex, WebRequest request) {
@@ -47,15 +43,7 @@ final class RestExceptionController extends ResponseEntityExceptionHandler {
                                                              HttpHeaders headers,
                                                              HttpStatus status,
                                                              WebRequest request) {
-        final Error error = new Error();
-        error.setCode("SERVER_EXCEPTION");
-        error.setDescription(ex.getMessage());
-        StringWriter writer = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(writer);
-        ex.printStackTrace(printWriter);
-        error.setTrace(writer.toString());
-        repository.save(error);
-        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        final Error error = service.handleException(ex, headers, status, request);
         return new ResponseEntity<>(error, headers, status);
     }
 }

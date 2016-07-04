@@ -13,8 +13,8 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import ru.phi.modules.api.ExceptionService;
 
 @Configuration
 @EnableWebSecurity
@@ -27,6 +27,9 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private RestAuthenticationEntryPoint entryPoint;
+
+    @Autowired
+    private ExceptionService service;
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -53,7 +56,7 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .httpBasic().disable()
                 .formLogin().disable()
                 .logout().disable()
-                .addFilterBefore(new SecurityTokenFilter(authenticationManager()), BasicAuthenticationFilter.class)
+                .addFilterBefore(new SecurityTokenFilter(authenticationManager(), service), BasicAuthenticationFilter.class)
                 .exceptionHandling().authenticationEntryPoint(entryPoint);
     }
 
