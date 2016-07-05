@@ -30,14 +30,14 @@ final class AuthorizedScopeMonitor {
         if (token.isPresent()) {
             final Token one = repository.findOne(token.get().getId());
             final Set<ru.phi.modules.entity.Scope> scopes = one.getScopes();
-            for (Scope s : scope.scope()) {
+            for (String s : scope.scopes()) {
                 final ru.phi.modules.entity.Scope ss = new ru.phi.modules.entity.Scope();
-                ss.setName(s.name());
+                ss.setName(s.toLowerCase());
                 if (!scopes.contains(ss))
-                    throw new AccessScopeException(format("Scope {0} not present for token", s.name()));
+                    throw new AccessScopeException(format("Scope {0} not present for token", s.toLowerCase()));
             }
         } else {
-            throw new AccessScopeException("");
+            throw new AccessScopeException("Token empty");
         }
         return point.proceed();
     }

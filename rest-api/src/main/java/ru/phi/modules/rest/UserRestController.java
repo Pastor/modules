@@ -11,14 +11,13 @@ import ru.phi.modules.entity.User;
 import ru.phi.modules.exceptions.AuthenticationException;
 import ru.phi.modules.security.AuthorizedScope;
 import ru.phi.modules.security.AuthorizedToken;
-import ru.phi.modules.security.Scope;
 
 @SuppressWarnings("unused")
 @RequestMapping("/rest/v1/")
 @RestController
 @Transactional
 class UserRestController {
-    @AuthorizedScope(scope = {Scope.PROFILE})
+    @AuthorizedScope(scopes = {"profile"})
     @RequestMapping(value = "/user", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public
     @ResponseBody

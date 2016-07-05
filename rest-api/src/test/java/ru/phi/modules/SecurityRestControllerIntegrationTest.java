@@ -133,7 +133,7 @@ public class SecurityRestControllerIntegrationTest {
                 "", Token.class, "pastor", "123456");
         final Token token = tokenRepository.findByKey(entity.getBody().getKey());
         final Scope scope = new Scope();
-        scope.setName(ru.phi.modules.security.Scope.PROFILE.name());
+        scope.setName("profile");
         scopeRepository.save(scope);
         token.setScopes(Sets.newHashSet(scope));
         tokenRepository.save(token);
