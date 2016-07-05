@@ -19,7 +19,7 @@ import static java.text.MessageFormat.format;
 
 @SuppressWarnings("unused")
 @Service("securityTokenService.v1")
-final class SecurityAuthenticateService implements AuthenticateService {
+class SecurityAuthenticateService implements AuthenticateService {
 
     @Autowired
     private UserRepository userRepository;
@@ -29,7 +29,7 @@ final class SecurityAuthenticateService implements AuthenticateService {
 
     @Transactional(readOnly = true)
     @Override
-    public User authenticate(String key) throws AuthenticationException {
+    public Token authenticate(String key) throws AuthenticationException {
         Optional<String> opKey = Optional.ofNullable(key);
         if (!opKey.isPresent())
             throw new AuthenticationException("Empty token");
@@ -37,7 +37,7 @@ final class SecurityAuthenticateService implements AuthenticateService {
         final Token token = tokenRepository.findByKey(tokenKey);
         if (token == null)
             throw new AuthenticationException(format("Token \"{0}\" not found", tokenKey));
-        return token.getUser();
+        return token;
     }
 
     @Transactional

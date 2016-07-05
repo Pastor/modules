@@ -1,6 +1,7 @@
 package ru.phi.modules;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
@@ -18,10 +19,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 import ru.phi.modules.entity.Error;
+import ru.phi.modules.entity.Scope;
 import ru.phi.modules.entity.Token;
 import ru.phi.modules.entity.User;
 import ru.phi.modules.exceptions.AuthenticationException;
 import ru.phi.modules.repository.ErrorRepository;
+import ru.phi.modules.repository.ScopeRepository;
+import ru.phi.modules.repository.TokenRepository;
 import ru.phi.modules.repository.UserRepository;
 
 import java.io.IOException;
@@ -41,6 +45,12 @@ public class SecurityRestControllerIntegrationTest {
 
     @Autowired
     private ErrorRepository errorRepository;
+
+    @Autowired
+    private TokenRepository tokenRepository;
+
+    @Autowired
+    private ScopeRepository scopeRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -87,8 +97,10 @@ public class SecurityRestControllerIntegrationTest {
 
     @After
     public void tearDown() throws Exception {
-        userRepository.deleteAll();
         errorRepository.deleteAll();
+        userRepository.deleteAll();
+        tokenRepository.deleteAll();
+
     }
 
     @Test(expected = AuthenticationException.class)
@@ -119,12 +131,26 @@ public class SecurityRestControllerIntegrationTest {
     public void successToken() throws Exception {
         final ResponseEntity<Token> entity = template.postForEntity("http://localhost:" + port + "/rest/v1/login?login={login}&password={password}",
                 "", Token.class, "pastor", "123456");
-        final Token token = entity.getBody();
+        final Token token = tokenRepository.findByKey(entity.getBody().getKey());
+        final Scope scope = new Scope();
+        scope.setName(ru.phi.modules.security.Scope.PROFILE.name());
+        scopeRepository.save(scope);
+        token.setScopes(Sets.newHashSet(scope));
+        tokenRepository.save(token);
         final ResponseEntity<User> userEntity = template.getForEntity("http://localhost:" + port + "/rest/v1/user?token={token}",
                 User.class, token.getKey());
         assertEquals(userEntity.getStatusCode(), HttpStatus.OK);
         final User user = userEntity.getBody();
         assertEquals(user.getUsername(), "pastor");
+    }
+
+    @Test(expected = AuthenticationException.class)
+    public void faultScopedToken() throws Exception {
+        final ResponseEntity<Token> entity = template.postForEntity("http://localhost:" + port + "/rest/v1/login?login={login}&password={password}",
+                "", Token.class, "pastor", "123456");
+        final ResponseEntity<User> userEntity = template.getForEntity("http://localhost:" + port + "/rest/v1/user?token={token}",
+                User.class, entity.getBody().getKey());
+        assertEquals(userEntity.getStatusCode(), HttpStatus.OK);
     }
 
     @Test(expected = AuthenticationException.class)

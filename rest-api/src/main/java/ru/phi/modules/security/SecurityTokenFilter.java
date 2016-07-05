@@ -48,6 +48,7 @@ final class SecurityTokenFilter extends GenericFilterBean {
                 addSessionContextToLogging();
             } catch (Exception ex) {
                 service.write((HttpServletResponse) response, ex, HttpStatus.UNAUTHORIZED);
+                return;
             } finally {
                 remove(TOKEN_SESSION_KEY);
                 remove(USER_SESSION_KEY);

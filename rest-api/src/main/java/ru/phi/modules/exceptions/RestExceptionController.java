@@ -6,7 +6,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Controller;
@@ -17,11 +16,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.phi.modules.api.ExceptionService;
 import ru.phi.modules.entity.Error;
-import ru.phi.modules.repository.ErrorRepository;
-
-import javax.annotation.PostConstruct;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 @SuppressWarnings("unused")
 @Controller
@@ -33,8 +27,17 @@ final class RestExceptionController extends ResponseEntityExceptionHandler {
     private ExceptionService service;
 
     @ExceptionHandler({BadCredentialsException.class, AuthenticationException.class})
-    public @ResponseBody ResponseEntity<Object> handleUnauthorizedException(Exception ex, WebRequest request) {
+    public
+    @ResponseBody
+    ResponseEntity<Object> handleUnauthorizedException(Exception ex, WebRequest request) {
         return handleExceptionInternal(ex, null, new HttpHeaders(), HttpStatus.UNAUTHORIZED, request);
+    }
+
+    @ExceptionHandler({AccessScopeException.class})
+    public
+    @ResponseBody
+    ResponseEntity<Object> handleForbiddenException(Exception ex, WebRequest request) {
+        return handleExceptionInternal(ex, null, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
     @Override

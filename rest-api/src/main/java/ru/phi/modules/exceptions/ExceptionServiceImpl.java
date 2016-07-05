@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.WebRequest;
 import ru.phi.modules.api.ExceptionService;
 import ru.phi.modules.entity.Error;
-import ru.phi.modules.entity.User;
+import ru.phi.modules.entity.Token;
 import ru.phi.modules.repository.ErrorRepository;
 import ru.phi.modules.security.Utilities;
 
@@ -56,9 +56,9 @@ final class ExceptionServiceImpl implements ExceptionService {
         PrintWriter printWriter = new PrintWriter(writer);
         ex.printStackTrace(printWriter);
         error.setTrace(writer.toString().substring(0, maxLength));
-        final Optional<User> user = Utilities.currentUser();
-        if (user.isPresent())
-            error.setUser(user.get());
+        final Optional<Token> token = Utilities.currentToken();
+        if (token.isPresent())
+            error.setUser(token.get().getUser());
         repository.save(error);
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
         return error;

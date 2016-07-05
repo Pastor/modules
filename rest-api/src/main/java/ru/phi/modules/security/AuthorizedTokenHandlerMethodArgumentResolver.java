@@ -8,17 +8,17 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import ru.phi.modules.entity.User;
+import ru.phi.modules.entity.Token;
 
 import java.util.Optional;
 
 @SuppressWarnings("unused")
-@Component("authorizedUser.v1")
-final class AuthorizedUserHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
+@Component("authorizedToken.v1")
+class AuthorizedTokenHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.getParameterAnnotation(AuthorizedUser.class) != null
-                && parameter.getParameterType().equals(User.class);
+        return parameter.getParameterAnnotation(AuthorizedToken.class) != null
+                && parameter.getParameterType().equals(Token.class);
     }
 
     @Override
@@ -27,9 +27,9 @@ final class AuthorizedUserHandlerMethodArgumentResolver implements HandlerMethod
                                   NativeWebRequest webRequest,
                                   WebDataBinderFactory binderFactory) throws Exception {
         if (this.supportsParameter(parameter)) {
-            final Optional<User> user = Utilities.currentUser();
-            if (user.isPresent()) {
-                return user.get();
+            final Optional<Token> token = Utilities.currentToken();
+            if (token.isPresent()) {
+                return token.get();
             }
             throw new BadCredentialsException("Нет авторизации");
         } else {

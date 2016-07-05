@@ -6,7 +6,7 @@ import ru.phi.modules.exceptions.AuthenticationException;
 
 public interface AuthenticateService {
 
-    User authenticate(String key) throws AuthenticationException;
+    Token authenticate(String key) throws AuthenticationException;
 
     Token authenticate(String username, String password) throws AuthenticationException;
 }

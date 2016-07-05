@@ -10,7 +10,7 @@ import ru.phi.modules.exceptions.AuthenticationException;
 @SuppressWarnings("unused")
 @RequestMapping("/rest/v1/")
 @RestController
-final class SecurityRestController {
+class SecurityRestController {
 
     @Autowired
     private AuthenticateService service;

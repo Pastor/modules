@@ -2,17 +2,17 @@ package ru.phi.modules.security;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-import ru.phi.modules.entity.User;
+import ru.phi.modules.entity.Token;
 
 import java.util.Collection;
 
 final class AuthenticationWithToken extends PreAuthenticatedAuthenticationToken {
 
-    final User user;
+    final Token token;
 
-    AuthenticationWithToken(User user, Object aPrincipal, Object aCredentials, Collection<? extends GrantedAuthority> anAuthorities) {
+    AuthenticationWithToken(Token token, Object aPrincipal, Object aCredentials, Collection<? extends GrantedAuthority> anAuthorities) {
         super(aPrincipal, aCredentials, anAuthorities);
-        this.user = user;
+        this.token = token;
     }
 
     void setToken(String token) {

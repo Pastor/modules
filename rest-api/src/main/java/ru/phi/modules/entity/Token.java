@@ -3,20 +3,21 @@ package ru.phi.modules.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
+import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "Token")
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = {})
+@EqualsAndHashCode(callSuper = true, exclude = {"scopes"})
 @NoArgsConstructor
+@Proxy(lazy = false)
+@ToString(exclude = {"scopes"})
 public final class Token extends AbstractEntity {
     @NotNull
     @NonNull
@@ -36,4 +37,11 @@ public final class Token extends AbstractEntity {
     @PrimaryKeyJoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private User user;
+
+    @Setter(value = AccessLevel.PUBLIC)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JoinTable(name = "Scope", joinColumns = @JoinColumn(name = "id"),
+//            inverseJoinColumns = @JoinColumn(name = "id"))
+    @OrderBy("id")
+    private Set<Scope> scopes;
 }
