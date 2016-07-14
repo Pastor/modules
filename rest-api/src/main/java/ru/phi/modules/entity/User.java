@@ -14,8 +14,8 @@ import java.util.Set;
 @Entity
 @Table(name = "User")
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = {"tokens"})
-@ToString(exclude = {"tokens"})
+@EqualsAndHashCode(callSuper = true, exclude = {"tokens", "profile"})
+@ToString(exclude = {"tokens", "profile"})
 @NoArgsConstructor
 @Proxy(lazy = false)
 public final class User extends AbstractEntity {
@@ -50,4 +50,9 @@ public final class User extends AbstractEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     @OrderBy("id")
     private Set<Token> tokens;
+
+    @JsonIgnore
+    @Setter(AccessLevel.NONE)
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    private Profile profile;
 }

@@ -151,7 +151,7 @@ public class SecurityRestControllerIntegrationTest {
         scopeRepository.save(scope);
         token.setScopes(Sets.newHashSet(scope));
         tokenRepository.save(token);
-        final ResponseEntity<User> userEntity = template.getForEntity("http://localhost:" + port + "/rest/v1/user?token={token}",
+        final ResponseEntity<User> userEntity = template.getForEntity("http://localhost:" + port + "/rest/v1/me?token={token}",
                 User.class, token.getKey());
         assertEquals(userEntity.getStatusCode(), HttpStatus.OK);
         final User user = userEntity.getBody();
@@ -162,21 +162,21 @@ public class SecurityRestControllerIntegrationTest {
     public void faultScopedToken() throws Exception {
         final ResponseEntity<Token> entity = template.postForEntity("http://localhost:" + port + "/rest/v1/update",
                 "", Token.class);
-        final ResponseEntity<User> userEntity = template.getForEntity("http://localhost:" + port + "/rest/v1/user?token={token}",
+        final ResponseEntity<User> userEntity = template.getForEntity("http://localhost:" + port + "/rest/v1/me?token={token}",
                 User.class, entity.getBody().getKey());
         assertEquals(userEntity.getStatusCode(), HttpStatus.OK);
     }
 
     @Test(expected = AuthenticationException.class)
     public void faultToken() throws Exception {
-        final ResponseEntity<Error> userEntity = template.getForEntity("http://localhost:" + port + "/rest/v1/user?token={token}",
+        final ResponseEntity<Error> userEntity = template.getForEntity("http://localhost:" + port + "/rest/v1/me?token={token}",
                 Error.class, "000000000000000000000000000000000000");
         assertEquals(userEntity.getStatusCode(), HttpStatus.UNAUTHORIZED);
     }
 
     @Test(expected = AuthenticationException.class)
     public void emptyToken() throws Exception {
-        final ResponseEntity<User> userEntity = template.getForEntity("http://localhost:" + port + "/rest/v1/user",
+        final ResponseEntity<User> userEntity = template.getForEntity("http://localhost:" + port + "/rest/v1/me",
                 User.class);
         assertEquals(userEntity.getStatusCode(), HttpStatus.UNAUTHORIZED);
     }

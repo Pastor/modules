@@ -16,9 +16,9 @@ import ru.phi.modules.security.AuthorizedToken;
 @RequestMapping("/rest/v1/")
 @RestController
 @Transactional
-class UserRestController {
+class MeRestController {
     @AuthorizedScope(scopes = {"profile"})
-    @RequestMapping(value = "/user", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(value = "/me", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public
     @ResponseBody
     User authorizedUser(@AuthorizedToken Token token)

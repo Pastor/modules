@@ -59,6 +59,6 @@ public final class Profile extends AbstractEntity {
     @NotNull
     @NonNull
     @PrimaryKeyJoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, optional = false)
     private User user;
 }

@@ -37,7 +37,7 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
                 .antMatchers("/resources/*")
-                .antMatchers(HttpMethod.POST, "/rest/v1/login")
+                .antMatchers(HttpMethod.POST, "/rest/v1/update")
                 .antMatchers(HttpMethod.GET, "/rest/v1/token");
     }
 
