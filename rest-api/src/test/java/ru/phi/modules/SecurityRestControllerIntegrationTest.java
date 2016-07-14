@@ -11,9 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.security.crypto.codec.Base64;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.ResponseErrorHandler;
@@ -29,6 +33,7 @@ import ru.phi.modules.repository.TokenRepository;
 import ru.phi.modules.repository.UserRepository;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -39,6 +44,9 @@ import static junit.framework.Assert.assertNotNull;
 @SpringApplicationConfiguration(classes = Application.class)
 @TestPropertySource({"classpath:application.properties"})
 public class SecurityRestControllerIntegrationTest {
+
+    private static ClientHttpRequestInterceptor basicSuccess;
+    private static ClientHttpRequestInterceptor basicFault;
 
     @Autowired
     private UserRepository userRepository;
@@ -93,6 +101,8 @@ public class SecurityRestControllerIntegrationTest {
         user.setPassword("123456");
         user.setUsername("pastor");
         userRepository.save(user);
+        basicSuccess = basicInterceptor("pastor", "123456");
+        basicFault = basicInterceptor("username", "password");
     }
 
     @After
@@ -100,27 +110,30 @@ public class SecurityRestControllerIntegrationTest {
         errorRepository.deleteAll();
         userRepository.deleteAll();
         tokenRepository.deleteAll();
-
+        template.getInterceptors().remove(basicFault);
+        template.getInterceptors().remove(basicSuccess);
     }
 
     @Test(expected = AuthenticationException.class)
-    public void faultLogin() throws Exception {
-        final ResponseEntity<Token> entity = template.postForEntity("http://localhost:" + port + "/rest/v1/login?login={login}&password={password}",
-                "", Token.class, "username", "password");
+    public void faultUpdate() throws Exception {
+        template.getInterceptors().add(basicFault);
+        final ResponseEntity<Token> entity = template.postForEntity("http://localhost:" + port + "/rest/v1/update",
+                "", Token.class);
         assertEquals(entity.getStatusCode().value(), 401);
     }
 
     @Test(expected = AuthenticationException.class)
-    public void emptyLogin() throws Exception {
-        final ResponseEntity<Token> entity = template.postForEntity("http://localhost:" + port + "/rest/v1/login",
+    public void emptyUpdate() throws Exception {
+        final ResponseEntity<Token> entity = template.postForEntity("http://localhost:" + port + "/rest/v1/update",
                 "", Token.class);
         assertEquals(entity.getStatusCode().value(), 401);
     }
 
     @Test
-    public void successLogin() throws Exception {
-        final ResponseEntity<Token> entity = template.postForEntity("http://localhost:" + port + "/rest/v1/login?login={login}&password={password}",
-                "", Token.class, "pastor", "123456");
+    public void successUpdate() throws Exception {
+        template.getInterceptors().add(basicSuccess);
+        final ResponseEntity<Token> entity = template.postForEntity("http://localhost:" + port + "/rest/v1/update",
+                "", Token.class);
         assertEquals(entity.getStatusCode(), HttpStatus.OK);
         final Token token = entity.getBody();
         assertNotNull(token);
@@ -129,8 +142,9 @@ public class SecurityRestControllerIntegrationTest {
 
     @Test
     public void successToken() throws Exception {
-        final ResponseEntity<Token> entity = template.postForEntity("http://localhost:" + port + "/rest/v1/login?login={login}&password={password}",
-                "", Token.class, "pastor", "123456");
+        template.getInterceptors().add(basicSuccess);
+        final ResponseEntity<Token> entity = template.postForEntity("http://localhost:" + port + "/rest/v1/update",
+                "", Token.class);
         final Token token = tokenRepository.findByKey(entity.getBody().getKey());
         final Scope scope = new Scope();
         scope.setName("profile");
@@ -146,8 +160,8 @@ public class SecurityRestControllerIntegrationTest {
 
     @Test(expected = AuthenticationException.class)
     public void faultScopedToken() throws Exception {
-        final ResponseEntity<Token> entity = template.postForEntity("http://localhost:" + port + "/rest/v1/login?login={login}&password={password}",
-                "", Token.class, "pastor", "123456");
+        final ResponseEntity<Token> entity = template.postForEntity("http://localhost:" + port + "/rest/v1/update",
+                "", Token.class);
         final ResponseEntity<User> userEntity = template.getForEntity("http://localhost:" + port + "/rest/v1/user?token={token}",
                 User.class, entity.getBody().getKey());
         assertEquals(userEntity.getStatusCode(), HttpStatus.OK);
@@ -165,5 +179,17 @@ public class SecurityRestControllerIntegrationTest {
         final ResponseEntity<User> userEntity = template.getForEntity("http://localhost:" + port + "/rest/v1/user",
                 User.class);
         assertEquals(userEntity.getStatusCode(), HttpStatus.UNAUTHORIZED);
+    }
+
+    private static ClientHttpRequestInterceptor basicInterceptor(String username, String password) {
+        return (request, body, execution) -> {
+            request.getHeaders().add("Authorization", basic(username, password));
+            return execution.execute(request, body);
+        };
+    }
+
+    private static String basic(String username, String password) throws UnsupportedEncodingException {
+        final String token = username + ":" + password;
+        return "Basic " + new String(Base64.encode(token.getBytes("UTF-8")), "UTF-8");
     }
 }

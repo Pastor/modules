@@ -1,0 +1,954 @@
+swagger: '2.0'
+info:
+  title: "Социальный навигатор"
+  description: API для "Социального навигатора"
+  version: "1.0.3"
+host: api.socnavi.ru
+schemes:
+  - http
+  - https
+tags:
+  - name: Users
+    description: Пользователи
+  - name: Profiles
+    description: Профиль пользователя
+  - name: News
+    description: Новости
+  - name: Elements
+    description: Объекты/Элементы 
+  - name: Categories
+    description: Категории доступа
+  - name: Qualities
+    description: Шаблоны UI
+  - name: Settings
+    description: Настройки
+  - name: Token
+    description: Токен
+basePath: /rest/v1
+produces:
+  - application/json
+  - application/xml
+paths:
+  /news:
+    get:
+      summary: Получение списка новостей
+      parameters:
+        - name: created_at
+          in: query
+          description: Дата создания.
+          required: false
+          type: number
+          format: int64
+        - name: limit
+          in: query
+          description: Ограничения количества элементов в результирующем списке.
+          required: false
+          type: number
+          format: int64
+        - name: offset
+          in: query
+          description: С какого элемента начинать вывод.
+          required: false
+          type: number
+          format: int64  
+      tags:
+        - News
+      responses:
+        200:
+          description: Список новостей
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/News'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Добавление новости
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/News'
+      tags:
+        - News
+      responses:
+        200:
+          description: Информация о добавленной новости
+          schema:
+            $ref: '#/definitions/News'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: add_news
+      security: 
+        - token: [] 
+  /news/{id}:
+    get:
+      summary: Получение информации о новости
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+      tags:
+        - News
+      responses:
+        200:
+          description: Информация о новости
+          schema:
+            $ref: '#/definitions/News'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Изменение информации о новости
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/News'
+      tags:
+        - News
+      responses:
+        200:
+          description: Информация о измененной новости
+          schema:
+            $ref: '#/definitions/News'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: update_news
+      security: 
+        - token: [] 
+    delete:
+      summary: Удаление новости
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+      tags:
+        - News
+      responses:
+        200:
+          description: Новость удалена
+      operationId: delete_news
+      security: 
+        - token: []    
+  /elements:
+    get:
+      summary: Получение списка элементов
+      parameters:
+        - name: created_at
+          in: query
+          description: Дата создания.
+          required: false
+          type: number
+          format: int64
+        - name: limit
+          in: query
+          description: Ограничения количества элементов в результирующем списке.
+          required: false
+          type: number
+          format: int64
+        - name: offset
+          in: query
+          description: С какого элемента начинать вывод.
+          required: false
+          type: number
+          format: int64  
+      tags:
+        - Elements
+      responses:
+        200:
+          description: Список элементов
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Element'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Добавление элемента
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Element'
+      tags:
+        - Elements
+      responses:
+        200:
+          description: Информация о добавленном элементом
+          schema:
+            $ref: '#/definitions/Element'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: add_element
+      security: 
+        - token: [] 
+  /elements/{id}:
+    get:
+      summary: Получение информации о элементе
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+      tags:
+        - Elements
+      responses:
+        200:
+          description: Информация о элементе
+          schema:
+            $ref: '#/definitions/Element'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Изменение информации о элементе
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Element'
+      tags:
+        - Categories
+      responses:
+        200:
+          description: Информация о измененном элементе
+          schema:
+            $ref: '#/definitions/Element'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: update_element
+      security: 
+        - token: [] 
+    delete:
+      summary: Удаление элемента
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+      tags:
+        - Elements
+      responses:
+        200:
+          description: Элемент удален
+      operationId: delete_element
+      security: 
+        - token: []    
+  /categories:
+    get:
+      summary: Получение списка категорий элементов
+      parameters:
+        - name: created_at
+          in: query
+          description: Дата создания.
+          required: false
+          type: number
+          format: int64
+        - name: limit
+          in: query
+          description: Ограничения количества элементов в результирующем списке.
+          required: false
+          type: number
+          format: int64
+        - name: offset
+          in: query
+          description: С какого элемента начинать вывод.
+          required: false
+          type: number
+          format: int64  
+      tags:
+        - Categories
+      responses:
+        200:
+          description: Список категорий эелементов
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ElementCategory'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Добавление категории
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ElementCategory'
+      tags:
+        - Categories
+      responses:
+        200:
+          description: Информация о добавленной категории
+          schema:
+            $ref: '#/definitions/ElementCategory'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: add_category
+      security: 
+        - token: [] 
+  /categories/{id}:
+    get:
+      summary: Получение информации категории
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+      tags:
+        - Categories
+      responses:
+        200:
+          description: Информация о категории
+          schema:
+            $ref: '#/definitions/ElementCategory'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Изменение информации о категории
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ElementCategory'
+      tags:
+        - Categories
+      responses:
+        200:
+          description: Информация о измененной категории
+          schema:
+            $ref: '#/definitions/ElementCategory'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: update_category
+      security: 
+        - token: [] 
+    delete:
+      summary: Удаление категории
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+      tags:
+        - Categories
+      responses:
+        200:
+          description: Категория удалена
+      operationId: delete_category
+      security: 
+        - token: []    
+  /qualities:
+    get:
+      summary: Получение списка возможных шаблонов UI
+      tags:
+        - Qualities
+      responses:
+        200:
+          description: Список шаблонов UI
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Quality'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Добавление шаблона
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Quality'
+      tags:
+        - Qualities
+      responses:
+        200:
+          description: Информация о добавленном шаблоне
+          schema:
+            $ref: '#/definitions/Quality'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: add_quality
+      security: 
+        - token: [] 
+  /qualities/{id}:
+    get:
+      summary: Получение информации о шаблоне
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+      tags:
+        - Qualities
+      responses:
+        200:
+          description: Информация о шаблоне
+          schema:
+            $ref: '#/definitions/Quality'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Изменение информации о шаблоне
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Quality'
+      tags:
+        - Qualities
+      responses:
+        200:
+          description: Информация о измененном шаблоне
+          schema:
+            $ref: '#/definitions/Quality'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: update_quality
+      security: 
+        - token: [] 
+    delete:
+      summary: Удаление шаблона
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+      tags:
+        - Qualities
+      responses:
+        200:
+          description: Шаблон удален
+      operationId: delete_quality
+      security: 
+        - token: []    
+  /users/{id}:
+    get:
+      summary: Получение информации о пользователе
+      description: |
+        Получение информации о пользователе по его уникальному идентификатору.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+      tags:
+        - Users
+      responses:
+        200:
+          description: Информация о пользователе
+          schema:
+            $ref: '#/definitions/User'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: get_user
+      security: 
+        - token: []
+    delete:
+      summary: Удаление пользователя
+      description: |
+        Пользователь помечается как удаленный. Для получение удаленных пользователей надо воспользоваться параметром фильтра show_deleted.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+      tags:
+        - Users
+      responses:
+        200:
+          description: Пользователь удален успешно
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: delete_user
+      security: 
+        - token: []
+    put:
+      summary: Обновление информации о пользователе
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+        - Users
+      responses:
+        200:
+          description: Обновленная информация о пользователе
+          schema:
+            $ref: '#/definitions/User'
+        405:
+          description: Ошибка проверки правильности введенных полей
+        404:
+          description: Пользователь не найден
+        400:
+          description: Идентификатор пользователя не верен
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: update_user
+      security: 
+        - token: []
+  /users:
+    get:
+      summary: Пользователи
+      description: |
+        Получение списка пользователей.
+      parameters:
+        - name: created_at
+          in: query
+          description: Дата создания.
+          required: false
+          type: number
+          format: int64
+        - name: limit
+          in: query
+          description: Ограничения количества элементов в результирующем списке.
+          required: false
+          type: number
+          format: int64
+        - name: offset
+          in: query
+          description: С какого элемента начинать вывод.
+          required: false
+          type: number
+          format: int64  
+      tags:
+        - Users
+      responses:
+        200:
+          description: Список пользователей
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: list_users
+      security: 
+        - token: []
+    post:
+      summary: Создание пользователя
+      parameters:
+        - name: token
+          in: query
+          description: Token доступа
+          type: string
+          format: string
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+        - Users
+      responses:
+        200:
+          description: Информация о пользователе
+          schema:
+            $ref: '#/definitions/User'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: add_user
+      security: 
+        - token: []
+  /me:
+    get:
+      summary: Текущий профиль пользователя
+      description: Профиль авторизированного пользователя.
+      tags:
+        - Profiles
+      responses:
+        200:
+          description: Информация о профиле пользователя
+          schema:
+            $ref: '#/definitions/Profile'
+        default:
+          description: Ошибка получения информации о профиле
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: get_self
+      security: 
+        - token: []
+    put:
+      summary: Обновление своего профиля
+      parameters:
+        - name: body
+          in: body
+          description: Информация о профиле
+          schema:
+            $ref: '#/definitions/Profile'
+          required: true
+      tags:
+        - Profiles
+      responses:
+        200:
+          description: Обновленная информация о профиле пользователя
+          schema:
+            $ref: '#/definitions/Profile'
+        default:
+          description: Ошибка обновления информации о профиле
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: update_self
+      security: 
+        - token: []     
+  /me/settings:
+    get:
+      summary: Текущие настройки пользователя
+      description: Настройки авторизированного пользователя.
+      tags:
+        - Settings
+      responses:
+        200:
+          description: Настройки пользователя
+          schema:
+            $ref: '#/definitions/Settings'
+        default:
+          description: Ошибка получения настроек
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: get_settings
+      security: 
+        - token: []
+    put:
+      summary: Обновление настроек
+      parameters:
+        - name: body
+          in: body
+          description: Настройки
+          schema:
+            $ref: '#/definitions/Settings'
+          required: true
+      tags:
+        - Settings
+      responses:
+        200:
+          description: Настройки обновлены
+        default:
+          description: Ошибка обновления настроек
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: update_settings
+      security: 
+        - token: []     
+  /update:
+    post:
+      summary: Получение/Обновление токена
+      tags:
+        - Token
+      responses:
+        200:
+          description: Token доступа
+          schema:
+            $ref: '#/definitions/Token'
+        default:
+          description: Ошибка получения token
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: update_token
+      security: 
+        - token: []
+        - auth: []
+securityDefinitions:
+  token:
+    type: apiKey
+    name: token
+    in: query
+  auth:
+    type: basic
+definitions:
+  User:
+    type: object
+    required:
+      - id
+      - phone
+      - email
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: Уникальный идентификатор пользователя.
+      phone:
+        type: string
+        description: Телефон пользователя.
+      email:
+        type: string
+        description: Адрес электронной почты.
+  Quality:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: Уникальный идентификатор
+      accessibility:
+        type: string
+        description: Категория доступности
+      template:
+        type: string
+        description: Шаблон отображения интерфейса
+  Token:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: Уникальный идентификатор
+      key:
+        type: string
+        description: Строка доступа
+      expire:
+        type: string
+        format: datetime
+        description: Время окончания действия ключа
+      scope:
+        type: array
+        description: Список областей доступа
+        items: 
+          type: string
+      user:
+        $ref: '#/definitions/User'
+  Element:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: Уникальный идентификатор
+      name:
+        type: string
+        description: Наименование элемента
+      full_name:
+        type: string
+        description: Полное наименование элемента
+      address:
+        type: string
+        description: Адрес нахождения элемента
+      latitude:
+        type: number
+        format: double
+        description: Широта
+      longitude:
+        type: number
+        format: double
+        description: Долгота
+      categories:
+        type: array
+        description: Категории к которым относится объект
+        items:
+          $ref: '#/definitions/ElementCategory'
+  News:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: Уникальный идентификатор
+      title:
+        type: string
+        description: Заголовок новости
+      bref:
+        type: string
+        description: Краткое описание новости
+      content:
+        type: string
+        description: Полное описание новости с изображениями и ссылками
+      visible:
+        type: boolean
+        description: Флаг отображения новости
+      deleted:
+        type: boolean
+        description: Флаг удаления новости
+      creator:
+        $ref: '#/definitions/User'
+      published_at:
+        type: string
+        format: datetime
+        description: Время публикации новости
+  Settings:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: Уникальный идентификатор
+      quality:
+        $ref: '#/definitions/Quality'
+      filter:
+        type: string
+        description: Фильтр поиска
+      route_type:
+        type: string
+        description: Тип прокладываемого маршрута
+      start_latitude:
+        type: number
+        format: double
+      start_longitude:
+        type: number
+        format: double
+      end_latitude:
+        type: number
+        format: double
+      end_longitude:
+        type: number
+        format: double
+      token:
+        $ref: '#/definitions/Token'
+  ElementCategory:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: Уникальный идентификатор
+      name:
+        type: string
+        description: Наименование категории элеманта
+      icon:
+        type: string
+        format: url
+        description: Ссылка на изображение иконки элемента
+  Profile:
+    type: object
+    required:
+      - id
+      - first_name
+      - last_name
+      - user
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: Уникальный идентификатор
+      first_name:
+        type: string
+        description: Имя пользователя.
+      last_name:
+        type: string
+        description: Фамилия пользователя.
+      middle_name:
+        type: string
+        description: Отчество пользователя
+      accessibility:
+        type: string
+        description: Ограничения.
+      address:
+        type: string
+        description: Адрес места жительства.
+      city:
+        type: string
+        description: Город жительства
+      user:
+        $ref: '#/definitions/User'
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string

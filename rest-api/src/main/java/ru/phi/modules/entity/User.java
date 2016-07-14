@@ -36,6 +36,15 @@ public final class User extends AbstractEntity {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "phone", nullable = true)
+    private String phone;
+
+    @NotNull
+    @NonNull
+    @Column(name = "role", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRole role = UserRole.USER;
+
     @JsonIgnore
     @Setter(AccessLevel.NONE)
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)

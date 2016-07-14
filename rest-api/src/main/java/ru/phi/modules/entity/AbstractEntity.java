@@ -27,7 +27,7 @@ abstract class AbstractEntity implements Serializable {
     @Getter
     private Long id;
 
-//    @JsonIgnore
+    @JsonIgnore
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @JsonProperty("created_at")
     @JsonSerialize(using = JsonLocalDateTimeSerializer.class)
@@ -37,7 +37,7 @@ abstract class AbstractEntity implements Serializable {
     @Getter
     private LocalDateTime createdAt;
 
-//    @JsonIgnore
+    @JsonIgnore
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @JsonProperty("updated_at")
     @JsonSerialize(using = JsonLocalDateTimeSerializer.class)
@@ -46,6 +46,16 @@ abstract class AbstractEntity implements Serializable {
     @Setter(AccessLevel.NONE)
     @Getter
     private LocalDateTime updatedAt;
+
+    @JsonIgnore
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @JsonProperty("deleted_at")
+    @JsonSerialize(using = JsonLocalDateTimeSerializer.class)
+    @LastModifiedDate
+    @Column(name = "deleted_at", nullable = true)
+    @Setter(AccessLevel.PACKAGE)
+    @Getter
+    private LocalDateTime deletedAt;
 
     @PrePersist
     private void prePersist() {
