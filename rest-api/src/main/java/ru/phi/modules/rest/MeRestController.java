@@ -13,7 +13,7 @@ import ru.phi.modules.security.AuthorizedScope;
 import ru.phi.modules.security.AuthorizedToken;
 
 @SuppressWarnings("unused")
-@RequestMapping("/rest/v1/")
+@RequestMapping({"/rest/v1/", "/rest/"})
 @RestController
 @Transactional
 class MeRestController {

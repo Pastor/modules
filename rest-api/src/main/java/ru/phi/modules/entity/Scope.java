@@ -22,6 +22,14 @@ public final class Scope extends AbstractEntity {
     private String name;
 
     @JsonIgnore
+    @NotNull
+    @NonNull
+    @Column(name = "to_role", nullable = false)
+    @JsonProperty("to_role")
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+
+    @JsonIgnore
     @Setter(AccessLevel.NONE)
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OrderBy("id")

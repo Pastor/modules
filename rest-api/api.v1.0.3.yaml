@@ -735,7 +735,38 @@ paths:
         - token: []     
   /update:
     post:
-      summary: Получение/Обновление токена
+      summary: Получение токена
+      parameters:
+        - name: scopes
+          in: query
+          type: string
+          format: delim
+          description: Области
+          required: false
+      tags:
+        - Token
+      responses:
+        200:
+          description: Token доступа
+          schema:
+            $ref: '#/definitions/Token'
+        default:
+          description: Ошибка получения token
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: create_token
+      security: 
+        - token: []
+        - auth: []
+    put:
+      summary: Обновление токена
+      parameters:
+        - name: scopes
+          in: query
+          type: string
+          format: delim
+          description: Области
+          required: false
       tags:
         - Token
       responses:
