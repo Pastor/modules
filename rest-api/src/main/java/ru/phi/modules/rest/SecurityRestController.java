@@ -28,31 +28,44 @@ class SecurityRestController {
     @ResponseBody
     Token update(@RequestParam(name = "scopes", required = false) String scopes, WebRequest request, HttpServletRequest servletRequest)
             throws AuthenticationException, UnsupportedEncodingException {
-        String header = request.getHeader("Authorization");
-        if (header == null)
-            throw new BadCredentialsException(
-                    "Empty basic authentication token");
-        final byte[] base64Token = header.substring(6).getBytes("UTF-8");
-        final byte[] decoded;
-        try {
-            decoded = Base64.decode(base64Token);
-        } catch (IllegalArgumentException e) {
-            throw new BadCredentialsException(
-                    "Failed to decode basic authentication token");
-        }
-        final String token = new String(decoded, "UTF-8");
-        final int delim = token.indexOf(":");
-        if (delim == -1) {
-            throw new BadCredentialsException("Invalid basic authentication token");
-        }
-        final String username = token.substring(0, delim);
-        final String password = token.substring(delim + 1);
+        final Basic basic = Basic.parse(request);
         final String method = servletRequest.getMethod();
         if (scopes == null || scopes.isEmpty()) {
-            return service.authenticate(username, password, RequestMethod.PUT.name().equalsIgnoreCase(method));
+            return service.authenticate(basic.username, basic.password, RequestMethod.PUT.name().equalsIgnoreCase(method));
         } else {
-            return service.authenticate(username, password, RequestMethod.PUT.name().equalsIgnoreCase(method),
+            return service.authenticate(basic.username, basic.password, RequestMethod.PUT.name().equalsIgnoreCase(method),
                     Sets.newHashSet(scopes.split(",")));
+        }
+    }
+
+    private static class Basic {
+        private final String username;
+        private final String password;
+
+        private Basic(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+
+        public static Basic parse(WebRequest request) throws UnsupportedEncodingException {
+            final String header = request.getHeader("Authorization");
+            if (header == null)
+                throw new BadCredentialsException(
+                        "Empty basic authentication token");
+            final byte[] base64Token = header.substring(6).getBytes("UTF-8");
+            final byte[] decoded;
+            try {
+                decoded = Base64.decode(base64Token);
+            } catch (IllegalArgumentException e) {
+                throw new BadCredentialsException(
+                        "Failed to decode basic authentication token");
+            }
+            final String token = new String(decoded, "UTF-8");
+            final int delim = token.indexOf(":");
+            if (delim == -1) {
+                throw new BadCredentialsException("Invalid basic authentication token");
+            }
+            return new Basic(token.substring(0, delim), token.substring(delim + 1));
         }
     }
 }

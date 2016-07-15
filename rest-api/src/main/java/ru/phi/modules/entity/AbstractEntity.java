@@ -23,7 +23,7 @@ abstract class AbstractEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
-    @Setter(AccessLevel.NONE)
+    @Setter(AccessLevel.PUBLIC)
     @Getter
     private Long id;
 

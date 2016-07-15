@@ -13,8 +13,8 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "Profile")
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = {"user", "quality"})
-@ToString(exclude = {"quality"})
+@EqualsAndHashCode(callSuper = true, exclude = {"user", "quality", "settings"})
+@ToString(exclude = {"quality", "settings"})
 @NoArgsConstructor
 @Proxy(lazy = false)
 public final class Profile extends AbstractEntity {
@@ -61,4 +61,9 @@ public final class Profile extends AbstractEntity {
     @PrimaryKeyJoinColumn(name = "user_id", referencedColumnName = "id")
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, optional = false)
     private User user;
+
+    @JsonIgnore
+    @Setter(AccessLevel.NONE)
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "profile", cascade = CascadeType.ALL)
+    private Settings settings;
 }

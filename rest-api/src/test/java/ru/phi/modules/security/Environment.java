@@ -11,8 +11,9 @@ import org.springframework.security.crypto.codec.Base64;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 import ru.phi.modules.entity.Error;
+import ru.phi.modules.entity.Profile;
+import ru.phi.modules.entity.Settings;
 import ru.phi.modules.entity.Token;
-import ru.phi.modules.entity.User;
 import ru.phi.modules.exceptions.AuthenticationException;
 
 import java.io.IOException;
@@ -80,12 +81,29 @@ public final class Environment {
         clearDown();
     }
 
-    public User me(String token) {
-        final ResponseEntity<User> userEntity = template.getForEntity("http://localhost:" + port + "/rest/v1/me?token={token}",
-                User.class, token);
+    public Profile me(String token) {
+        final ResponseEntity<Profile> userEntity = template.getForEntity("http://localhost:" + port + "/rest/v1/me?token={token}",
+                Profile.class, token);
         clearDown();
         assertEquals(userEntity.getStatusCode(), HttpStatus.OK);
         return userEntity.getBody();
+    }
+
+    public Settings meSettings(String token) {
+        clearDown();
+        final ResponseEntity<Settings> userEntity =
+                template.getForEntity("http://localhost:" + port + "/rest/v1/me/settings?token={token}",
+                        Settings.class, token);
+        clearDown();
+        assertEquals(userEntity.getStatusCode(), HttpStatus.OK);
+        return userEntity.getBody();
+    }
+
+    public void putSettings(Settings settings, String token) {
+        clearDown();
+        template.put("http://localhost:" + port + "/rest/v1/me/settings?token={token}",
+                settings, token);
+        clearDown();
     }
 
     public void putUpdate(String username, String password, String... scopes) {

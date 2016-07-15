@@ -11,8 +11,8 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "Settings")
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = {"token"})
-@ToString(exclude = {"token"})
+@EqualsAndHashCode(callSuper = true, exclude = {"profile"})
+@ToString(exclude = {"profile"})
 @NoArgsConstructor
 @Proxy(lazy = false)
 public final class Settings extends AbstractEntity {
@@ -26,7 +26,7 @@ public final class Settings extends AbstractEntity {
 
     @Column(name = "route_type")
     @Enumerated(EnumType.STRING)
-    private RouteType routeType;
+    private RouteType routeType = RouteType.BEST;
 
     @Column(name = "start_longitude")
     private Double startLongitude;
@@ -43,7 +43,6 @@ public final class Settings extends AbstractEntity {
     @JsonIgnore
     @NotNull
     @NonNull
-    @PrimaryKeyJoinColumn(name = "token_id", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private Token token;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
+    private Profile profile;
 }

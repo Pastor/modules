@@ -125,9 +125,7 @@ paths:
         - News
       responses:
         200:
-          description: Информация о измененной новости
-          schema:
-            $ref: '#/definitions/News'
+          description: Информация обновлена
         default:
           description: Unexpected error
           schema:
@@ -248,9 +246,7 @@ paths:
         - Categories
       responses:
         200:
-          description: Информация о измененном элементе
-          schema:
-            $ref: '#/definitions/Element'
+          description: Информация обновлена
         default:
           description: Unexpected error
           schema:
@@ -371,9 +367,7 @@ paths:
         - Categories
       responses:
         200:
-          description: Информация о измененной категории
-          schema:
-            $ref: '#/definitions/ElementCategory'
+          description: Информация обновлена
         default:
           description: Unexpected error
           schema:
@@ -475,9 +469,7 @@ paths:
         - Qualities
       responses:
         200:
-          description: Информация о измененном шаблоне
-          schema:
-            $ref: '#/definitions/Quality'
+          description: Информация обновлена
         default:
           description: Unexpected error
           schema:
@@ -569,9 +561,7 @@ paths:
         - Users
       responses:
         200:
-          description: Обновленная информация о пользователе
-          schema:
-            $ref: '#/definitions/User'
+          description: Информация обновлена
         405:
           description: Ошибка проверки правильности введенных полей
         404:
@@ -684,9 +674,7 @@ paths:
         - Profiles
       responses:
         200:
-          description: Обновленная информация о профиле пользователя
-          schema:
-            $ref: '#/definitions/Profile'
+          description: Информация обновлена
         default:
           description: Ошибка обновления информации о профиле
           schema:
@@ -771,9 +759,7 @@ paths:
         - Token
       responses:
         200:
-          description: Token доступа
-          schema:
-            $ref: '#/definitions/Token'
+          description: Token обновлен
         default:
           description: Ошибка получения token
           schema:

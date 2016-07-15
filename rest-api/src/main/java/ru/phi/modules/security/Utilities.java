@@ -16,4 +16,8 @@ public final class Utilities {
             return Optional.empty();
         return Optional.ofNullable(token.token);
     }
+
+    public static void copy(Object dst, Object src) {
+        throw new RuntimeException("Not implement yet");
+    }
 }
