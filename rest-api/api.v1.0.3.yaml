@@ -19,11 +19,13 @@ tags:
   - name: Categories
     description: Категории доступа
   - name: Qualities
-    description: Шаблоны UI
+    description: Шаблоны `UI`
   - name: Settings
     description: Настройки
   - name: Token
     description: Токен
+  - name: Version
+    description: Версия `API`
 basePath: /rest/v1
 produces:
   - application/json
@@ -724,6 +726,17 @@ paths:
   /token:
     post:
       summary: Создание токена
+      description: | 
+        Создание нового токена с ограничениями `scope`, перечисленными через запятую. Пока определены следующие `scope`:
+          1. `profile`  - управление профилем пользователя
+          2. `settings` - управление настройкми
+          3. `ping`     - для проверки работоспособности сервиса
+          
+        Токену, так же, можно передать тип. Доступные типы:
+          1. `device`   - токен созданный для мобильных устройств
+          2. `web`      - токен создан для `web` приложений
+
+        Для каждого типа токена, можут быть различия в вызовах методов `API` или его поведении. 
       parameters:
         - name: scopes
           in: query
@@ -753,6 +766,8 @@ paths:
         - auth: []
     put:
       summary: Обновление токена
+      description: |
+        Данный вызов предназначен только для тестирования и ограничен вызовом только из под роли `administrator` и типа токена `web`.
       parameters:
         - name: scopes
           in: query
@@ -772,6 +787,23 @@ paths:
       operationId: update_token
       security: 
         - token: []
+  /version:
+    get:
+      summary: Текущая версия `API`
+      description: |
+        Получение текущей версии `API`
+      tags:
+        - Version
+      responses:
+        200:
+          description: Версия
+          schema:
+            $ref: '#/definitions/Version'
+        default:
+          description: Ошибка получения версии приложения
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: get_version
 securityDefinitions:
   token:
     type: apiKey
@@ -973,3 +1005,27 @@ definitions:
         type: string
       fields:
         type: string
+  Version:
+    type: object
+    required:
+      - major
+      - minor
+      - build
+    properties:
+      major:
+        type: integer
+        format: int32
+      minor:
+        type: integer
+        format: int32
+      build:
+        type: integer
+        format: int32
+      rc:
+        type: boolean
+      ms:
+        type: integer 
+        format: int32
+      support:
+        type: string
+        format: email

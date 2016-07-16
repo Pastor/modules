@@ -17,7 +17,7 @@ import java.io.UnsupportedEncodingException;
 @SuppressWarnings("unused")
 @RequestMapping({"/rest/v1/", "/rest/"})
 @RestController
-class SecurityRestController {
+class SecurityController {
 
     @Autowired
     private AuthenticateService service;

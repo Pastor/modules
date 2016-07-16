@@ -16,7 +16,7 @@ import ru.phi.modules.security.AuthorizedToken;
 @RequestMapping({"/rest/v1/", "/rest/"})
 @RestController
 @Transactional
-class MeRestController {
+class MeController {
 
     @Autowired
     private SettingsRepository settingsRepository;

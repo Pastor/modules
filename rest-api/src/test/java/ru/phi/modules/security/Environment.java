@@ -10,10 +10,8 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
+import ru.phi.modules.entity.*;
 import ru.phi.modules.entity.Error;
-import ru.phi.modules.entity.Profile;
-import ru.phi.modules.entity.Settings;
-import ru.phi.modules.entity.Token;
 import ru.phi.modules.exceptions.AuthenticationException;
 
 import java.io.IOException;
@@ -120,6 +118,38 @@ public final class Environment {
                     params, token);
         }
         clearDown();
+    }
+
+    public String pingScope(String token) {
+        final ResponseEntity<String> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/ping/scope?token={token}", String.class,
+                token);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return entity.getBody();
+    }
+
+    public String pingAuthorized(String token) {
+        final ResponseEntity<String> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/ping/authorized?token={token}", String.class,
+                token);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return entity.getBody();
+    }
+
+    public String pingClear() {
+        final ResponseEntity<String> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/ping/clear", String.class);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return entity.getBody();
+    }
+
+    public Version current() {
+        final ResponseEntity<Version> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/version", Version.class);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return entity.getBody();
+    }
+
+    public String pingAuthorizedFault() {
+        final ResponseEntity<String> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/ping/authorized_fault", String.class);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return entity.getBody();
     }
 
     public void successUp(String username, String password) {

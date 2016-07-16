@@ -9,7 +9,7 @@ import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-public final class SecurityRestControllerIntegrationTest extends AbstractRestTest {
+public final class SecurityControllerIntegrationTest extends AbstractRestTest {
 
     @Test(expected = AuthenticationException.class)
     public void faultUpdate() throws Exception {

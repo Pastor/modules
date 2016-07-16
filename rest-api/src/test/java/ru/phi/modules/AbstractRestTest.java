@@ -21,6 +21,10 @@ import ru.phi.modules.security.Environment;
 @SpringApplicationConfiguration(classes = Application.class)
 @TestPropertySource({"classpath:application.properties"})
 public abstract class AbstractRestTest {
+
+    @Autowired
+    protected VersionRepository versionRepository;
+
     @Autowired
     protected UserRepository userRepository;
 
@@ -64,6 +68,7 @@ public abstract class AbstractRestTest {
         environment = new Environment(objectMapper, port);
         register("profile");
         register("settings");
+        register("ping");
     }
 
     protected final void register(String scopeName) {

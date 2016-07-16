@@ -54,7 +54,7 @@ class SecurityAuthenticateService implements AuthenticateService {
             throws AuthenticationException {
         final User user = userRepository.find(username, password);
         if (user == null)
-            throw new AuthenticationException();
+            throw new AuthenticationException(format("Пользователь {0} не найден", username));
         final Token token = new Token();
         token.setExpiredAt(LocalDateTime.now().plus(365, ChronoUnit.DAYS));
         token.setUser(user);

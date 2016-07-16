@@ -37,7 +37,9 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
                 .antMatchers("/resources/*")
-                .antMatchers(HttpMethod.POST, "/rest/v1/update")
+                .antMatchers(HttpMethod.POST, "/rest/v1/token")
+                .antMatchers(HttpMethod.GET, "/rest/v1/ping/clear")
+                .antMatchers(HttpMethod.GET, "/rest/v1/version")
                 .antMatchers(HttpMethod.GET, "/rest/v1/token");
     }
 
@@ -45,7 +47,7 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).
                 and().authorizeRequests()
-                .antMatchers("/rest/*").authenticated().
+                .anyRequest().authenticated().
                 and()
                 .anonymous().disable()
                 .securityContext()
