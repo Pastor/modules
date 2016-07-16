@@ -31,6 +31,13 @@ public final class Token extends AbstractEntity {
     @JsonProperty("key")
     private String key;
 
+    @NotNull
+    @NonNull
+    @Column(name = "type", nullable = false)
+    @JsonProperty("type")
+    @Enumerated(EnumType.STRING)
+    private Type type = Type.WEB;
+
     @JsonIgnore
     @NotNull
     @NonNull
@@ -42,4 +49,9 @@ public final class Token extends AbstractEntity {
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OrderBy("id")
     private Set<Scope> scopes;
+
+    public enum Type {
+        DEVICE,
+        WEB
+    }
 }

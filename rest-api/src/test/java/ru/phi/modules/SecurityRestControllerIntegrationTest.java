@@ -23,34 +23,30 @@ public final class SecurityRestControllerIntegrationTest extends AbstractRestTes
 
     @Test
     public void successUpdate() throws Exception {
-        final Token token = token();
+        final Token token = newToken();
         assertNotNull(token);
         assertNotNull(token.getExpiredAt());
     }
 
     @Test
     public void updateToken() throws Exception {
-        Token token = token();
+        Token token = newToken();
         assertNotNull(token);
         assertNull(token.getScopes());
-        environment.putUpdate(successUser.getUsername(), successUser.getPassword(), "profile");
-        token = environment.postUpdate(successUser.getUsername(), successUser.getPassword());
-        assertNotNull(token);
-        assertNotNull(token.getScopes());
-        assertEquals(token.getScopes().size(), 1);
-        assertEquals(token.getScopes().iterator().next().getName(), "profile");
+        environment.putUpdate(token.getKey(), "profile");
+        environment.me(token.getKey());
     }
 
     @Test
     public void successToken() throws Exception {
-        final Token token = token("profile");
+        final Token token = newToken("profile");
         final Profile profile = environment.me(token.getKey());
         assertEquals(profile.getEmail(), successProfile.getEmail());
     }
 
     @Test(expected = AuthenticationException.class)
     public void faultScopedToken() throws Exception {
-        final Token token = token();
+        final Token token = newToken();
         final Profile profile = environment.me(token.getKey());
         assertNotNull(profile);
     }
@@ -65,5 +61,16 @@ public final class SecurityRestControllerIntegrationTest extends AbstractRestTes
     public void emptyToken() throws Exception {
         final Profile profile = environment.me("");
         assertNotNull(profile);
+    }
+
+    public void createToken() throws Exception {
+        final Token token = newToken();
+        assertEquals(token.getScopes().size(), 0);
+        final Token token2 = newToken("profile");
+        assertEquals(token2.getScopes().size(), 1);
+        assertEquals(token.getScopes().size(), 0);
+        final Token token3 = newToken();
+        assertEquals(token3.getScopes().size(), 0);
+        assertEquals(token2.getScopes().size(), 1);
     }
 }

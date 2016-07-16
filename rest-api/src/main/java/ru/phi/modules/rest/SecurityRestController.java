@@ -10,8 +10,8 @@ import org.springframework.web.context.request.WebRequest;
 import ru.phi.modules.api.AuthenticateService;
 import ru.phi.modules.entity.Token;
 import ru.phi.modules.exceptions.AuthenticationException;
+import ru.phi.modules.security.AuthorizedToken;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 
 @SuppressWarnings("unused")
@@ -22,19 +22,33 @@ class SecurityRestController {
     @Autowired
     private AuthenticateService service;
 
-    @RequestMapping(value = "/update", method = {RequestMethod.POST, RequestMethod.PUT},
+    @RequestMapping(value = "/token", method = {RequestMethod.POST},
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public
     @ResponseBody
-    Token update(@RequestParam(name = "scopes", required = false) String scopes, WebRequest request, HttpServletRequest servletRequest)
+    Token create(@RequestParam(name = "scopes", required = false) String scopes,
+                 @RequestParam(name = "type", required = false) String type,
+                 WebRequest request)
             throws AuthenticationException, UnsupportedEncodingException {
         final Basic basic = Basic.parse(request);
-        final String method = servletRequest.getMethod();
         if (scopes == null || scopes.isEmpty()) {
-            return service.authenticate(basic.username, basic.password, RequestMethod.PUT.name().equalsIgnoreCase(method));
+            return service.authenticate(basic.username, basic.password, null);
         } else {
-            return service.authenticate(basic.username, basic.password, RequestMethod.PUT.name().equalsIgnoreCase(method),
-                    Sets.newHashSet(scopes.split(",")));
+            return service.authenticate(basic.username, basic.password, Sets.newHashSet(scopes.split(",")));
+        }
+    }
+
+    @RequestMapping(value = "/token", method = {RequestMethod.PUT},
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public
+    @ResponseBody
+    void update(@AuthorizedToken Token token, @RequestParam(name = "scopes", required = false) String scopes, WebRequest request)
+            throws AuthenticationException, UnsupportedEncodingException {
+
+        if (scopes == null || scopes.isEmpty()) {
+            service.updateToken(token, null);
+        } else {
+            service.updateToken(token, Sets.newHashSet(scopes.split(",")));
         }
     }
 

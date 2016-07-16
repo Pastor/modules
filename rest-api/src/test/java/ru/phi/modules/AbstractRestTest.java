@@ -83,12 +83,7 @@ public abstract class AbstractRestTest {
         environment.clearDown();
     }
 
-    protected final Token token(String... scopes) {
-        return environment.postUpdate(successUser.getUsername(), successUser.getPassword(), scopes);
-    }
-
     protected final Token newToken(String... scopes) {
-        environment.putUpdate(successUser.getUsername(), successUser.getPassword(), scopes);
-        return environment.postUpdate(successUser.getUsername(), successUser.getPassword());
+        return environment.postUpdate(successUser.getUsername(), successUser.getPassword(), scopes);
     }
 }

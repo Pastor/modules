@@ -37,6 +37,35 @@ class MeRestController {
         return user.getProfile();
     }
 
+    @AuthorizedScope(scopes = {"profile"})
+    @RequestMapping(value = "/me", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public
+    @ResponseBody
+    void putMe(@AuthorizedToken Token token, @RequestBody Profile profile) throws AuthenticationException {
+        final User user = token.getUser();
+        final Profile meProfile = user.getProfile();
+        if (meProfile == null) {
+            profile.setId(null);
+            profile.setUser(user);
+            profileRepository.save(profile);
+        } else {
+            meProfile.setMiddleName(profile.getMiddleName());
+            meProfile.setFirstName(profile.getLastName());
+            meProfile.setLastName(profile.getLastName());
+            meProfile.setEmail(profile.getEmail());
+            if (profile.getAccessibility() != null) {
+                meProfile.setAccessibility(profile.getAccessibility());
+            }
+            meProfile.setCity(profile.getCity());
+            meProfile.setAddress(profile.getAddress());
+            if (profile.getQuality() != null) {
+                final Quality quality = qualityRepository.findOne(profile.getQuality().getId());
+                meProfile.setQuality(quality);
+            }
+            profileRepository.save(meProfile);
+        }
+    }
+
     @AuthorizedScope(scopes = {"profile", "settings"})
     @RequestMapping(value = "/me/settings", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public

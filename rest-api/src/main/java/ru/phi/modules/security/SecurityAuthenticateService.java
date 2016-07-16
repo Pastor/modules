@@ -50,36 +50,29 @@ class SecurityAuthenticateService implements AuthenticateService {
 
     @Transactional
     @Override
-    public Token authenticate(String username, String password, boolean update) throws AuthenticationException {
-        return authenticate(username, password, update, null);
-    }
-
-    @Override
-    public Token authenticate(String username, String password, boolean update, Set<String> scopes)
+    public Token authenticate(String username, String password, Set<String> scopes)
             throws AuthenticationException {
         final User user = userRepository.find(username, password);
         if (user == null)
             throw new AuthenticationException();
-        final Token token;
-        if (user.getTokens() == null || user.getTokens().size() == 0) {
-            token = new Token();
-            token.setExpiredAt(LocalDateTime.now().plus(365, ChronoUnit.DAYS));
-            token.setUser(user);
-            token.setKey(UUID.randomUUID().toString());
-            processScope(token, user.getRole(), scopes);
-            tokenRepository.save(token);
-            user.getTokens().add(token);
-        } else if (update) {
-            token = user.getTokens().iterator().next();
-            token.setExpiredAt(LocalDateTime.now().plus(365, ChronoUnit.DAYS));
-            processScope(token, user.getRole(), scopes);
-            tokenRepository.save(token);
-        } else if (user.getTokens().size() > 0) {
-            token = user.getTokens().iterator().next();
-        } else {
-            throw new AuthenticationException("Неизвестное условие");
-        }
+        final Token token = new Token();
+        token.setExpiredAt(LocalDateTime.now().plus(365, ChronoUnit.DAYS));
+        token.setUser(user);
+        token.setKey(UUID.randomUUID().toString());
+        processScope(token, user.getRole(), scopes);
+        tokenRepository.save(token);
+        user.getTokens().clear();
+        user.getTokens().add(token);
         return token;
+    }
+
+    @Override
+    public void updateToken(Token token, Set<String> scopes) {
+        if (token != null) {
+            final User user = token.getUser();
+            processScope(token, user.getRole(), scopes);
+            tokenRepository.save(token);
+        }
     }
 
     private void processScope(Token token, UserRole role, Set<String> scopes) {

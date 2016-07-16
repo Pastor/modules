@@ -64,10 +64,10 @@ public final class Environment {
         successUp(username, password);
         final ResponseEntity<Token> entity;
         if (scopes == null) {
-            entity = template.postForEntity("http://localhost:" + port + "/rest/v1/update", "", Token.class);
+            entity = template.postForEntity("http://localhost:" + port + "/rest/v1/token", "", Token.class);
         } else {
             final String params = Joiner.on(",").join(scopes);
-            entity = template.postForEntity("http://localhost:" + port + "/rest/v1/update?scopes={scopes}", "",
+            entity = template.postForEntity("http://localhost:" + port + "/rest/v1/token?scopes={scopes}", "",
                     Token.class, params);
         }
         clearDown();
@@ -77,7 +77,7 @@ public final class Environment {
 
     public void postUpdate() {
         clearDown();
-        template.postForEntity("http://localhost:" + port + "/rest/v1/update", "", Token.class);
+        template.postForEntity("http://localhost:" + port + "/rest/v1/token", "", Token.class);
         clearDown();
     }
 
@@ -87,6 +87,10 @@ public final class Environment {
         clearDown();
         assertEquals(userEntity.getStatusCode(), HttpStatus.OK);
         return userEntity.getBody();
+    }
+
+    public void putMe(Profile profile, String token) {
+        template.put("http://localhost:" + port + "/rest/v1/me?token={token}", profile, token);
     }
 
     public Settings meSettings(String token) {
@@ -106,15 +110,14 @@ public final class Environment {
         clearDown();
     }
 
-    public void putUpdate(String username, String password, String... scopes) {
+    public void putUpdate(String token, String... scopes) {
         clearDown();
-        successUp(username, password);
         if (scopes == null) {
-            template.put("http://localhost:" + port + "/rest/v1/update", "", "");
+            template.put("http://localhost:" + port + "/rest/v1/token?token={token}", "", token);
         } else {
             final String params = Joiner.on(",").join(scopes);
-            template.put("http://localhost:" + port + "/rest/v1/update?scopes={scopes}", "",
-                    params);
+            template.put("http://localhost:" + port + "/rest/v1/token?scopes={scopes}&token={token}", "",
+                    params, token);
         }
         clearDown();
     }

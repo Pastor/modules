@@ -721,9 +721,9 @@ paths:
       operationId: update_settings
       security: 
         - token: []     
-  /update:
+  /token:
     post:
-      summary: Получение токена
+      summary: Создание токена
       parameters:
         - name: scopes
           in: query
@@ -731,6 +731,12 @@ paths:
           format: delim
           description: Области
           required: false
+        - name: type
+          in: query
+          type: string
+          description: Тип токена
+          required: false
+          default: 'device'
       tags:
         - Token
       responses:
@@ -744,7 +750,6 @@ paths:
             $ref: '#/definitions/Error'
       operationId: create_token
       security: 
-        - token: []
         - auth: []
     put:
       summary: Обновление токена
@@ -767,7 +772,6 @@ paths:
       operationId: update_token
       security: 
         - token: []
-        - auth: []
 securityDefinitions:
   token:
     type: apiKey

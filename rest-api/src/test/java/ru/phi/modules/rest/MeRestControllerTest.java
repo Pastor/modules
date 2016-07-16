@@ -24,6 +24,28 @@ public final class MeRestControllerTest extends AbstractRestTest {
         assertEquals(profile.getEmail(), successProfile.getEmail());
     }
 
+    @Test
+    public void putMe() throws Exception {
+        final Token token = newToken("profile");
+        final Profile profile = environment.me(token.getKey());
+        profile.setMiddleName("Иванович");
+        environment.putMe(profile, token.getKey());
+        final Profile profile2 = environment.me(token.getKey());
+        assertEquals(profile.getEmail(), successProfile.getEmail());
+        assertEquals(profile.getEmail(), profile2.getEmail());
+        assertEquals(profile2.getMiddleName(), "Иванович");
+    }
+
+    @Test(expected = AuthenticationException.class)
+    public void putMeWithoutProfileScope() throws Exception {
+        final Token token = newToken("profile");
+        final Profile profile = environment.me(token.getKey());
+        profile.setMiddleName("Иванович");
+        final Token withoutScope = newToken();
+        environment.putMe(profile, withoutScope.getKey());
+        assertTrue(false);
+    }
+
     @Test(expected = AuthenticationException.class)
     public void meWithoutProfileScope() throws Exception {
         final Token token = newToken();
