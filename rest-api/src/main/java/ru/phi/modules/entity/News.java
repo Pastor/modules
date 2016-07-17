@@ -17,8 +17,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "News")
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = {"user"})
-@ToString(exclude = {"user"})
+@EqualsAndHashCode(callSuper = true, exclude = {"profile"})
+@ToString(exclude = {"profile"})
 @NoArgsConstructor
 @Proxy(lazy = false)
 public final class News extends AbstractEntity {
@@ -54,9 +54,9 @@ public final class News extends AbstractEntity {
     private LocalDateTime publishedAt;
 
     @JsonIgnore
-    @NotNull
-    @NonNull
-    @PrimaryKeyJoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private User user;
+//    @NotNull
+//    @NonNull
+    @PrimaryKeyJoinColumn(name = "profile_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private Profile profile;
 }

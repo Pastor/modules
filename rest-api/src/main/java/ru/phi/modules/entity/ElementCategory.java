@@ -29,6 +29,13 @@ public final class ElementCategory extends AbstractEntity {
     private String icon;
 
     @JsonIgnore
+    @NotNull
+    @NonNull
+    @PrimaryKeyJoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private User user;
+
+    @JsonIgnore
     @Setter(AccessLevel.NONE)
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OrderBy("id")

@@ -1,6 +1,7 @@
 package ru.phi.modules.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.Proxy;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -31,4 +32,11 @@ public final class Quality extends AbstractEntity {
     @Column(name = "accessibility", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private Accessibility accessibility;
+
+    @JsonIgnore
+    @NotNull
+    @NonNull
+    @PrimaryKeyJoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private User user;
 }

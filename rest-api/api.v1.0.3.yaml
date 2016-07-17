@@ -148,6 +148,28 @@ paths:
       operationId: delete_news
       security: 
         - token: []    
+  /news/{id}/publish:
+    put:
+      summary: Публикация новости
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+      tags:
+        - News
+      responses:
+        200:
+          description: Новость опубликована
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: publish_news
+      security: 
+        - token: []
   /news/{id}/content:
     get:
       summary: Получение тела новости
@@ -216,19 +238,13 @@ paths:
     get:
       summary: Получение списка элементов
       parameters:
-        - name: created_at
-          in: query
-          description: Дата создания.
-          required: false
-          type: number
-          format: int64
-        - name: limit
+        - name: page
           in: query
           description: Ограничения количества элементов в результирующем списке.
           required: false
           type: number
           format: int64
-        - name: offset
+        - name: size
           in: query
           description: С какого элемента начинать вывод.
           required: false
@@ -305,7 +321,7 @@ paths:
           schema:
             $ref: '#/definitions/Element'
       tags:
-        - Categories
+        - Elements
       responses:
         200:
           description: Информация обновлена
@@ -783,6 +799,41 @@ paths:
       operationId: update_settings
       security: 
         - token: []     
+  /me/news:
+    get:
+      summary: Новости пользователя
+      description: |
+        Возвращает список новостей созданных авторизованным пользователем.
+      parameters:
+        - name: size
+          in: query
+          description: |
+            Ограничения количества элементов на странице.
+          required: false
+          type: number
+          format: int64
+        - name: page
+          in: query
+          description: Номер страницы запроса.
+          required: false
+          type: number
+          format: int64
+      tags:
+        - News
+      responses:
+        200:
+          description: Настройки пользователя
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/News'
+        default:
+          description: Ошибка получения настроек
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: get_me_news
+      security: 
+        - token: []
   /token:
     post:
       summary: Создание токена
@@ -993,8 +1044,8 @@ definitions:
       deleted:
         type: boolean
         description: Флаг удаления новости
-      user:
-        $ref: '#/definitions/User'
+      profile:
+        $ref: '#/definitions/Profile'
       published_at:
         type: string
         format: datetime

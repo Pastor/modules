@@ -51,15 +51,15 @@ public final class Element extends AbstractEntity {
     @NonNull
     @PrimaryKeyJoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private User creator;
+    private User user;
 
     @Setter(value = AccessLevel.PUBLIC)
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @OrderBy("id")
     private Set<ElementCategory> categories;
 
     @Setter(value = AccessLevel.PUBLIC)
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @OrderBy("id")
     private Set<AccessibilityProcess> accessibilityProcesses;
 }

@@ -155,9 +155,33 @@ public final class Environment {
         return Lists.newArrayList(entity.getBody());
     }
 
+    public List<News> meNews(String token) {
+        final ResponseEntity<News[]> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/me/news?token={token}",
+                News[].class, token);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return Lists.newArrayList(entity.getBody());
+    }
+
     public News createNews(String token, News news) {
         final ResponseEntity<News> entity = template.postForEntity("http://localhost:" + port + "/rest/v1/news?token={token}",
                 news, News.class, token);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return entity.getBody();
+    }
+
+    public void putContent(String token, Long id, String content) {
+        template.put("http://localhost:" + port + "/rest/v1/news/{id}/content?token={token}",
+                content, id, token);
+    }
+
+    public String getContent(String token, Long id) {
+        final ResponseEntity<String> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/news/{id}/content?token={token}", String.class, id, token);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return entity.getBody();
+    }
+
+    public News getNews(String token, Long id) {
+        final ResponseEntity<News> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/news/{id}?token={token}", News.class, id, token);
         assertEquals(entity.getStatusCode(), HttpStatus.OK);
         return entity.getBody();
     }

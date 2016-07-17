@@ -9,12 +9,13 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 @Entity
 @Table(name = "Profile")
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = {"user", "quality", "settings"})
-@ToString(exclude = {"quality", "settings"})
+@EqualsAndHashCode(callSuper = true, exclude = {"user", "quality", "settings", "news"})
+@ToString(exclude = {"quality", "settings", "news"})
 @NoArgsConstructor
 @Proxy(lazy = false)
 public final class Profile extends AbstractEntity {
@@ -43,6 +44,12 @@ public final class Profile extends AbstractEntity {
 
     @Column(name = "city", nullable = true)
     private String city;
+
+    @JsonIgnore
+    @Setter(AccessLevel.NONE)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "profile", cascade = CascadeType.ALL)
+    @OrderBy("id")
+    private Set<News> news;
 
     @NotNull
     @NonNull

@@ -84,6 +84,9 @@ public abstract class AbstractRestTest {
         register("profile");
         register("settings");
         register("ping");
+        register("element");
+        register("categories");
+        register("quality");
         register("news");
     }
 
