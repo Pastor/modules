@@ -17,8 +17,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "News")
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = {"creator"})
-@ToString(exclude = {"creator"})
+@EqualsAndHashCode(callSuper = true, exclude = {"user"})
+@ToString(exclude = {"user"})
 @NoArgsConstructor
 @Proxy(lazy = false)
 public final class News extends AbstractEntity {
@@ -35,10 +35,8 @@ public final class News extends AbstractEntity {
     @Column(name = "bref", nullable = false)
     private String bref;
 
-    @NotNull
-    @NonNull
-    @NotEmpty
-    @Column(name = "content", nullable = false)
+    //FIXME: CLOB
+    @Column(name = "content", nullable = true)
     private String content;
 
     @NotNull
@@ -59,6 +57,6 @@ public final class News extends AbstractEntity {
     @NotNull
     @NonNull
     @PrimaryKeyJoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private User creator;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private User user;
 }

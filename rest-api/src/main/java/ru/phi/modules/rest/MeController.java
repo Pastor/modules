@@ -45,7 +45,7 @@ class MeController {
         final User user = token.getUser();
         final Profile meProfile = user.getProfile();
         if (meProfile == null) {
-            profile.setId(null);
+            profile.clear();
             profile.setUser(user);
             profileRepository.save(profile);
         } else {
@@ -112,7 +112,7 @@ class MeController {
                 meSettings.setRouteType(settings.getRouteType());
                 settingsRepository.save(meSettings);
             } else {
-                settings.setId(null);
+                settings.clear();
                 settings.setProfile(profile);
                 settingsRepository.save(settings);
             }

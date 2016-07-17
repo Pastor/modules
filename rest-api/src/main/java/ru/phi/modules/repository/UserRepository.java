@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.phi.modules.entity.User;
 
 @Repository
-@Transactional
 public interface UserRepository extends PagingAndSortingRepository<User, Long> {
 
     @Query(value = "SELECT u FROM User u WHERE u.username = :username AND u.password = :password")

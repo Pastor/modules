@@ -1,7 +1,8 @@
 swagger: '2.0'
 info:
   title: "Социальный навигатор"
-  description: API для "Социального навигатора"
+  description: |
+    `API` для `"Социального навигатора"`
   version: "1.0.3"
 host: api.socnavi.ru
 schemes:
@@ -35,21 +36,16 @@ paths:
     get:
       summary: Получение списка новостей
       parameters:
-        - name: created_at
+        - name: size
           in: query
-          description: Дата создания.
+          description: |
+            Ограничения количества элементов на странице.
           required: false
           type: number
           format: int64
-        - name: limit
+        - name: page
           in: query
-          description: Ограничения количества элементов в результирующем списке.
-          required: false
-          type: number
-          format: int64
-        - name: offset
-          in: query
-          description: С какого элемента начинать вывод.
+          description: Номер страницы запроса.
           required: false
           type: number
           format: int64  
@@ -150,6 +146,70 @@ paths:
         200:
           description: Новость удалена
       operationId: delete_news
+      security: 
+        - token: []    
+  /news/{id}/content:
+    get:
+      summary: Получение тела новости
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+      tags:
+        - News
+      responses:
+        200:
+          description: Тело новости
+          schema:
+            type: string
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Изменение тела новости
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: string
+      tags:
+        - News
+      responses:
+        200:
+          description: Информация обновлена
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: update_news_content
+      security: 
+        - token: [] 
+    delete:
+      summary: Удаление тела новости
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+      tags:
+        - News
+      responses:
+        200:
+          description: Новость удалена
+      operationId: delete_news_content
       security: 
         - token: []    
   /elements:
@@ -813,6 +873,7 @@ securityDefinitions:
     type: basic
 definitions:
   User:
+    description: Объект описывающий пользователя системы
     type: object
     required:
       - id
@@ -830,7 +891,11 @@ definitions:
         type: string
         description: Адрес электронной почты.
   Quality:
+    description: Объект описывающий шаблон UI для отображении на web странице 
     type: object
+    required:
+      - accessibility
+      - template
     properties:
       id:
         type: integer
@@ -843,7 +908,12 @@ definitions:
         type: string
         description: Шаблон отображения интерфейса
   Token:
+    description: Объект описывающий токен для доступа к API сервиса
     type: object
+    required:
+      - key
+      - expire
+      - scopes
     properties:
       id:
         type: integer
@@ -851,12 +921,13 @@ definitions:
         description: Уникальный идентификатор
       key:
         type: string
-        description: Строка доступа
+        description: |
+          Строка доступа. Далее будет использоваться для вызова методов сервиса путем добавления к запросу параметра token
       expire:
         type: string
         format: datetime
         description: Время окончания действия ключа
-      scope:
+      scopes:
         type: array
         description: Список областей доступа
         items: 
@@ -864,7 +935,15 @@ definitions:
       user:
         $ref: '#/definitions/User'
   Element:
+    description: |
+      Объект описывающий элемент системы. Это светофоры, переходы, социальные и медицинские заведения и т.д.
     type: object
+    required:
+      - name
+      - address
+      - latitude
+      - longitude
+      - categories
     properties:
       id:
         type: integer
@@ -894,6 +973,9 @@ definitions:
           $ref: '#/definitions/ElementCategory'
   News:
     type: object
+    required:
+      - title
+      - bref
     properties:
       id:
         type: integer
@@ -905,16 +987,13 @@ definitions:
       bref:
         type: string
         description: Краткое описание новости
-      content:
-        type: string
-        description: Полное описание новости с изображениями и ссылками
       visible:
         type: boolean
         description: Флаг отображения новости
       deleted:
         type: boolean
         description: Флаг удаления новости
-      creator:
+      user:
         $ref: '#/definitions/User'
       published_at:
         type: string
@@ -951,6 +1030,8 @@ definitions:
         $ref: '#/definitions/Token'
   ElementCategory:
     type: object
+    required:
+      - name
     properties:
       id:
         type: integer
@@ -969,7 +1050,7 @@ definitions:
       - id
       - first_name
       - last_name
-      - user
+      - accessibility
     properties:
       id:
         type: integer
@@ -993,8 +1074,6 @@ definitions:
       city:
         type: string
         description: Город жительства
-      user:
-        $ref: '#/definitions/User'
   Error:
     type: object
     properties:
@@ -1019,13 +1098,20 @@ definitions:
         type: integer
         format: int32
       build:
+        description: |
+          Номер инкрементной версии сборки 
         type: integer
         format: int32
       rc:
+        description: |
+          Флаг указывающий, является ли данная версия релиз кандидатом (RC)
         type: boolean
       ms:
+        description: |
+          Mail Stone номер
         type: integer 
         format: int32
       support:
+        description: Электронный адрес поддержки
         type: string
         format: email

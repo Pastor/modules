@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
+import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ru.phi.modules.entity.*;
 import ru.phi.modules.repository.*;
@@ -20,10 +23,23 @@ import ru.phi.modules.security.Environment;
 @WebIntegrationTest(randomPort = true)
 @SpringApplicationConfiguration(classes = Application.class)
 @TestPropertySource({"classpath:application.properties"})
+@SqlGroup({
+        @Sql(
+                scripts = {"/sql/data/drop.data.sql"},
+                executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+                config = @SqlConfig(
+                        dataSource = "dataSource",
+                        encoding = "UTF-8"
+                )
+        )
+})
 public abstract class AbstractRestTest {
 
     @Autowired
     protected VersionRepository versionRepository;
+
+    @Autowired
+    protected NewsRepository newsRepository;
 
     @Autowired
     protected UserRepository userRepository;
@@ -50,25 +66,25 @@ public abstract class AbstractRestTest {
     private int port;
 
     protected Environment environment;
-    protected final User successUser = new User();
-    protected final Profile successProfile = new Profile();
+    protected User successUser = new User();
+    protected Profile successProfile = new Profile();
 
     @Before
     public void setUp() {
-        userRepository.deleteAll();
         successUser.setPassword("123456");
         successUser.setUsername("pastor");
-        userRepository.save(successUser);
+        successUser = userRepository.save(successUser);
         successProfile.setUser(successUser);
         successProfile.setAccessibility(Accessibility.BAROOW);
         successProfile.setEmail("viruszold@mail.ru");
         successProfile.setFirstName("Иванов");
         successProfile.setLastName("Михаил");
-        profileRepository.save(successProfile);
+        successProfile = profileRepository.save(successProfile);
         environment = new Environment(objectMapper, port);
         register("profile");
         register("settings");
         register("ping");
+        register("news");
     }
 
     protected final void register(String scopeName) {
@@ -80,11 +96,12 @@ public abstract class AbstractRestTest {
 
     @After
     public void tearDown() throws Exception {
-        errorRepository.deleteAll();
-        settingsRepository.deleteAll();
-        profileRepository.deleteAll();
-        userRepository.deleteAll();
-        tokenRepository.deleteAll();
+//        newsRepository.deleteAll();
+//        errorRepository.deleteAll();
+//        settingsRepository.deleteAll();
+//        profileRepository.deleteAll();
+//        userRepository.deleteAll();
+//        tokenRepository.deleteAll();
         environment.clearDown();
     }
 

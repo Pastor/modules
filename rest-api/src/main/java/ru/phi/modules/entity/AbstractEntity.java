@@ -67,4 +67,8 @@ abstract class AbstractEntity implements Serializable {
     private void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    public final void clear() {
+        id = null;
+    }
 }

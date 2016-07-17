@@ -2,6 +2,7 @@ package ru.phi.modules.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,12 +11,13 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
-import ru.phi.modules.entity.*;
 import ru.phi.modules.entity.Error;
+import ru.phi.modules.entity.*;
 import ru.phi.modules.exceptions.AuthenticationException;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -142,6 +144,20 @@ public final class Environment {
 
     public Version current() {
         final ResponseEntity<Version> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/version", Version.class);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return entity.getBody();
+    }
+
+    public List<News> news(String token) {
+        final ResponseEntity<News[]> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/news?token={token}",
+                News[].class, token);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return Lists.newArrayList(entity.getBody());
+    }
+
+    public News createNews(String token, News news) {
+        final ResponseEntity<News> entity = template.postForEntity("http://localhost:" + port + "/rest/v1/news?token={token}",
+                news, News.class, token);
         assertEquals(entity.getStatusCode(), HttpStatus.OK);
         return entity.getBody();
     }
