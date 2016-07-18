@@ -185,6 +185,10 @@ public final class Environment {
         template.put("http://localhost:" + port + "/rest/v1/news/{id}/publish?token={token}", "", id, token);
     }
 
+    public void hide(String token, Long id) {
+        template.put("http://localhost:" + port + "/rest/v1/news/{id}/hide?token={token}", "", id, token);
+    }
+
     public void delete(String token, Long id) {
         template.delete("http://localhost:" + port + "/rest/v1/news/{id}?token={token}", id, token);
     }

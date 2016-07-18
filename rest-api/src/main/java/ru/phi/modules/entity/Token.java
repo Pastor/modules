@@ -46,7 +46,7 @@ public final class Token extends AbstractEntity {
     private User user;
 
     @Setter(value = AccessLevel.PUBLIC)
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @OrderBy("id")
     private Set<Scope> scopes;
 

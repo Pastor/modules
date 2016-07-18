@@ -35,7 +35,7 @@ class NewsController {
             throws AuthenticationException {
         final Sort sort = new Sort(Sort.Direction.ASC, "createdAt");
         final PageRequest pageable = new PageRequest(page, size, sort);
-        return newsRepository.findAll(pageable).getContent();
+        return newsRepository.list(pageable).getContent();
     }
 
     @RequestMapping(value = "/news/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -43,7 +43,10 @@ class NewsController {
     @ResponseBody
     News get(@PathVariable("id") Long id)
             throws AuthenticationException {
-        return newsRepository.findOne(id);
+        final News one = newsRepository.findOne(id);
+        if (one == null)
+            throw new ObjectNotFoundException(id);
+        return one;
     }
 
     @AuthorizedScope(scopes = {"news"})
@@ -68,7 +71,10 @@ class NewsController {
     @RequestMapping(value = "/news/{id}/content", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE + ";charset=UTF-8")
     public String getContent(@PathVariable("id") Long id)
             throws AuthenticationException {
-        return newsRepository.findOne(id).getContent();
+        final News one = newsRepository.findOne(id);
+        if (one == null)
+            throw new ObjectNotFoundException(id);
+        return one.getContent();
     }
 
     @AuthorizedScope(scopes = {"news"})
@@ -91,6 +97,17 @@ class NewsController {
             throw new ObjectNotFoundException(id);
         one.setPublishedAt(LocalDateTime.now());
         one.setVisible(true);
+        newsRepository.save(one);
+    }
+
+    @AuthorizedScope(scopes = {"news"})
+    @RequestMapping(value = "/news/{id}/hide", method = RequestMethod.PUT)
+    public void hide(@PathVariable("id") Long id)
+            throws AuthenticationException, ObjectNotFoundException {
+        final News one = newsRepository.findOne(id);
+        if (one == null)
+            throw new ObjectNotFoundException(id);
+        one.setVisible(false);
         newsRepository.save(one);
     }
 

@@ -8,6 +8,7 @@ import ru.phi.modules.entity.News;
 import ru.phi.modules.entity.Token;
 import ru.phi.modules.exceptions.ObjectNotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static junit.framework.TestCase.*;
@@ -85,6 +86,20 @@ public final class NewsControllerTest extends AbstractRestTest {
     }
 
     @Test
+    public void hide() throws Exception {
+        final Token token = newToken("news");
+        create("TITLE1", "BREF1");
+        create("TITLE2", "BREF2");
+        create("TITLE3", "BREF3");
+        final List<News> news = environment.news(token.getKey());
+        assertEquals(news.size(), 3);
+        final News n = news.get(0);
+        environment.hide(token.getKey(), n.getId());
+        List<News> news2 = environment.news(token.getKey());
+        assertEquals(news2.size(), 2);
+    }
+
+    @Test
     public void publish() throws Exception {
         final Token token = newToken("news");
         final News news = new News();
@@ -98,7 +113,7 @@ public final class NewsControllerTest extends AbstractRestTest {
         assertNotNull(n2.getPublishedAt());
     }
 
-    @Test
+    @Test(expected = ObjectNotFoundException.class)
     public void delete() throws Exception {
         final Token token = newToken("news");
         final News news = new News();
@@ -108,8 +123,7 @@ public final class NewsControllerTest extends AbstractRestTest {
         final News n1 = environment.getNews(token.getKey(), id);
         assertNotNull(n1);
         environment.delete(token.getKey(), id);
-        final News n2 = environment.getNews(token.getKey(), id);
-        assertNull(n2);
+        environment.getNews(token.getKey(), id);
     }
 
     @Test
@@ -139,6 +153,8 @@ public final class NewsControllerTest extends AbstractRestTest {
         news.setTitle(title);
         news.setBref(bref);
         news.setProfile(successProfile);
+        news.setPublishedAt(LocalDateTime.now());
+        news.setVisible(true);
         newsRepository.save(news);
         return news;
     }

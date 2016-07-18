@@ -71,6 +71,6 @@ public final class User extends AbstractEntity {
 
     @JsonIgnore
     @Setter(AccessLevel.NONE)
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
     private Profile profile;
 }

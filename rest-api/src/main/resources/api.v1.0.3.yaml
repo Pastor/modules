@@ -35,7 +35,8 @@ produces:
 paths:
   /news:
     get:
-      summary: Получение списка новостей
+      summary: Получение списка новостей. В порядке от более ранней к более поздней новости.
+      description: При этом в список попадают только опубликованные новости (для которых был вызван метод `/news/{id}/publish`).
       parameters:
         - name: size
           in: query
@@ -46,7 +47,8 @@ paths:
           format: int64
         - name: page
           in: query
-          description: Номер страницы запроса.
+          description: |
+            Номер страницы запроса.
           required: false
           type: number
           format: int64  
@@ -149,6 +151,28 @@ paths:
       operationId: delete_news
       security: 
         - token: []    
+  /news/{id}/hide:
+    put:
+      summary: Сокрытие новости
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+      tags:
+        - News
+      responses:
+        200:
+          description: Новость сокрыта
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: hide_news
+      security: 
+        - token: []
   /news/{id}/publish:
     put:
       summary: Публикация новости
@@ -237,17 +261,18 @@ paths:
         - token: []    
   /elements:
     get:
-      summary: Получение списка элементов
+      summary: Получение списка зарегистрированных объектов
       parameters:
-        - name: page
+        - name: size
           in: query
-          description: Ограничения количества элементов в результирующем списке.
+          description: |
+            Ограничения количества элементов на странице.
           required: false
           type: number
           format: int64
-        - name: size
+        - name: page
           in: query
-          description: С какого элемента начинать вывод.
+          description: Номер страницы запроса.
           required: false
           type: number
           format: int64  
@@ -354,24 +379,19 @@ paths:
     get:
       summary: Получение списка категорий элементов
       parameters:
-        - name: created_at
+        - name: size
           in: query
-          description: Дата создания.
+          description: |
+            Ограничения количества элементов на странице.
           required: false
           type: number
           format: int64
-        - name: limit
+        - name: page
           in: query
-          description: Ограничения количества элементов в результирующем списке.
+          description: Номер страницы запроса.
           required: false
           type: number
-          format: int64
-        - name: offset
-          in: query
-          description: С какого элемента начинать вывод.
-          required: false
-          type: number
-          format: int64  
+          format: int64 
       tags:
         - Categories
       responses:
@@ -660,21 +680,16 @@ paths:
       description: |
         Получение списка пользователей.
       parameters:
-        - name: created_at
+        - name: size
           in: query
-          description: Дата создания.
+          description: |
+            Ограничения количества элементов на странице.
           required: false
           type: number
           format: int64
-        - name: limit
+        - name: page
           in: query
-          description: Ограничения количества элементов в результирующем списке.
-          required: false
-          type: number
-          format: int64
-        - name: offset
-          in: query
-          description: С какого элемента начинать вывод.
+          description: Номер страницы запроса.
           required: false
           type: number
           format: int64  
@@ -843,6 +858,10 @@ paths:
           1. `profile`  - управление профилем пользователя
           2. `settings` - управление настройкми
           3. `ping`     - для проверки работоспособности сервиса
+          4. `element`  - управление объектами
+          5. `category` - управление категориями доступности
+          6. `quality`  - управление шаблонами `UI`
+          7. `news`     - управление новостной лентой
           
         Токену, так же, можно передать тип. Доступные типы:
           1. `device`   - токен созданный для мобильных устройств
@@ -854,7 +873,7 @@ paths:
           in: query
           type: string
           format: delim
-          description: Области
+          description: Области доступа
           required: false
         - name: type
           in: query
@@ -878,14 +897,13 @@ paths:
         - auth: []
     put:
       summary: Обновление токена
-      description: |
-        Данный вызов предназначен только для тестирования и ограничен вызовом только из под роли `administrator` и типа токена `web`.
+      description: Данный вызов предназначен только для тестирования и ограничен вызовом только из под роли `administrator` и типа токена `web`.
       parameters:
         - name: scopes
+          description: Области доступа. Возможные значения перечислены в методе `POST` данного описания
           in: query
           type: string
           format: delim
-          description: Области
           required: false
       tags:
         - Token
@@ -943,11 +961,12 @@ definitions:
         type: string
         description: Адрес электронной почты.
   Quality:
-    description: Объект описывающий шаблон UI для отображении на web странице 
+    description: Объект описывающий шаблон `UI` для отображении на `web` странице 
     type: object
     required:
       - accessibility
       - template
+      - id
     properties:
       id:
         type: integer
@@ -960,7 +979,7 @@ definitions:
         type: string
         description: Шаблон отображения интерфейса
   Token:
-    description: Объект описывающий токен для доступа к API сервиса
+    description: Токен для доступа к API сервиса
     type: object
     required:
       - key
@@ -973,8 +992,7 @@ definitions:
         description: Уникальный идентификатор
       key:
         type: string
-        description: |
-          Строка доступа. Далее будет использоваться для вызова методов сервиса путем добавления к запросу параметра token
+        description: Строка доступа. Далее будет использоваться для вызова методов сервиса путем добавления к запросу параметра `token`
       expire:
         type: string
         format: datetime
@@ -984,8 +1002,6 @@ definitions:
         description: Список областей доступа
         items: 
           type: string
-      user:
-        $ref: '#/definitions/User'
   Element:
     description: |
       Объект описывающий элемент системы. Это светофоры, переходы, социальные и медицинские заведения и т.д.
@@ -1024,6 +1040,7 @@ definitions:
         items:
           $ref: '#/definitions/ElementCategory'
   News:
+    description: Новость
     type: object
     required:
       - title
@@ -1045,13 +1062,12 @@ definitions:
       deleted:
         type: boolean
         description: Флаг удаления новости
-      profile:
-        $ref: '#/definitions/Profile'
       published_at:
         type: string
         format: datetime
         description: Время публикации новости
   Settings:
+    description: Настройки пользователя
     type: object
     properties:
       id:
@@ -1078,12 +1094,12 @@ definitions:
       end_longitude:
         type: number
         format: double
-      token:
-        $ref: '#/definitions/Token'
   ElementCategory:
+    description: Категория объекта
     type: object
     required:
       - name
+      - id
     properties:
       id:
         type: integer
@@ -1097,6 +1113,7 @@ definitions:
         format: url
         description: Ссылка на изображение иконки элемента
   Profile:
+    description: Профиль пользователя системы
     type: object
     required:
       - id
@@ -1125,16 +1142,16 @@ definitions:
         description: Адрес места жительства.
       city:
         type: string
-        description: Город жительства
+        description: Город, в котором постоянно находится владелец
   Error:
     type: object
     properties:
       code:
+        description: Код ошибки
         type: integer
         format: int32
       message:
-        type: string
-      fields:
+        description: Описание ошибки
         type: string
   Version:
     type: object

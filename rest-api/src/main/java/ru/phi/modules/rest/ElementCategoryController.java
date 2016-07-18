@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.phi.modules.entity.ElementCategory;
 import ru.phi.modules.entity.Token;
 import ru.phi.modules.exceptions.AuthenticationException;
+import ru.phi.modules.exceptions.ObjectNotFoundException;
 import ru.phi.modules.repository.ElementCategoryRepository;
 import ru.phi.modules.security.AuthorizedScope;
 import ru.phi.modules.security.AuthorizedToken;
@@ -53,7 +54,10 @@ class ElementCategoryController {
     @ResponseBody
     ElementCategory get(@PathVariable("id") Long id)
             throws AuthenticationException {
-        return elementCategoryRepository.findOne(id);
+        final ElementCategory one = elementCategoryRepository.findOne(id);
+        if (one == null)
+            throw new ObjectNotFoundException(id);
+        return one;
     }
 
     @AuthorizedScope(scopes = {"categories"})
@@ -61,6 +65,8 @@ class ElementCategoryController {
     public void put(@PathVariable("id") Long id, @RequestBody ElementCategory category)
             throws AuthenticationException {
         final ElementCategory one = elementCategoryRepository.findOne(id);
+        if (one == null)
+            throw new ObjectNotFoundException(id);
         one.setName(category.getName());
         one.setIcon(category.getIcon());
         elementCategoryRepository.save(one);

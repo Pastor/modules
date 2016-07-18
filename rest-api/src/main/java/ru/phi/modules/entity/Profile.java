@@ -65,12 +65,12 @@ public final class Profile extends AbstractEntity {
     @JsonIgnore
     @NotNull
     @NonNull
-    @PrimaryKeyJoinColumn(name = "user_id", referencedColumnName = "id")
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, optional = false)
     private User user;
 
     @JsonIgnore
     @Setter(AccessLevel.NONE)
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "profile", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "profile")
     private Settings settings;
 }

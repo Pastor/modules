@@ -1,7 +1,10 @@
 package ru.phi.modules.rest;
 
+import com.google.common.io.CharStreams;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +16,9 @@ import ru.phi.modules.exceptions.AuthenticationException;
 import ru.phi.modules.repository.VersionRepository;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 @SuppressWarnings("unused")
 @RequestMapping({"/rest/v1/", "/rest/"})
@@ -30,6 +36,19 @@ class VersionController {
     Version current()
             throws AuthenticationException {
         return versionRepository.last();
+    }
+
+    @RequestMapping(
+            value = "/version/swagger",
+            method = RequestMethod.GET,
+            produces = "application/yaml;charset=UTF-8",
+            headers = {
+            })
+    public
+    String swagger() throws IOException {
+        try (Reader reader = new InputStreamReader(VersionController.class.getResourceAsStream("/api.v1.0.3.yaml"))) {
+            return CharStreams.toString(reader);
+        }
     }
 
     @PostConstruct

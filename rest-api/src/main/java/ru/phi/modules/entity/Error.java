@@ -27,6 +27,7 @@ public final class Error extends AbstractEntity {
     @NotNull
     @NonNull
     @JsonProperty("description")
+    @Column(name = "description", length = 4096)
     private String description;
 
     @Column(name = "status")

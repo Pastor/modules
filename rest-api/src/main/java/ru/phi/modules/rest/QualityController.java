@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.phi.modules.entity.Quality;
 import ru.phi.modules.entity.Token;
 import ru.phi.modules.exceptions.AuthenticationException;
+import ru.phi.modules.exceptions.ObjectNotFoundException;
 import ru.phi.modules.repository.QualityRepository;
 import ru.phi.modules.security.AuthorizedScope;
 import ru.phi.modules.security.AuthorizedToken;
@@ -37,9 +38,11 @@ class QualityController {
     @RequestMapping(value = "/qualities/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public
     @ResponseBody
-    Quality get(@PathVariable("id") Long id)
-            throws AuthenticationException {
-        return qualityRepository.findOne(id);
+    Quality get(@PathVariable("id") Long id) throws AuthenticationException {
+        final Quality one = qualityRepository.findOne(id);
+        if (one == null)
+            throw new ObjectNotFoundException(id);
+        return one;
     }
 
     @AuthorizedScope(scopes = {"quality"})
@@ -47,6 +50,8 @@ class QualityController {
     public void put(@PathVariable("id") Long id, @RequestBody Quality quality)
             throws AuthenticationException {
         final Quality one = qualityRepository.findOne(id);
+        if (one == null)
+            throw new ObjectNotFoundException(id);
         one.setName(quality.getName());
         one.setAccessibility(quality.getAccessibility());
         one.setTemplate(quality.getTemplate());

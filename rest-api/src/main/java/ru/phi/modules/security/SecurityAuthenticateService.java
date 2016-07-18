@@ -62,7 +62,7 @@ class SecurityAuthenticateService implements AuthenticateService {
         final Token token = new Token();
         token.setExpiredAt(LocalDateTime.now().plus(365, ChronoUnit.DAYS));
         token.setUser(user);
-        token.setKey(hash.hashUnencodedChars(UUID.randomUUID().toString()).toString().toLowerCase());
+        token.setKey(Utilities.generateTokenKey());
         processScope(token, user.getRole(), scopes);
         tokenRepository.save(token);
         user.getTokens().clear();

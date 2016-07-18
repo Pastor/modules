@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.phi.modules.entity.Element;
 import ru.phi.modules.entity.Token;
 import ru.phi.modules.exceptions.AuthenticationException;
+import ru.phi.modules.exceptions.ObjectNotFoundException;
 import ru.phi.modules.repository.ElementRepository;
 import ru.phi.modules.security.AuthorizedScope;
 import ru.phi.modules.security.AuthorizedToken;
@@ -39,7 +40,10 @@ class ElementController {
     @ResponseBody
     Element get(@PathVariable("id") Long id)
             throws AuthenticationException {
-        return elementRepository.findOne(id);
+        final Element one = elementRepository.findOne(id);
+        if (one == null)
+            throw new ObjectNotFoundException(id);
+        return one;
     }
 
     @AuthorizedScope(scopes = {"element"})
@@ -47,6 +51,8 @@ class ElementController {
     public void put(@PathVariable("id") Long id, @RequestBody Element element)
             throws AuthenticationException {
         final Element one = elementRepository.findOne(id);
+        if (one == null)
+            throw new ObjectNotFoundException(id);
         one.setAddress(element.getAddress());
         one.setFullName(element.getFullName());
         one.setName(element.getName());

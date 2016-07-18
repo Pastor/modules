@@ -13,10 +13,12 @@ import ru.phi.modules.RestMvcConfiguration;
 import ru.phi.modules.entity.*;
 import ru.phi.modules.repository.*;
 import ru.phi.modules.security.RestSecurityConfiguration;
+import ru.phi.modules.security.Utilities;
 
 import javax.annotation.PostConstruct;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Slf4j
 @Configuration
@@ -60,7 +62,13 @@ public class DemoConfiguration {
     @PostConstruct
     private void construct() {
         log.info("Создание областей доступа");
-        createScopes();
+        final Scope scopeProfile = registerScope("profile");
+        final Scope scopeSettings = registerScope("settings");
+        final Scope scopePing = registerScope("ping");
+        final Scope scopeElement = registerScope("element");
+        final Scope scopeCategory = registerScope("category");
+        final Scope scopeQuality = registerScope("quality");
+        final Scope scopeNews = registerScope("news");
         log.info("Создание пользователей");
         final User pastor = createUser("pastor", "+79265943742", "123456",
                 "viruszold@mail.ru", UserRole.ADMIN);
@@ -68,6 +76,10 @@ public class DemoConfiguration {
                 "vasia@mail.ru", UserRole.USER);
         final User content = createUser("content", "+79265941111", "123456",
                 "content@mail.ru", UserRole.CONTENT);
+        log.info("Сщздание токенов");
+        createToken(pastor, scopeCategory, scopeElement, scopeNews, scopePing, scopeProfile, scopeQuality, scopeSettings);
+        createToken(vasia, scopeProfile, scopeSettings);
+        createToken(content, scopeProfile, scopeSettings, scopeNews);
         log.info("Создание профилей для пользователей");
         final Profile vasiaProfile = createProfile(vasia, "Залупа", "Василий", "Николаевич", Accessibility.BAROOW);
         final Profile pastorProfile = createProfile(pastor, "Хлебников", "Андрей", "Александрович", Accessibility.NORMAL);
@@ -110,6 +122,18 @@ public class DemoConfiguration {
         createNews(pastorProfile, "Первая версия API", "Первая версия API", "<h1>ПЕРВАЯ ВЕРСИЯ API</h1>");
         createNews(pastorProfile, "Вторая версия API", "Вторая версия API", "<h1>ВТОРАЯ ВЕРСИЯ API</h1>");
         createNews(pastorProfile, "Третья версия API", "Третья версия API", "<h1>ТРЕТЬЯ ВЕРСИЯ API</h1>");
+        log.info("Окончание");
+    }
+
+    private void createToken(User user, Scope... scopes) {
+        final Token token = new Token();
+        token.setUser(user);
+        token.setExpiredAt(LocalDateTime.now().plus(365, ChronoUnit.DAYS));
+        token.setScopes(Sets.newHashSet(scopes));
+        final String key = Utilities.generateTokenKey();
+        token.setKey(key);
+        log.info("Token for {}: {}", user.getUsername(), key);
+        tokenRepository.save(token);
     }
 
     private News createNews(Profile profile, String title, String bref, String content) {
@@ -164,16 +188,6 @@ public class DemoConfiguration {
         log.info("Создане шаблон \"{}\"", save);
     }
 
-    private void createScopes() {
-        registerScope("profile");
-        registerScope("settings");
-        registerScope("ping");
-        registerScope("element");
-        registerScope("categories");
-        registerScope("quality");
-        registerScope("news");
-    }
-
     private Profile createProfile(User user,
                                   String lastName,
                                   String firstName,
@@ -213,11 +227,11 @@ public class DemoConfiguration {
         return hash.hashUnencodedChars(text).toString().toUpperCase();
     }
 
-    private void registerScope(String scopeName) {
+    private Scope registerScope(String scopeName) {
         final Scope scope = new Scope();
         scope.setName(scopeName);
         scope.setRole(UserRole.USER);
-        scopeRepository.save(scope);
         log.info(MessageFormat.format("Создана область {0}", scopeName));
+        return scopeRepository.save(scope);
     }
 }
