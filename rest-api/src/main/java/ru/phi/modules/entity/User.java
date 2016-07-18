@@ -33,7 +33,7 @@ public final class User extends AbstractEntity {
     @NotNull
     @NonNull
     @NotEmpty
-    @Column(name = "password", nullable = false)
+    @Column(name = "password", nullable = false, length = 1024)
     private String password;
 
     @Column(name = "phone", nullable = true)

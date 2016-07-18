@@ -112,7 +112,7 @@ class MeController {
         return Collections.emptyList();
     }
 
-    protected final Profile update(Profile profile) {
+    private Profile update(Profile profile) {
         return profileRepository.findOne(profile.getId());
     }
 

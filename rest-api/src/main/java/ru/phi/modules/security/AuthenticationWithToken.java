@@ -14,12 +14,4 @@ final class AuthenticationWithToken extends PreAuthenticatedAuthenticationToken 
         super(aPrincipal, aCredentials, anAuthorities);
         this.token = token;
     }
-
-    void setToken(String token) {
-        setDetails(token);
-    }
-
-    public String getToken() {
-        return (String) getDetails();
-    }
 }

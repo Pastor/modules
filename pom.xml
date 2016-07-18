@@ -17,6 +17,7 @@
 
     <modules>
         <module>rest-api</module>
+        <module>rest-demo</module>
         <module>deployment</module>
     </modules>
 

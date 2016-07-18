@@ -36,7 +36,7 @@ public final class News extends AbstractEntity {
     private String bref;
 
     //FIXME: CLOB
-    @Column(name = "content", nullable = true)
+    @Column(name = "content", nullable = true, length = 4096)
     private String content;
 
     @NotNull
