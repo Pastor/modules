@@ -38,6 +38,22 @@ public final class SecurityControllerIntegrationTest extends AbstractRestTest {
     }
 
     @Test
+    public void updateTokenWithEmptyScope() throws Exception {
+        Token token = newToken();
+        environment.putUpdate(token.getKey());
+    }
+
+    @Test(expected = AuthenticationException.class)
+    public void illegalBase64() throws Exception {
+        environment.postUpdateIllegalBasicBase64();
+    }
+
+    @Test(expected = AuthenticationException.class)
+    public void illegalBasicContent() throws Exception {
+        environment.postUpdateIllegalBasicContent();
+    }
+
+    @Test
     public void successToken() throws Exception {
         final Token token = newToken("profile");
         final Profile profile = environment.me(token.getKey());

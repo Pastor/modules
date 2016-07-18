@@ -40,6 +40,13 @@ final class RestExceptionController extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, null, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
+    @ExceptionHandler({ObjectNotFoundException.class})
+    public
+    @ResponseBody
+    ResponseEntity<Object> handleNotFoundException(Exception ex, WebRequest request) {
+        return handleExceptionInternal(ex, null, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex,
                                                              Object body,

@@ -14,8 +14,10 @@ import org.springframework.web.client.RestTemplate;
 import ru.phi.modules.entity.Error;
 import ru.phi.modules.entity.*;
 import ru.phi.modules.exceptions.AuthenticationException;
+import ru.phi.modules.exceptions.ObjectNotFoundException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
@@ -46,18 +48,38 @@ public final class Environment {
                     final HttpStatus statusCode = response.getStatusCode();
                     if (statusCode == HttpStatus.UNAUTHORIZED ||
                             statusCode == HttpStatus.FORBIDDEN) {
-                        try {
-                            final Error error = objectMapper.readerFor(Error.class).readValue(response.getBody());
-                            log.error("{}", error);
-                        } catch (Exception ex) {
-                            //Nothing
-                        }
+                        showError(response);
                         throw new AuthenticationException();
+                    } else if (statusCode == HttpStatus.NOT_FOUND) {
+                        showError(response);
+                        throw new ObjectNotFoundException();
+                    }
+                }
+
+                protected void showError(ClientHttpResponse response) {
+                    try {
+                        final InputStream body = response.getBody();
+                        final Error error = objectMapper.readerFor(Error.class).readValue(body);
+                        log.error("{}", error);
+                    } catch (Exception ex) {
+//                            log.error("", ex);
                     }
                 }
             });
         }
     };
+
+    public void postUpdateIllegalBasicBase64() {
+        clearDown();
+        template.getInterceptors().add(illegalBasicBase64());
+        template.postForEntity("http://localhost:" + port + "/rest/v1/token", "", Token.class);
+    }
+
+    public void postUpdateIllegalBasicContent() {
+        clearDown();
+        template.getInterceptors().add(illegalBasicContent());
+        template.postForEntity("http://localhost:" + port + "/rest/v1/token", "", Token.class);
+    }
 
     public Token postUpdate(String username, String password, String... scopes) {
         clearDown();
@@ -155,6 +177,18 @@ public final class Environment {
         return Lists.newArrayList(entity.getBody());
     }
 
+    public void update(String token, Long id, News news) {
+        template.put("http://localhost:" + port + "/rest/v1/news/{id}?token={token}", news, id, token);
+    }
+
+    public void publish(String token, Long id) {
+        template.put("http://localhost:" + port + "/rest/v1/news/{id}/publish?token={token}", "", id, token);
+    }
+
+    public void delete(String token, Long id) {
+        template.delete("http://localhost:" + port + "/rest/v1/news/{id}?token={token}", id, token);
+    }
+
     public List<News> meNews(String token) {
         final ResponseEntity<News[]> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/me/news?token={token}",
                 News[].class, token);
@@ -203,6 +237,21 @@ public final class Environment {
     private static ClientHttpRequestInterceptor basicInterceptor(String username, String password) {
         return (request, body, execution) -> {
             request.getHeaders().add("Authorization", basic(username, password));
+            return execution.execute(request, body);
+        };
+    }
+
+    private static ClientHttpRequestInterceptor illegalBasicBase64() {
+        return (request, body, execution) -> {
+            request.getHeaders().add("Authorization", "Basic ------------------");
+            return execution.execute(request, body);
+        };
+    }
+
+    private static ClientHttpRequestInterceptor illegalBasicContent() {
+        return (request, body, execution) -> {
+            request.getHeaders().add("Authorization", "Basic " + new String(Base64.encode("ILLEGAL_CONTENT"
+                    .getBytes("UTF-8")), "UTF-8"));
             return execution.execute(request, body);
         };
     }

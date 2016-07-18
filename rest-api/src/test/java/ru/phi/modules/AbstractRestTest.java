@@ -26,7 +26,7 @@ import ru.phi.modules.security.Environment;
 @SqlGroup({
         @Sql(
                 scripts = {"/sql/data/drop.data.sql"},
-                executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+                executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
                 config = @SqlConfig(
                         dataSource = "dataSource",
                         encoding = "UTF-8"
@@ -99,12 +99,12 @@ public abstract class AbstractRestTest {
 
     @After
     public void tearDown() throws Exception {
-//        newsRepository.deleteAll();
-//        errorRepository.deleteAll();
-//        settingsRepository.deleteAll();
-//        profileRepository.deleteAll();
-//        userRepository.deleteAll();
-//        tokenRepository.deleteAll();
+        errorRepository.deleteAll();
+        settingsRepository.deleteAll();
+        profileRepository.deleteAll();
+        userRepository.deleteAll();
+        tokenRepository.deleteAll();
+        newsRepository.deleteAll();
         environment.clearDown();
     }
 

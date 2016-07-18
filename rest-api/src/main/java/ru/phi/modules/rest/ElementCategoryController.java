@@ -6,7 +6,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import ru.phi.modules.entity.Element;
 import ru.phi.modules.entity.ElementCategory;
 import ru.phi.modules.entity.Token;
 import ru.phi.modules.exceptions.AuthenticationException;

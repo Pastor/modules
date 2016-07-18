@@ -61,6 +61,7 @@ final class ExceptionServiceImpl implements ExceptionService {
             error.setUser(token.get().getUser());
         repository.save(error);
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        log.error("", ex);
         return error;
     }
 

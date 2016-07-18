@@ -57,6 +57,6 @@ public final class News extends AbstractEntity {
 //    @NotNull
 //    @NonNull
     @PrimaryKeyJoinColumn(name = "profile_id", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     private Profile profile;
 }
