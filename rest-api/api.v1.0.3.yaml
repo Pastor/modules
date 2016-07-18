@@ -4,7 +4,8 @@ info:
   description: |
     `API` для `"Социального навигатора"`
   version: "1.0.3"
-host: api.socnavi.ru
+#host: http://api.socnavi.ru
+host: 127.0.0.1:9090
 schemes:
   - http
   - https

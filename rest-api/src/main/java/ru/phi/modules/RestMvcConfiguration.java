@@ -47,6 +47,8 @@ public class RestMvcConfiguration extends WebMvcConfigurerAdapter {
         final Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
         final ObjectMapper objectMapper = builder.createXmlMapper(false).build();
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        objectMapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+        objectMapper.configure(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS, false);
         objectMapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         objectMapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);

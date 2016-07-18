@@ -23,12 +23,10 @@ class ElementController {
     @Autowired
     private ElementRepository elementRepository;
 
-    @AuthorizedScope(scopes = {"element"})
     @RequestMapping(value = "/elements", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public
     @ResponseBody
-    List<Element> list(@AuthorizedToken Token token,
-                       @RequestParam(name = "page", defaultValue = "0", required = false) Integer page,
+    List<Element> list(@RequestParam(name = "page", defaultValue = "0", required = false) Integer page,
                        @RequestParam(name = "size", defaultValue = "10", required = false) Integer size)
             throws AuthenticationException {
         final Sort sort = new Sort(Sort.Direction.ASC, "createdAt");
@@ -36,7 +34,6 @@ class ElementController {
         return elementRepository.findAll(pageable).getContent();
     }
 
-    @AuthorizedScope(scopes = {"element"})
     @RequestMapping(value = "/elements/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public
     @ResponseBody

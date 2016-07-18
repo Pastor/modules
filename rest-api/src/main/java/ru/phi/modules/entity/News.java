@@ -36,9 +36,11 @@ public final class News extends AbstractEntity {
     private String bref;
 
     //FIXME: CLOB
+    @JsonIgnore
     @Column(name = "content", nullable = true, length = 4096)
     private String content;
 
+    @JsonIgnore
     @NotNull
     @NonNull
     @Column(name = "visible", nullable = false)
@@ -54,8 +56,8 @@ public final class News extends AbstractEntity {
     private LocalDateTime publishedAt;
 
     @JsonIgnore
-//    @NotNull
-//    @NonNull
+    @NotNull
+    @NonNull
     @PrimaryKeyJoinColumn(name = "profile_id", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     private Profile profile;

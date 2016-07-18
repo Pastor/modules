@@ -1,6 +1,8 @@
 package ru.phi.modules.security;
 
 import com.google.common.collect.Sets;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,8 @@ import static java.text.MessageFormat.format;
 @SuppressWarnings("unused")
 @Service("securityTokenService.v1")
 class SecurityAuthenticateService implements AuthenticateService {
+
+    private static final HashFunction hash = Hashing.goodFastHash(256);
 
     @Autowired
     private UserRepository userRepository;
@@ -58,7 +62,7 @@ class SecurityAuthenticateService implements AuthenticateService {
         final Token token = new Token();
         token.setExpiredAt(LocalDateTime.now().plus(365, ChronoUnit.DAYS));
         token.setUser(user);
-        token.setKey(UUID.randomUUID().toString());
+        token.setKey(hash.hashUnencodedChars(UUID.randomUUID().toString()).toString().toLowerCase());
         processScope(token, user.getRole(), scopes);
         tokenRepository.save(token);
         user.getTokens().clear();

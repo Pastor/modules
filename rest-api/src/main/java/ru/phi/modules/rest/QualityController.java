@@ -23,12 +23,10 @@ class QualityController {
     @Autowired
     private QualityRepository qualityRepository;
 
-    @AuthorizedScope(scopes = {"quality"})
     @RequestMapping(value = "/qualities", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public
     @ResponseBody
-    List<Quality> list(@AuthorizedToken Token token,
-                       @RequestParam(name = "page", defaultValue = "0", required = false) Integer page,
+    List<Quality> list(@RequestParam(name = "page", defaultValue = "0", required = false) Integer page,
                        @RequestParam(name = "size", defaultValue = "10", required = false) Integer size)
             throws AuthenticationException {
         final Sort sort = new Sort(Sort.Direction.ASC, "createdAt");
@@ -36,7 +34,6 @@ class QualityController {
         return qualityRepository.findAll(pageable).getContent();
     }
 
-    @AuthorizedScope(scopes = {"quality"})
     @RequestMapping(value = "/qualities/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public
     @ResponseBody

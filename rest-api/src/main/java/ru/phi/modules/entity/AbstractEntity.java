@@ -28,30 +28,28 @@ abstract class AbstractEntity implements Serializable {
     private Long id;
 
     @JsonIgnore
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @JsonProperty("created_at")
-    @JsonSerialize(using = JsonLocalDateTimeSerializer.class)
-    @CreatedDate
+//    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+//    @JsonProperty("created_at")
+//    @JsonSerialize(using = JsonLocalDateTimeSerializer.class)
+//    @CreatedDate
     @Column(name = "created_at", nullable = false)
     @Setter(AccessLevel.NONE)
     @Getter
     private LocalDateTime createdAt;
 
     @JsonIgnore
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @JsonProperty("updated_at")
-    @JsonSerialize(using = JsonLocalDateTimeSerializer.class)
-    @LastModifiedDate
+//    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+//    @JsonProperty("updated_at")
+//    @JsonSerialize(using = JsonLocalDateTimeSerializer.class)
     @Column(name = "updated_at", nullable = false)
     @Setter(AccessLevel.NONE)
     @Getter
     private LocalDateTime updatedAt;
 
     @JsonIgnore
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @JsonProperty("deleted_at")
-    @JsonSerialize(using = JsonLocalDateTimeSerializer.class)
-    @LastModifiedDate
+//    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+//    @JsonProperty("deleted_at")
+//    @JsonSerialize(using = JsonLocalDateTimeSerializer.class)
     @Column(name = "deleted_at", nullable = true)
     @Setter(AccessLevel.PACKAGE)
     @Getter

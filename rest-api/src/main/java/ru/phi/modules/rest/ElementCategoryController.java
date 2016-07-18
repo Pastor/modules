@@ -23,12 +23,10 @@ class ElementCategoryController {
     @Autowired
     private ElementCategoryRepository elementCategoryRepository;
 
-    @AuthorizedScope(scopes = {"categories"})
     @RequestMapping(value = "/categories", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public
     @ResponseBody
-    List<ElementCategory> list(@AuthorizedToken Token token,
-                               @RequestParam(name = "page", defaultValue = "0", required = false) Integer page,
+    List<ElementCategory> list(@RequestParam(name = "page", defaultValue = "0", required = false) Integer page,
                                @RequestParam(name = "size", defaultValue = "10", required = false) Integer size)
             throws AuthenticationException {
         final Sort sort = new Sort(Sort.Direction.ASC, "createdAt");
@@ -50,7 +48,6 @@ class ElementCategoryController {
         return category;
     }
 
-    @AuthorizedScope(scopes = {"categories"})
     @RequestMapping(value = "/categories/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public
     @ResponseBody

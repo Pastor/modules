@@ -2,6 +2,7 @@ package ru.phi.modules.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.hibernate.annotations.Proxy;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -13,8 +14,8 @@ import java.util.Set;
 @Entity
 @Table(name = "Element")
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = {"categories", "creator", "accessibilityProcesses"})
-@ToString(exclude = {"categories", "creator", "accessibilityProcesses"})
+@EqualsAndHashCode(callSuper = true, exclude = {"categories", "user", "accessibilityProcesses"})
+@ToString(exclude = {"categories", "user", "accessibilityProcesses"})
 @NoArgsConstructor
 @Proxy(lazy = false)
 public final class Element extends AbstractEntity {
@@ -31,18 +32,17 @@ public final class Element extends AbstractEntity {
     @Column(name = "address", nullable = false)
     private String address;
 
+    @JsonProperty("info")
     @Column(name = "info")
     private String info;
 
     @NotNull
     @NonNull
-    @NotEmpty
     @Column(name = "longitude", nullable = false)
     private double longitude;
 
     @NotNull
     @NonNull
-    @NotEmpty
     @Column(name = "latitude", nullable = false)
     private double latitude;
 

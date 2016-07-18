@@ -27,12 +27,10 @@ class NewsController {
     private NewsRepository newsRepository;
 
 
-    @AuthorizedScope(scopes = {"news"})
     @RequestMapping(value = "/news", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public
     @ResponseBody
-    List<News> news(@AuthorizedToken Token token,
-                    @RequestParam(name = "page", defaultValue = "0", required = false) Integer page,
+    List<News> news(@RequestParam(name = "page", defaultValue = "0", required = false) Integer page,
                     @RequestParam(name = "size", defaultValue = "10", required = false) Integer size)
             throws AuthenticationException {
         final Sort sort = new Sort(Sort.Direction.ASC, "createdAt");
@@ -40,7 +38,6 @@ class NewsController {
         return newsRepository.findAll(pageable).getContent();
     }
 
-    @AuthorizedScope(scopes = {"news"})
     @RequestMapping(value = "/news/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public
     @ResponseBody
@@ -68,8 +65,7 @@ class NewsController {
         newsRepository.delete(id);
     }
 
-    @AuthorizedScope(scopes = {"news"})
-    @RequestMapping(value = "/news/{id}/content", method = RequestMethod.GET)
+    @RequestMapping(value = "/news/{id}/content", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE + ";charset=UTF-8")
     public String getContent(@PathVariable("id") Long id)
             throws AuthenticationException {
         return newsRepository.findOne(id).getContent();
