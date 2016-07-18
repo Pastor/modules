@@ -68,7 +68,12 @@ class NewsController {
         newsRepository.delete(id);
     }
 
-    @RequestMapping(value = "/news/{id}/content", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE + ";charset=UTF-8")
+    @RequestMapping(value = "/news/{id}/content", method = RequestMethod.GET/*, produces = {
+            MediaType.TEXT_HTML_VALUE + ";charset=UTF-8",
+            MediaType.TEXT_PLAIN_VALUE + ";charset=UTF-8"
+    }, consumes = {
+            MediaType.ALL_VALUE + ";charset=UTF-8"
+    }*/)
     public String getContent(@PathVariable("id") Long id)
             throws AuthenticationException {
         final News one = newsRepository.findOne(id);

@@ -53,6 +53,8 @@ public final class Environment {
                     } else if (statusCode == HttpStatus.NOT_FOUND) {
                         showError(response);
                         throw new ObjectNotFoundException();
+                    } else if (statusCode == HttpStatus.NOT_ACCEPTABLE) {
+                        showError(response);
                     }
                 }
 
@@ -213,9 +215,7 @@ public final class Environment {
     }
 
     public String getContent(String token, Long id) {
-        final ResponseEntity<String> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/news/{id}/content?token={token}", String.class, id, token);
-        assertEquals(entity.getStatusCode(), HttpStatus.OK);
-        return entity.getBody();
+        return template.getForObject("http://localhost:" + port + "/rest/v1/news/{id}/content?token={token}", String.class, id, token);
     }
 
     public News getNews(String token, Long id) {

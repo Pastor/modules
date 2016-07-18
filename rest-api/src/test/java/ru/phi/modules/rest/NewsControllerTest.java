@@ -32,6 +32,18 @@ public final class NewsControllerTest extends AbstractRestTest {
     }
 
     @Test(expected = ObjectNotFoundException.class)
+    public void notExistsGetContent() throws Exception {
+        final Token token = newToken("news");
+        environment.getContent(token.getKey(), 11111L);
+    }
+
+    @Test(expected = ObjectNotFoundException.class)
+    public void notExistsHide() throws Exception {
+        final Token token = newToken("news");
+        environment.hide(token.getKey(), 11111L);
+    }
+
+    @Test(expected = ObjectNotFoundException.class)
     public void notExistsPublish() throws Exception {
         final Token token = newToken("news");
         environment.publish(token.getKey(), 11111L);
