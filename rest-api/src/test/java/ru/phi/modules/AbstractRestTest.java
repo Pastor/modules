@@ -67,6 +67,7 @@ public abstract class AbstractRestTest {
 
     protected Environment environment;
     protected User successUser = new User();
+    protected User successUserWithoutProfile = new User();
     protected Profile successProfile = new Profile();
 
     @Before
@@ -74,6 +75,11 @@ public abstract class AbstractRestTest {
         successUser.setPassword("123456");
         successUser.setUsername("pastor");
         successUser = userRepository.save(successUser);
+
+        successUserWithoutProfile.setPassword("123456");
+        successUserWithoutProfile.setUsername("pastor_without");
+        successUserWithoutProfile = userRepository.save(successUserWithoutProfile);
+
         successProfile.setUser(successUser);
         successProfile.setAccessibility(Accessibility.BAROOW);
         successProfile.setEmail("viruszold@mail.ru");
@@ -112,5 +118,9 @@ public abstract class AbstractRestTest {
 
     protected final Token newToken(String... scopes) {
         return environment.postUpdate(successUser.getUsername(), successUser.getPassword(), scopes);
+    }
+
+    protected final Token newTokenWithoutProfile(String... scopes) {
+        return environment.postUpdate(successUserWithoutProfile.getUsername(), successUserWithoutProfile.getPassword(), scopes);
     }
 }

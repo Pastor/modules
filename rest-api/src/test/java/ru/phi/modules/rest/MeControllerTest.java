@@ -17,6 +17,7 @@ import static junit.framework.TestCase.assertTrue;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public final class MeControllerTest extends AbstractRestTest {
 
+
     @Test
     public void me() throws Exception {
         final Token token = newToken("profile");

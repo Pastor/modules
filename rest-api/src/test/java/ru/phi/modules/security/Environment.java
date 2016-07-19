@@ -117,6 +117,10 @@ public final class Environment {
         template.put("http://localhost:" + port + "/rest/v1/me?token={token}", profile, token);
     }
 
+    public Long meNewsCount(String token) {
+        return template.getForObject("http://localhost:" + port + "/rest/v1/me/news/count?token={token}", Long.class, token);
+    }
+
     public Settings meSettings(String token) {
         clearDown();
         final ResponseEntity<Settings> userEntity =
@@ -172,11 +176,19 @@ public final class Environment {
         return entity.getBody();
     }
 
+    public String swagger() {
+        return template.getForObject("http://localhost:" + port + "/rest/v1/version/swagger", String.class);
+    }
+
     public List<News> news(String token) {
         final ResponseEntity<News[]> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/news?token={token}",
                 News[].class, token);
         assertEquals(entity.getStatusCode(), HttpStatus.OK);
         return Lists.newArrayList(entity.getBody());
+    }
+
+    public Long newsCount(String token) {
+        return template.getForObject("http://localhost:" + port + "/rest/v1/news/count?token={token}", Long.class, token);
     }
 
     public void update(String token, Long id, News news) {

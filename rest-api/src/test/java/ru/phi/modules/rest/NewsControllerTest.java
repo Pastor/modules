@@ -112,6 +112,26 @@ public final class NewsControllerTest extends AbstractRestTest {
     }
 
     @Test
+    public void count() throws Exception {
+        final Token token = newToken("news");
+        create("TITLE1", "BREF1");
+        create("TITLE2", "BREF2");
+        create("TITLE3", "BREF3");
+        assertEquals((long) environment.newsCount(token.getKey()), 3L);
+    }
+
+    @Test
+    public void countWithHide() throws Exception {
+        final Token token = newToken("news");
+        final News news = create("TITLE1", "BREF1");
+        create("TITLE2", "BREF2");
+        create("TITLE3", "BREF3");
+        assertEquals((long) environment.newsCount(token.getKey()), 3L);
+        environment.hide(token.getKey(), news.getId());
+        assertEquals((long) environment.newsCount(token.getKey()), 2L);
+    }
+
+    @Test
     public void publish() throws Exception {
         final Token token = newToken("news");
         final News news = new News();
@@ -158,6 +178,40 @@ public final class NewsControllerTest extends AbstractRestTest {
         assertEquals(news.size(), 3);
         news = environment.meNews(token.getKey());
         assertEquals(news.size(), 3);
+    }
+
+    @Test
+    public void meWithoutProfile() throws Exception {
+        final Token token = newTokenWithoutProfile("news", "profile");
+        final List<News> news = environment.meNews(token.getKey());
+        assertEquals(news.size(), 0);
+    }
+
+    @Test
+    public void meCountWithoutProfile() throws Exception {
+        final Token token = newTokenWithoutProfile("news", "profile");
+        final Long count = environment.meNewsCount(token.getKey());
+        assertEquals(count.longValue(), 0L);
+    }
+
+    @Test
+    public void meCount() throws Exception {
+        final Token token = newToken("news", "profile");
+        create("TITLE1", "BREF1");
+        create("TITLE2", "BREF2");
+        create("TITLE3", "BREF3");
+        assertEquals((long) environment.meNewsCount(token.getKey()), 3L);
+    }
+
+    @Test
+    public void meNewsCountWithHide() throws Exception {
+        final Token token = newToken("news", "profile");
+        final News news = create("TITLE1", "BREF1");
+        create("TITLE2", "BREF2");
+        create("TITLE3", "BREF3");
+        assertEquals((long) environment.meNewsCount(token.getKey()), 3L);
+        environment.hide(token.getKey(), news.getId());
+        assertEquals((long) environment.meNewsCount(token.getKey()), 2L);
     }
 
     private News create(String title, String bref) {

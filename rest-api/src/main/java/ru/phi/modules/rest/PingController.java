@@ -29,9 +29,7 @@ class PingController {
     }
 
     @RequestMapping(value = "/ping/authorized_fault", method = RequestMethod.GET)
-    public String authorizedFault()
-            throws AuthenticationException {
-        return "pong";
+    public void authorizedFault() {
     }
 
     @RequestMapping(value = "/ping/authorized", method = RequestMethod.GET)
