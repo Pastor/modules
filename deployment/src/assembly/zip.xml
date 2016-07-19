@@ -26,6 +26,9 @@
             <includes>
                 <include>ru.phi.modules:*</include>
             </includes>
+            <excludes>
+                <exclude>ru.phi.modules:deployment</exclude>
+            </excludes>
         </dependencySet>
     </dependencySets>
     <fileSets>
