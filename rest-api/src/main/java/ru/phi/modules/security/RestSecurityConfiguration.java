@@ -36,7 +36,9 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
-                .antMatchers(HttpMethod.GET, "/static/*")
+                .antMatchers(HttpMethod.GET, "/static/index.html")
+                .antMatchers(HttpMethod.GET, "/static/bundle.js")
+                .antMatchers(HttpMethod.GET, "/static/favicon.ico")
                 .antMatchers(HttpMethod.GET, "/static/css/*")
                 .antMatchers(HttpMethod.GET, "/static/fonts/*")
                 .antMatchers(HttpMethod.GET, "/static/i18n/*")

@@ -13,7 +13,7 @@ public class StaticConfiguration extends WebMvcConfigurerAdapter {
     private static final String[] SERVLET_RESOURCE_LOCATIONS = {"/"};
 
     private static final String[] CLASSPATH_RESOURCE_LOCATIONS = {
-            "classpath:/static/"
+            "classpath:/html/"
     };
 
     private static final String[] RESOURCE_LOCATIONS;
