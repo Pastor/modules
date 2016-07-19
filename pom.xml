@@ -18,6 +18,7 @@
     <modules>
         <module>rest-api</module>
         <module>rest-demo</module>
+        <module>rest-static</module>
         <module>deployment</module>
     </modules>
 
@@ -101,6 +102,12 @@
             <dependency>
                 <groupId>ru.phi.modules</groupId>
                 <artifactId>rest-api</artifactId>
+                <version>1.0.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ru.phi.modules</groupId>
+                <artifactId>rest-static</artifactId>
                 <version>1.0.1</version>
             </dependency>
         </dependencies>

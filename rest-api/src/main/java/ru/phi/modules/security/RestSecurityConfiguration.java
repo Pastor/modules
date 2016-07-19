@@ -36,7 +36,11 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
-                .antMatchers("/resources/*")
+                .antMatchers(HttpMethod.GET, "/static/*")
+                .antMatchers(HttpMethod.GET, "/static/css/*")
+                .antMatchers(HttpMethod.GET, "/static/fonts/*")
+                .antMatchers(HttpMethod.GET, "/static/i18n/*")
+                .antMatchers(HttpMethod.GET, "/static/images/*")
                 .antMatchers(HttpMethod.POST, "/rest/v1/token")
                 .antMatchers(HttpMethod.GET, "/rest/v1/ping/clear")
                 .antMatchers(HttpMethod.GET, "/rest/v1/version")

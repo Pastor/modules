@@ -14,6 +14,7 @@ import ru.phi.modules.entity.*;
 import ru.phi.modules.repository.*;
 import ru.phi.modules.security.RestSecurityConfiguration;
 import ru.phi.modules.security.Utilities;
+import ru.phi.modules.strong.StaticConfiguration;
 
 import javax.annotation.PostConstruct;
 import java.text.MessageFormat;
@@ -25,7 +26,8 @@ import java.time.temporal.ChronoUnit;
 @Import({
         JpaConfiguration.class,
         RestMvcConfiguration.class,
-        RestSecurityConfiguration.class
+        RestSecurityConfiguration.class,
+        StaticConfiguration.class
 })
 public class DemoConfiguration {
 

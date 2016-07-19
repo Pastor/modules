@@ -1178,7 +1178,7 @@ definitions:
           Строка доступа. Далее будет использоваться для вызова методов сервиса путем добавления к запросу параметра token
       expire:
         type: string
-        format: datetime
+        format: date-time
         description: Время окончания действия ключа
       scopes:
         type: array
@@ -1270,7 +1270,7 @@ definitions:
         description: Флаг удаления новости
       published_at:
         type: string
-        format: datetime
+        format: date-time
         description: Время публикации новости
   Settings:
     description: Настройки пользователя

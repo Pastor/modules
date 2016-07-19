@@ -10,7 +10,7 @@
         <version>1.0.1</version>
     </parent>
 
-    <artifactId>rest-demo</artifactId>
+    <artifactId>rest-static</artifactId>
 
     <build>
         <plugins>
@@ -31,18 +31,6 @@
         <dependency>
             <groupId>ru.phi.modules</groupId>
             <artifactId>rest-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ru.phi.modules</groupId>
-            <artifactId>rest-static</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.jayway.jsonpath</groupId>
-            <artifactId>json-path</artifactId>
         </dependency>
     </dependencies>
 
