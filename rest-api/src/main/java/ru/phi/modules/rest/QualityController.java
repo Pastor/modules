@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import ru.phi.modules.entity.Quality;
 import ru.phi.modules.entity.Token;
-import ru.phi.modules.exceptions.AuthenticationException;
 import ru.phi.modules.exceptions.ObjectNotFoundException;
 import ru.phi.modules.repository.QualityRepository;
 import ru.phi.modules.security.AuthorizedScope;
@@ -28,8 +27,7 @@ class QualityController {
     public
     @ResponseBody
     List<Quality> list(@RequestParam(name = "page", defaultValue = "0", required = false) Integer page,
-                       @RequestParam(name = "size", defaultValue = "10", required = false) Integer size)
-            throws AuthenticationException {
+                       @RequestParam(name = "size", defaultValue = "10", required = false) Integer size) {
         final Sort sort = new Sort(Sort.Direction.ASC, "createdAt");
         final PageRequest pageable = new PageRequest(page, size, sort);
         return qualityRepository.findAll(pageable).getContent();
@@ -38,7 +36,7 @@ class QualityController {
     @RequestMapping(value = "/qualities/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public
     @ResponseBody
-    Quality get(@PathVariable("id") Long id) throws AuthenticationException {
+    Quality get(@PathVariable("id") Long id) {
         final Quality one = qualityRepository.findOne(id);
         if (one == null)
             throw new ObjectNotFoundException(id);
@@ -47,8 +45,7 @@ class QualityController {
 
     @AuthorizedScope(scopes = {"quality"})
     @RequestMapping(value = "/qualities/{id}", method = RequestMethod.PUT)
-    public void put(@PathVariable("id") Long id, @RequestBody Quality quality)
-            throws AuthenticationException {
+    public void put(@PathVariable("id") Long id, @RequestBody Quality quality) {
         final Quality one = qualityRepository.findOne(id);
         if (one == null)
             throw new ObjectNotFoundException(id);
@@ -60,8 +57,9 @@ class QualityController {
 
     @AuthorizedScope(scopes = {"quality"})
     @RequestMapping(value = "/qualities/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void delete(@PathVariable("id") Long id)
-            throws AuthenticationException {
+    public void delete(@PathVariable("id") Long id) {
+        if (!qualityRepository.exists(id))
+            throw new ObjectNotFoundException(id);
         qualityRepository.delete(id);
     }
 
@@ -71,8 +69,7 @@ class QualityController {
     public
     @ResponseBody
     Quality create(@AuthorizedToken Token token,
-                   @RequestBody Quality quality)
-            throws AuthenticationException {
+                   @RequestBody Quality quality) {
         quality.clear();
         quality.setUser(token.getUser());
         qualityRepository.save(quality);

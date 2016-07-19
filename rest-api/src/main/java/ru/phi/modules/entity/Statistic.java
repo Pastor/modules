@@ -27,6 +27,6 @@ public final class Statistic extends AbstractEntity {
     @NotNull
     @NonNull
     @PrimaryKeyJoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     private User user;
 }

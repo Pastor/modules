@@ -187,12 +187,49 @@ public final class Environment {
         return Lists.newArrayList(entity.getBody());
     }
 
+    public List<Statistic> statistics(String token) {
+        final ResponseEntity<Statistic[]> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/statistics?token={token}",
+                Statistic[].class, token);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return Lists.newArrayList(entity.getBody());
+    }
+
+    public List<Error> errors(String token) {
+        final ResponseEntity<Error[]> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/errors?token={token}",
+                Error[].class, token);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return Lists.newArrayList(entity.getBody());
+    }
+
+    public List<Quality> qualities(String token) {
+        final ResponseEntity<Quality[]> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/qualities?token={token}",
+                Quality[].class, token);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return Lists.newArrayList(entity.getBody());
+    }
+
     public Long newsCount(String token) {
         return template.getForObject("http://localhost:" + port + "/rest/v1/news/count?token={token}", Long.class, token);
     }
 
+    public Long statisticsCount(String token) {
+        return template.getForObject("http://localhost:" + port + "/rest/v1/statistics/count?token={token}", Long.class, token);
+    }
+
+    public Long errorsCount(String token) {
+        return template.getForObject("http://localhost:" + port + "/rest/v1/errors/count?token={token}", Long.class, token);
+    }
+
+    public Long qualitiesCount(String token) {
+        return template.getForObject("http://localhost:" + port + "/rest/v1/qualities/count?token={token}", Long.class, token);
+    }
+
     public void update(String token, Long id, News news) {
         template.put("http://localhost:" + port + "/rest/v1/news/{id}?token={token}", news, id, token);
+    }
+
+    public void update(String token, Long id, Quality quality) {
+        template.put("http://localhost:" + port + "/rest/v1/qualities/{id}?token={token}", quality, id, token);
     }
 
     public void publish(String token, Long id) {
@@ -203,8 +240,12 @@ public final class Environment {
         template.put("http://localhost:" + port + "/rest/v1/news/{id}/hide?token={token}", "", id, token);
     }
 
-    public void delete(String token, Long id) {
+    public void deleteNews(String token, Long id) {
         template.delete("http://localhost:" + port + "/rest/v1/news/{id}?token={token}", id, token);
+    }
+
+    public void deleteQuality(String token, Long id) {
+        template.delete("http://localhost:" + port + "/rest/v1/qualities/{id}?token={token}", id, token);
     }
 
     public List<News> meNews(String token) {
@@ -221,6 +262,20 @@ public final class Environment {
         return entity.getBody();
     }
 
+    public Statistic createStatistic(String token, Statistic statistic) {
+        final ResponseEntity<Statistic> entity = template.postForEntity("http://localhost:" + port + "/rest/v1/statistics?token={token}",
+                statistic, Statistic.class, token);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return entity.getBody();
+    }
+
+    public Quality createQuality(String token, Quality quality) {
+        final ResponseEntity<Quality> entity = template.postForEntity("http://localhost:" + port + "/rest/v1/qualities?token={token}",
+                quality, Quality.class, token);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return entity.getBody();
+    }
+
     public void putContent(String token, Long id, String content) {
         template.put("http://localhost:" + port + "/rest/v1/news/{id}/content?token={token}",
                 content, id, token);
@@ -232,6 +287,12 @@ public final class Environment {
 
     public News getNews(String token, Long id) {
         final ResponseEntity<News> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/news/{id}?token={token}", News.class, id, token);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return entity.getBody();
+    }
+
+    public Quality getQuality(String token, Long id) {
+        final ResponseEntity<Quality> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/qualities/{id}?token={token}", Quality.class, id, token);
         assertEquals(entity.getStatusCode(), HttpStatus.OK);
         return entity.getBody();
     }

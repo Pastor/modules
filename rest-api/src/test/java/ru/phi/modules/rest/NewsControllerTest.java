@@ -154,7 +154,7 @@ public final class NewsControllerTest extends AbstractRestTest {
         final Long id = environment.createNews(token.getKey(), news).getId();
         final News n1 = environment.getNews(token.getKey(), id);
         assertNotNull(n1);
-        environment.delete(token.getKey(), id);
+        environment.deleteNews(token.getKey(), id);
         environment.getNews(token.getKey(), id);
     }
 

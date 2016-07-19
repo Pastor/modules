@@ -60,6 +60,12 @@ public abstract class AbstractRestTest {
     protected SettingsRepository settingsRepository;
 
     @Autowired
+    protected StatisticRepository statisticRepository;
+
+    @Autowired
+    protected QualityRepository qualityRepository;
+
+    @Autowired
     protected ObjectMapper objectMapper;
 
     @Value("${local.server.port}")
@@ -107,10 +113,10 @@ public abstract class AbstractRestTest {
 
     @After
     public void tearDown() throws Exception {
-        errorRepository.deleteAll();
         settingsRepository.deleteAll();
         profileRepository.deleteAll();
         userRepository.deleteAll();
+        errorRepository.deleteAll();
         tokenRepository.deleteAll();
         newsRepository.deleteAll();
         environment.clearDown();

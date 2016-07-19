@@ -59,13 +59,13 @@ public final class Profile extends AbstractEntity {
 
     @JsonIgnore
     @PrimaryKeyJoinColumn(name = "quality_id", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     private Quality quality;
 
     @JsonIgnore
     @NotNull
     @NonNull
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, optional = false)
     private User user;
 
     @JsonIgnore
