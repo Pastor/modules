@@ -44,20 +44,29 @@ public class RestMvcConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/rest/v1/version/swagger");
-        registry.addMapping("/rest/v1/version");
+        registry.addMapping("/rest/v1/version/swagger").allowedMethods("GET");
+        registry.addMapping("/rest/v1/version").allowedMethods("GET");
+        registry.addMapping("/rest/v1/errors").allowedMethods("GET");
+        registry.addMapping("/rest/v1/errors/count").allowedMethods("GET");
+        registry.addMapping("/rest/v1/statistics").allowedMethods("POST", "GET");
+        registry.addMapping("/rest/v1/statistics/count").allowedMethods("GET");
         registry.addMapping("/rest/v1/elements").allowedMethods("POST", "GET");
+        registry.addMapping("/rest/v1/elements/{id}").allowedMethods("PUT", "GET", "DELETE");
+        registry.addMapping("/rest/v1/elements/count").allowedMethods("GET");
         registry.addMapping("/rest/v1/me").allowedMethods("PUT", "GET");
         registry.addMapping("/rest/v1/me/settings").allowedMethods("PUT", "GET");
         registry.addMapping("/rest/v1/me/news").allowedMethods("POST", "GET");
+        registry.addMapping("/rest/v1/me/news/count").allowedMethods("GET");
         registry.addMapping("/rest/v1/qualities").allowedMethods("POST", "GET");
         registry.addMapping("/rest/v1/qualities/{id}").allowedMethods("PUT", "GET", "DELETE");
         registry.addMapping("/rest/v1/news").allowedMethods("POST", "GET");
         registry.addMapping("/rest/v1/news/{id}").allowedMethods("PUT", "GET", "DELETE");
         registry.addMapping("/rest/v1/news/{id}/publish").allowedMethods("PUT");
         registry.addMapping("/rest/v1/news/{id}/content").allowedMethods("PUT", "GET");
+        registry.addMapping("/rest/v1/news/count").allowedMethods("GET");
         registry.addMapping("/rest/v1/categories").allowedMethods("POST", "GET");
         registry.addMapping("/rest/v1/categories/{id}").allowedMethods("PUT", "GET", "DELETE");
+        registry.addMapping("/rest/v1/categories/count").allowedMethods("GET");
     }
 
     @Bean

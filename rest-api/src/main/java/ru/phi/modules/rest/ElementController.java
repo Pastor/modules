@@ -30,7 +30,7 @@ class ElementController {
     List<Element> list(@RequestParam(name = "page", defaultValue = "0", required = false) Integer page,
                        @RequestParam(name = "size", defaultValue = "10", required = false) Integer size)
             throws AuthenticationException {
-        final Sort sort = new Sort(Sort.Direction.ASC, "createdAt");
+        final Sort sort = new Sort(Sort.Direction.DESC, "createdAt");
         final PageRequest pageable = new PageRequest(page, size, sort);
         return elementRepository.findAll(pageable).getContent();
     }
@@ -81,6 +81,12 @@ class ElementController {
         element.setUser(token.getUser());
         elementRepository.save(element);
         return element;
+    }
+
+    @AuthorizedScope(scopes = {"element"})
+    @RequestMapping(value = "/elements/count", method = RequestMethod.GET)
+    public long count() {
+        return elementRepository.count();
     }
 
 }

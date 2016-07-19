@@ -28,15 +28,18 @@ tags:
     description: Токен
   - name: Version
     description: Версия `API`
+  - name: Statistic
+    description: Статистика использования сервиса
+  - name: Error
+    description: Ошибки сервиса
 basePath: /rest/v1
 produces:
   - application/json
   - application/xml
 paths:
-  /news:
+  /errors:
     get:
-      summary: Получение списка новостей. В порядке от более ранней к более поздней новости.
-      description: При этом в список попадают только опубликованные новости (для которых был вызван метод `/news/{id}/publish`).
+      summary: Получение списка ошибок в порядке убывания
       parameters:
         - name: size
           in: query
@@ -47,8 +50,131 @@ paths:
           format: int64
         - name: page
           in: query
+          description: Номер страницы запроса.
+          required: false
+          type: number
+          format: int64  
+      tags:
+        - Error
+      operationId: get_errors
+      security: 
+        - token: [] 
+      responses:
+        200:
+          description: Список ошибок
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Error'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /errors/count:
+    get:
+      summary: Количество ошибок в списке
+      tags:
+        - Error
+      operationId: get_errors_count
+      security: 
+        - token: [] 
+      responses:
+        200:
+          description: Количество ошибок
+          schema:
+            type: number
+            format: int64
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /statistics:
+    get:
+      summary: Получение списка объектов сбора статистики
+      parameters:
+        - name: size
+          in: query
           description: |
-            Номер страницы запроса.
+            Ограничения количества элементов на странице.
+          required: false
+          type: number
+          format: int64
+        - name: page
+          in: query
+          description: Номер страницы запроса.
+          required: false
+          type: number
+          format: int64  
+      tags:
+        - Statistic
+      operationId: get_statistic
+      security: 
+        - token: [] 
+      responses:
+        200:
+          description: Список объектов сбора статистики
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Statistic'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Добавление статистики
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Statistic'
+      tags:
+        - Statistic
+      responses:
+        200:
+          description: Статистическая информация
+          schema:
+            $ref: '#/definitions/Statistic'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: add_statistic
+      security: 
+        - token: []
+  /statistics/count:
+    get:
+      summary: Количество элементов статистики в списке
+      tags:
+        - Statistic
+      operationId: get_statistic_count
+      security: 
+        - token: [] 
+      responses:
+        200:
+          description: Количество элементов статистики
+          schema:
+            type: number
+            format: int64
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /news:
+    get:
+      summary: Получение списка новостей
+      parameters:
+        - name: size
+          in: query
+          description: |
+            Ограничения количества элементов на странице.
+          required: false
+          type: number
+          format: int64
+        - name: page
+          in: query
+          description: Номер страницы запроса.
           required: false
           type: number
           format: int64  
@@ -87,6 +213,21 @@ paths:
       operationId: add_news
       security: 
         - token: [] 
+  /news/count:
+    get:
+      summary: Количество новостей в списке
+      tags:
+        - News
+      responses:
+        200:
+          description: Количество новостей
+          schema:
+            type: number
+            format: int64
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
   /news/{id}:
     get:
       summary: Получение информации о новости
@@ -261,7 +402,7 @@ paths:
         - token: []    
   /elements:
     get:
-      summary: Получение списка зарегистрированных объектов
+      summary: Получение списка элементов
       parameters:
         - name: size
           in: query
@@ -311,6 +452,21 @@ paths:
       operationId: add_element
       security: 
         - token: [] 
+  /elements/count:
+    get:
+      summary: Количество объектов в списке
+      tags:
+        - Elements
+      responses:
+        200:
+          description: Количество объектов
+          schema:
+            type: number
+            format: int64
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
   /elements/{id}:
     get:
       summary: Получение информации о элементе
@@ -427,6 +583,21 @@ paths:
       operationId: add_category
       security: 
         - token: [] 
+  /categories/count:
+    get:
+      summary: Количество категорий в списке
+      tags:
+        - Categories
+      responses:
+        200:
+          description: Количество категорий
+          schema:
+            type: number
+            format: int64
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
   /categories/{id}:
     get:
       summary: Получение информации категории
@@ -850,6 +1021,21 @@ paths:
       operationId: get_me_news
       security: 
         - token: []
+  /me/news/count:
+    get:
+      summary: Количество новостей
+      tags:
+        - News
+      responses:
+        200:
+          description: Количество новостей
+          schema:
+            type: number
+            format: int64
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
   /token:
     post:
       summary: Создание токена
@@ -858,10 +1044,6 @@ paths:
           1. `profile`  - управление профилем пользователя
           2. `settings` - управление настройкми
           3. `ping`     - для проверки работоспособности сервиса
-          4. `element`  - управление объектами
-          5. `category` - управление категориями доступности
-          6. `quality`  - управление шаблонами `UI`
-          7. `news`     - управление новостной лентой
           
         Токену, так же, можно передать тип. Доступные типы:
           1. `device`   - токен созданный для мобильных устройств
@@ -873,7 +1055,7 @@ paths:
           in: query
           type: string
           format: delim
-          description: Области доступа
+          description: Области
           required: false
         - name: type
           in: query
@@ -897,13 +1079,14 @@ paths:
         - auth: []
     put:
       summary: Обновление токена
-      description: Данный вызов предназначен только для тестирования и ограничен вызовом только из под роли `administrator` и типа токена `web`.
+      description: |
+        Данный вызов предназначен только для тестирования и ограничен вызовом только из под роли `administrator` и типа токена `web`.
       parameters:
         - name: scopes
-          description: Области доступа. Возможные значения перечислены в методе `POST` данного описания
           in: query
           type: string
           format: delim
+          description: Области
           required: false
       tags:
         - Token
@@ -961,12 +1144,11 @@ definitions:
         type: string
         description: Адрес электронной почты.
   Quality:
-    description: Объект описывающий шаблон `UI` для отображении на `web` странице 
+    description: Объект описывающий шаблон UI для отображении на web странице 
     type: object
     required:
       - accessibility
       - template
-      - id
     properties:
       id:
         type: integer
@@ -992,7 +1174,8 @@ definitions:
         description: Уникальный идентификатор
       key:
         type: string
-        description: Строка доступа. Далее будет использоваться для вызова методов сервиса путем добавления к запросу параметра `token`
+        description: |
+          Строка доступа. Далее будет использоваться для вызова методов сервиса путем добавления к запросу параметра token
       expire:
         type: string
         format: datetime
@@ -1039,6 +1222,29 @@ definitions:
         description: Категории к которым относится объект
         items:
           $ref: '#/definitions/ElementCategory'
+  Statistic:
+    description: |
+      Объект описывающий запись статистики использования сервиса.
+    type: object
+    required:
+      - latitude
+      - longitude
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: Уникальный идентификатор
+      latitude:
+        type: number
+        format: double
+        description: Широта
+      longitude:
+        type: number
+        format: double
+        description: Долгота
+      type:
+        type: string
+        description: Тип записи
   News:
     description: Новость
     type: object
@@ -1099,7 +1305,6 @@ definitions:
     type: object
     required:
       - name
-      - id
     properties:
       id:
         type: integer

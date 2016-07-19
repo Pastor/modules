@@ -14,8 +14,12 @@ import java.util.Set;
 @Entity
 @Table(name = "User")
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = {"tokens", "profile", "elements", "elementCategories", "qualities"})
-@ToString(exclude = {"tokens", "profile", "elements", "elementCategories", "qualities"})
+@EqualsAndHashCode(callSuper = true, exclude = {
+        "tokens", "profile", "elements", "elementCategories", "qualities", "statistics", "errors"
+})
+@ToString(exclude = {
+        "tokens", "profile", "elements", "elementCategories", "qualities", "statistics", "errors"
+})
 @NoArgsConstructor
 @Proxy(lazy = false)
 public final class User extends AbstractEntity {
@@ -61,6 +65,12 @@ public final class User extends AbstractEntity {
     @Setter(AccessLevel.NONE)
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     @OrderBy("id")
+    private Set<Statistic> statistics;
+
+    @JsonIgnore
+    @Setter(AccessLevel.NONE)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    @OrderBy("id")
     private Set<ElementCategory> elementCategories;
 
     @JsonIgnore
@@ -68,6 +78,12 @@ public final class User extends AbstractEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     @OrderBy("id")
     private Set<Quality> qualities;
+
+    @JsonIgnore
+    @Setter(AccessLevel.NONE)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    @OrderBy("id")
+    private Set<Error> errors;
 
     @JsonIgnore
     @Setter(AccessLevel.NONE)

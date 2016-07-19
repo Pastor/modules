@@ -33,7 +33,7 @@ class NewsController {
     List<News> news(@RequestParam(name = "page", defaultValue = "0", required = false) Integer page,
                     @RequestParam(name = "size", defaultValue = "10", required = false) Integer size)
             throws AuthenticationException {
-        final Sort sort = new Sort(Sort.Direction.ASC, "createdAt");
+        final Sort sort = new Sort(Sort.Direction.DESC, "createdAt");
         final PageRequest pageable = new PageRequest(page, size, sort);
         return newsRepository.list(pageable).getContent();
     }
@@ -68,18 +68,18 @@ class NewsController {
         newsRepository.delete(id);
     }
 
-    @RequestMapping(value = "/news/{id}/content", method = RequestMethod.GET/*, produces = {
-            MediaType.TEXT_HTML_VALUE + ";charset=UTF-8",
-            MediaType.TEXT_PLAIN_VALUE + ";charset=UTF-8"
-    }, consumes = {
-            MediaType.ALL_VALUE + ";charset=UTF-8"
-    }*/)
+    @RequestMapping(value = "/news/{id}/content", method = RequestMethod.GET)
     public String getContent(@PathVariable("id") Long id)
             throws AuthenticationException {
         final News one = newsRepository.findOne(id);
         if (one == null)
             throw new ObjectNotFoundException(id);
         return one.getContent();
+    }
+
+    @RequestMapping(value = "/news/count", method = RequestMethod.GET)
+    public long count() {
+        return newsRepository.listCount();
     }
 
     @AuthorizedScope(scopes = {"news"})

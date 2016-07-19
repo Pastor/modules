@@ -69,6 +69,8 @@ public class DemoConfiguration {
         final Scope scopeCategory = registerScope("category");
         final Scope scopeQuality = registerScope("quality");
         final Scope scopeNews = registerScope("news");
+        final Scope scopeStatistic = registerScope("statistic");
+        final Scope scopeError = registerScope("error");
         log.info("Создание пользователей");
         final User pastor = createUser("pastor", "+79265943742", "123456",
                 "viruszold@mail.ru", UserRole.ADMIN);
@@ -77,7 +79,8 @@ public class DemoConfiguration {
         final User content = createUser("content", "+79265941111", "123456",
                 "content@mail.ru", UserRole.CONTENT);
         log.info("Сщздание токенов");
-        createToken(pastor, scopeCategory, scopeElement, scopeNews, scopePing, scopeProfile, scopeQuality, scopeSettings);
+        createToken(pastor, scopeCategory, scopeElement, scopeNews, scopePing, scopeProfile, scopeQuality,
+                scopeSettings, scopeStatistic, scopeError);
         createToken(vasia, scopeProfile, scopeSettings);
         createToken(content, scopeProfile, scopeSettings, scopeNews);
         log.info("Создание профилей для пользователей");

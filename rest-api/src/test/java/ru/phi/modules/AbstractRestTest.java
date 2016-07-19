@@ -85,9 +85,11 @@ public abstract class AbstractRestTest {
         register("settings");
         register("ping");
         register("element");
-        register("categories");
+        register("category");
         register("quality");
         register("news");
+        register("statistic");
+        register("error");
     }
 
     protected final void register(String scopeName) {

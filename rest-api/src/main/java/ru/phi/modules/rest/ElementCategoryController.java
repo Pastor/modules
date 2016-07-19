@@ -36,7 +36,7 @@ class ElementCategoryController {
     }
 
     @Transactional
-    @AuthorizedScope(scopes = {"categories"})
+    @AuthorizedScope(scopes = {"category"})
     @RequestMapping(value = "/categories", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public
     @ResponseBody
@@ -60,7 +60,7 @@ class ElementCategoryController {
         return one;
     }
 
-    @AuthorizedScope(scopes = {"categories"})
+    @AuthorizedScope(scopes = {"category"})
     @RequestMapping(value = "/categories/{id}", method = RequestMethod.PUT)
     public void put(@PathVariable("id") Long id, @RequestBody ElementCategory category)
             throws AuthenticationException {
@@ -72,10 +72,16 @@ class ElementCategoryController {
         elementCategoryRepository.save(one);
     }
 
-    @AuthorizedScope(scopes = {"categories"})
+    @AuthorizedScope(scopes = {"category"})
     @RequestMapping(value = "/categories/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public void delete(@PathVariable("id") Long id)
             throws AuthenticationException {
         elementCategoryRepository.delete(id);
+    }
+
+    @AuthorizedScope(scopes = {"category"})
+    @RequestMapping(value = "/categories/count", method = RequestMethod.GET)
+    public long count() {
+        return elementCategoryRepository.count();
     }
 }

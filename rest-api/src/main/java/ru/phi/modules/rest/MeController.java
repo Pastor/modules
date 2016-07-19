@@ -43,7 +43,14 @@ class MeController {
     Profile me(@AuthorizedToken Token token)
             throws AuthenticationException {
         final User user = token.getUser();
-        return user.getProfile();
+        Profile profile = user.getProfile();
+        if (profile == null) {
+            profile = new Profile();
+            profile.setUser(user);
+            profile.setEmail(user.getEmail());
+            profile = profileRepository.save(profile);
+        }
+        return profile;
     }
 
     @AuthorizedScope(scopes = {"profile"})
@@ -105,11 +112,22 @@ class MeController {
             throws AuthenticationException {
         final User user = token.getUser();
         if (user != null && user.getProfile() != null) {
-            final Sort sort = new Sort(Sort.Direction.ASC, "createdAt");
+            final Sort sort = new Sort(Sort.Direction.DESC, "createdAt");
             final PageRequest pageable = new PageRequest(page, size, sort);
             return newsRepository.findByProfile(user.getProfile(), pageable).getContent();
         }
         return Collections.emptyList();
+    }
+
+    @AuthorizedScope(scopes = {"profile", "news"})
+    @RequestMapping(value = "/me/news/count", method = RequestMethod.GET)
+    public long meCount(@AuthorizedToken Token token)
+            throws AuthenticationException {
+        final User user = token.getUser();
+        if (user != null && user.getProfile() != null) {
+            return newsRepository.profileCount(user.getProfile());
+        }
+        return 0;
     }
 
     private Profile update(Profile profile) {
