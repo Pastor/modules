@@ -94,7 +94,7 @@ public class DemoConfiguration {
         createQuality(pastor, "Нормальный", "normal", Accessibility.NORMAL);
         createQuality(pastor, "Слабовидещие", "eyeless", Accessibility.EYELESS);
         log.info("Создание категорий");
-        final ElementCategory hospital = createCategory(pastor, "Полеклинника");
+        final ElementCategory hospital = createCategory(pastor, "Поликлиника");
         final ElementCategory emergency = createCategory(pastor, "Станция скорой медицинской помощи");
         final ElementCategory underground = createCategory(pastor, "Подземный переход");
         log.info("Создание объектов инфраструктуры");
