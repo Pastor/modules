@@ -25,10 +25,11 @@ public final class AccessibilityProcess extends AbstractEntity {
     @Enumerated(value = EnumType.STRING)
     private Accessibility accessibility;
 
-    @Min(0)
-    @Max(100)
-    @Column(name = "process", nullable = false)
-    private int process;
+    @NotNull
+    @NonNull
+    @Column(name = "type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AccessibilityType type;
 
     @JsonIgnore
     @Setter(AccessLevel.NONE)

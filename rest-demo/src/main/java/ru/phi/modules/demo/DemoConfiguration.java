@@ -58,6 +58,9 @@ public class DemoConfiguration {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AccessibilityProcessRepository acp;
+
     @Transactional
     @PostConstruct
     private void construct() {
@@ -92,25 +95,61 @@ public class DemoConfiguration {
         createQuality(pastor, "Слабовидещие", "eyeless", Accessibility.EYELESS);
         log.info("Создание категорий");
         final ElementCategory hospital = createCategory(pastor, "Полеклинника");
+        final ElementCategory emergency = createCategory(pastor, "Станция скорой медицинской помощи");
         final ElementCategory underground = createCategory(pastor, "Подземный переход");
         log.info("Создание объектов инфраструктуры");
+        registeAcessibilityProcess();
         createElement(
                 pastor,
-                "Полеклинника",
-                "Полеклинника дважды краснознаменная имени Ленина",
-                "ул. Зои Космедемьянской, д. 8/12",
+                "Станция скорой медицинской помощи",
+                "МБУЗ Химкинская станция скорой медицинской помощи",
+                "141400, МО, г. Химки, ул. Молодежная д. 9",
                 56.00000000,
                 53.00000000,
-                hospital
+                emergency,
+                acp.findByAccessibilityAndType(Accessibility.BAROOW, AccessibilityType.CONDITION),
+                acp.findByAccessibilityAndType(Accessibility.LEGLESS, AccessibilityType.CONDITION),
+                acp.findByAccessibilityAndType(Accessibility.EYELESS, AccessibilityType.CONDITION),
+                acp.findByAccessibilityAndType(Accessibility.BRAINLESS, AccessibilityType.NOT_INFORMATION)
         );
         createElement(
                 pastor,
-                "Переход",
-                "",
-                "ул. Зои Космедемьянской, д. 9/12",
+                "Центральная городская больница",
+                "МБУЗ \"Химкинская Центральная городская больница\", педиатрический корпус",
+                "МО, г. Химки, ул. Куркинское ш., д. 11",
                 46.00000000,
                 53.45000000,
-                underground
+                hospital,
+                acp.findByAccessibilityAndType(Accessibility.BAROOW, AccessibilityType.NOT_INFORMATION),
+                acp.findByAccessibilityAndType(Accessibility.LEGLESS, AccessibilityType.NOT_INFORMATION),
+                acp.findByAccessibilityAndType(Accessibility.EYELESS, AccessibilityType.NOT_INFORMATION),
+                acp.findByAccessibilityAndType(Accessibility.BRAINLESS, AccessibilityType.NOT_INFORMATION)
+        );
+        createElement(
+                pastor,
+                "Центральная городская больница",
+                "МБУЗ \"Химкинская Центральная городская больница\", травмотолого-ортопедическое отделение полеклинники",
+                "МО, г. Химки, ул. Куркинское ш., д. 11",
+                46.00000000,
+                53.45000000,
+                hospital,
+                acp.findByAccessibilityAndType(Accessibility.BAROOW, AccessibilityType.NOT_INFORMATION),
+                acp.findByAccessibilityAndType(Accessibility.LEGLESS, AccessibilityType.NOT_INFORMATION),
+                acp.findByAccessibilityAndType(Accessibility.EYELESS, AccessibilityType.NOT_INFORMATION),
+                acp.findByAccessibilityAndType(Accessibility.BRAINLESS, AccessibilityType.NOT_INFORMATION)
+        );
+        createElement(
+                pastor,
+                "Центральная городская больница",
+                "МБУЗ \"Химкинская Центральная городская больница\", хирургический корпус",
+                "МО, г. Химки, ул. Куркинское ш., д. 11",
+                46.00000000,
+                53.45000000,
+                hospital,
+                acp.findByAccessibilityAndType(Accessibility.BAROOW, AccessibilityType.NOT_INFORMATION),
+                acp.findByAccessibilityAndType(Accessibility.LEGLESS, AccessibilityType.NOT_INFORMATION),
+                acp.findByAccessibilityAndType(Accessibility.EYELESS, AccessibilityType.NOT_INFORMATION),
+                acp.findByAccessibilityAndType(Accessibility.BRAINLESS, AccessibilityType.NOT_INFORMATION)
         );
         createElement(
                 pastor,
@@ -158,7 +197,8 @@ public class DemoConfiguration {
                                   String address,
                                   double latitude,
                                   double longitude,
-                                  ElementCategory... categories) {
+                                  ElementCategory category,
+                                  AccessibilityProcess... processes) {
         final Element element = new Element();
         element.setUser(user);
         element.setName(name);
@@ -166,7 +206,8 @@ public class DemoConfiguration {
         element.setAddress(address);
         element.setLatitude(latitude);
         element.setLongitude(longitude);
-        element.setCategories(Sets.newHashSet(categories));
+        element.setCategories(Sets.newHashSet(category));
+        element.setAccessibilityProcesses(Sets.newHashSet(processes));
         final Element save = elementRepository.save(element);
         log.info("Создан объект {}", save);
         return save;
@@ -236,5 +277,16 @@ public class DemoConfiguration {
         scope.setRole(UserRole.USER);
         log.info(MessageFormat.format("Создана область {0}", scopeName));
         return scopeRepository.save(scope);
+    }
+
+    private void registeAcessibilityProcess() {
+        for (Accessibility accessibility : Accessibility.values()) {
+            for (AccessibilityType type : AccessibilityType.values()) {
+                final AccessibilityProcess entity = new AccessibilityProcess();
+                entity.setAccessibility(accessibility);
+                entity.setType(type);
+                acp.save(entity);
+            }
+        }
     }
 }

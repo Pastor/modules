@@ -83,7 +83,6 @@ class ElementController {
         return element;
     }
 
-    @AuthorizedScope(scopes = {"element"})
     @RequestMapping(value = "/elements/count", method = RequestMethod.GET)
     public long count() {
         return elementRepository.count();

@@ -4,5 +4,7 @@ public enum Accessibility {
     BAROOW,
     NORMAL,
     EYELESS,
+    LEGLESS,
+    BRAINLESS,
     OTHER
 }
