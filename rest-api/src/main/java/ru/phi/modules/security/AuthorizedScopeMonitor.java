@@ -30,14 +30,19 @@ final class AuthorizedScopeMonitor {
         final Optional<Token> token = SecurityUtilities.currentToken();
         if (token.isPresent()) {
             final Token one = repository.findOne(token.get().getId());
-            final UserRole role = one.getUser().getRole();
             final Set<ru.phi.modules.entity.Scope> scopes = one.getScopes();
             for (String s : scope.scopes()) {
                 final ru.phi.modules.entity.Scope ss = new ru.phi.modules.entity.Scope();
                 ss.setName(s.toLowerCase());
-                //FIXME: Проверяется искуственно. Необходимо в параметр annotation  добавть поле ролей, к которым она относится
-                ss.setRole(role);
-                if (!scopes.contains(ss))
+                boolean found = false;
+                for (UserRole scopeRole : scope.roles()) {
+                    ss.setRole(scopeRole);
+                    if (scopes.contains(ss)) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
                     throw new AccessScopeException(format("Область доступа \"{0}\" в ключе не зарегистрирована", s.toLowerCase()));
             }
         } else {
