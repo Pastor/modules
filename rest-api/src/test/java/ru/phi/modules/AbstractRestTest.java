@@ -129,6 +129,8 @@ public abstract class AbstractRestTest {
         register("error");
 
         registeredCategory = elementCategoryRepository.count();
+
+        Utilities.register(accessibilityProcessRepository);
     }
 
     protected final int registeredCategory() {
@@ -156,6 +158,7 @@ public abstract class AbstractRestTest {
         newsRepository.deleteAll();
         qualityRepository.deleteAll();
         elementCategoryRepository.deleteAll();
+        accessibilityProcessRepository.deleteAll();
         if (environment != null)
             environment.clearDown();
     }
@@ -207,11 +210,13 @@ public abstract class AbstractRestTest {
     protected final EndPoint createEndpoint(User user,
                                             double latitude,
                                             double longitude,
-                                            EndPointType type) {
+                                            EndPointType type,
+                                            AccessibilityProcess... processes) {
         final EndPoint endPoint = new EndPoint();
         endPoint.setUser(user);
         endPoint.setPoint(point(user, latitude, longitude));
         endPoint.setType(type);
+        endPoint.setAccessibility(Sets.newHashSet(processes));
         return endPointRepository.save(endPoint);
     }
 
@@ -224,5 +229,9 @@ public abstract class AbstractRestTest {
         quality.setTemplate(template);
         quality.setName(name);
         return qualityRepository.save(quality);
+    }
+
+    protected final AccessibilityProcess standardAccPro() {
+        return Utilities.standard(accessibilityProcessRepository);
     }
 }

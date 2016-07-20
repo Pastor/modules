@@ -56,15 +56,6 @@ class VersionController {
         v.setBuild(3L);
         v.setRc(Boolean.TRUE);
         v.setSupport("support@me.com");
-        final Version current = versionRepository.last();
-        if (current != null) {
-            if (v.equals(current))
-                return;
-        }
-        try {
-            versionRepository.save(v);
-        } catch (Exception ex) {
-            log.error("Версия уже зарегистрирована?");
-        }
+        versionRepository.save(v);
     }
 }

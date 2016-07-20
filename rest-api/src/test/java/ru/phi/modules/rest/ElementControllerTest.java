@@ -6,6 +6,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import ru.phi.modules.AbstractRestTest;
+import ru.phi.modules.Utilities;
 import ru.phi.modules.entity.*;
 import ru.phi.modules.exceptions.ObjectNotFoundException;
 import ru.phi.modules.exceptions.ValidationException;
@@ -67,6 +68,42 @@ public final class ElementControllerTest extends AbstractRestTest {
         environment.update(token.getKey(), element.getId(), (EndPoint[]) null);
     }
 
+    @Test(expected = ValidationException.class)
+    public void faultValidateUpdateNewEndPointsWithoutAccessibilityProperty() throws Exception {
+        final Token token = newToken("element");
+        final Element element = createElementWithEndPoints();
+        final EndPoint endPoint = new EndPoint();
+        final GeoPoint point = new GeoPoint();
+        point.setLongitude(0);
+        point.setLatitude(0);
+        endPoint.setPoint(point);
+        endPoint.setType(EndPointType.both);
+        final AccessibilityProcess standard = Utilities.standard(accessibilityProcessRepository);
+        standard.setAccessibility(null);
+        endPoint.setAccessibility(Sets.newHashSet(standard));
+        environment.update(token.getKey(), element.getId(), new EndPoint[]{endPoint});
+        final Element one = environment.getElement(token.getKey(), element.getId());
+        assertEquals(one.getEndPoints().size(), 1);
+    }
+
+    @Test(expected = ValidationException.class)
+    public void faultValidateUpdateNewEndPointsWithoutTypeProperty() throws Exception {
+        final Token token = newToken("element");
+        final Element element = createElementWithEndPoints();
+        final EndPoint endPoint = new EndPoint();
+        final GeoPoint point = new GeoPoint();
+        point.setLongitude(0);
+        point.setLatitude(0);
+        endPoint.setPoint(point);
+        endPoint.setType(EndPointType.both);
+        final AccessibilityProcess standard = Utilities.standard(accessibilityProcessRepository);
+        standard.setType(null);
+        endPoint.setAccessibility(Sets.newHashSet(standard));
+        environment.update(token.getKey(), element.getId(), new EndPoint[]{endPoint});
+        final Element one = environment.getElement(token.getKey(), element.getId());
+        assertEquals(one.getEndPoints().size(), 1);
+    }
+
     @Test
     public void list() throws Exception {
         final Token token = newToken();
@@ -79,7 +116,7 @@ public final class ElementControllerTest extends AbstractRestTest {
     @Test
     public void get() throws Exception {
         final Token token = newToken();
-        final Element element = createElement(successUser, "NAME", "FULL_NAME", "ADDRESS", 54.0000, 55.00000, hospital);
+        final Element element = createElement(successUser, "NAME", "FULL_NAME", "ADDRESS", 54.0000, 55.00000, hospital, standardAccPro());
         final Element element2 = environment.getElement(token.getKey(), element.getId());
         assertNotNull(element2);
         assertEquals(element.getName(), element2.getName());
@@ -88,7 +125,7 @@ public final class ElementControllerTest extends AbstractRestTest {
     @Test
     public void update() throws Exception {
         final Token token = newToken("element");
-        final Element element = createElement(successUser, "NAME", "FULL_NAME", "ADDRESS", 54.0000, 55.00000, hospital);
+        final Element element = createElement(successUser, "NAME", "FULL_NAME", "ADDRESS", 54.0000, 55.00000, hospital, standardAccPro());
         element.setName("NEW_NAME");
         environment.update(token.getKey(), element.getId(), element);
         final Element element2 = elementRepository.findOne(element.getId());
@@ -108,11 +145,11 @@ public final class ElementControllerTest extends AbstractRestTest {
     protected final Element createElementWithEndPoints() {
         Element element = createElement(successUser, "NAME", "FULL_NAME", "ADDRESS", 54.0090, 55.90000, hospital);
         final Set<EndPoint> endpoints = Sets.newHashSet(
-                createEndpoint(successUser, 34.00000, 54.00000, EndPointType.enter),
-                createEndpoint(successUser, 34.10000, 54.00000, EndPointType.enter),
-                createEndpoint(successUser, 34.20000, 54.00000, EndPointType.enter),
-                createEndpoint(successUser, 34.30000, 54.00000, EndPointType.enter),
-                createEndpoint(successUser, 34.40000, 54.00000, EndPointType.enter)
+                createEndpoint(successUser, 34.00000, 54.00000, EndPointType.enter, standardAccPro()),
+                createEndpoint(successUser, 34.10000, 54.00000, EndPointType.enter, standardAccPro()),
+                createEndpoint(successUser, 34.20000, 54.00000, EndPointType.enter, standardAccPro()),
+                createEndpoint(successUser, 34.30000, 54.00000, EndPointType.enter, standardAccPro()),
+                createEndpoint(successUser, 34.40000, 54.00000, EndPointType.enter, standardAccPro())
         );
         element.setEndPoints(endpoints);
         element = elementRepository.save(element);
@@ -124,8 +161,8 @@ public final class ElementControllerTest extends AbstractRestTest {
         final Token token = newToken("element");
         final Element element = createElementWithEndPoints();
         final Set<EndPoint> endpoints = Sets.newHashSet(
-                createEndpoint(successUser, 34.00000, 54.00000, EndPointType.enter),
-                createEndpoint(successUser, 34.40000, 54.04000, EndPointType.enter)
+                createEndpoint(successUser, 34.00000, 54.00000, EndPointType.enter, standardAccPro()),
+                createEndpoint(successUser, 34.40000, 54.04000, EndPointType.enter, standardAccPro())
         );
         environment.update(token.getKey(), element.getId(), endpoints.toArray(new EndPoint[endpoints.size()]));
         final Element one = environment.getElement(token.getKey(), element.getId());
@@ -151,6 +188,7 @@ public final class ElementControllerTest extends AbstractRestTest {
         point.setLatitude(0);
         endPoint.setPoint(point);
         endPoint.setType(EndPointType.both);
+        endPoint.setAccessibility(Sets.newHashSet(Utilities.standard(accessibilityProcessRepository)));
         environment.update(token.getKey(), element.getId(), new EndPoint[]{endPoint});
         final Element one = environment.getElement(token.getKey(), element.getId());
         assertEquals(one.getEndPoints().size(), 1);
@@ -189,6 +227,7 @@ public final class ElementControllerTest extends AbstractRestTest {
         element.setEndPoints(null);
         element.setAccessibilityProcesses(null);
         element.setCategories(Sets.newHashSet(hospital));
+        element.setAccessibilityProcesses(Sets.newHashSet(standardAccPro()));
         final Element element2 = environment.createElement(token.getKey(), element);
         assertNotNull(element2);
         assertEquals(element2.getName(), "NEW000000000000000");
@@ -205,7 +244,7 @@ public final class ElementControllerTest extends AbstractRestTest {
 
     private void createElements(int size) {
         for (int i = 0; i < size; ++i) {
-            createElement(successUser, "NAME" + i, "FULL_NAME" + i, "ADDRESS" + i, 50.0000 + i, 55.00000 + i, hospital);
+            createElement(successUser, "NAME" + i, "FULL_NAME" + i, "ADDRESS" + i, 50.0000 + i, 55.00000 + i, hospital, standardAccPro());
         }
     }
 }

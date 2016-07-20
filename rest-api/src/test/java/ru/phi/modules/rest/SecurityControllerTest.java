@@ -1,6 +1,9 @@
-package ru.phi.modules;
+package ru.phi.modules.rest;
 
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
+import ru.phi.modules.AbstractRestTest;
 import ru.phi.modules.entity.Profile;
 import ru.phi.modules.entity.Token;
 import ru.phi.modules.exceptions.AuthenticationException;
@@ -9,7 +12,8 @@ import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-public final class SecurityControllerIntegrationTest extends AbstractRestTest {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public final class SecurityControllerTest extends AbstractRestTest {
 
     @Test(expected = AuthenticationException.class)
     public void faultUpdate() throws Exception {

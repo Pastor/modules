@@ -33,12 +33,13 @@ public final class EndPoint extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private EndPointType type = EndPointType.both;
 
-    @JsonProperty(value = "accessibility", required = true)
     @NotNull
     @NonNull
-    @Column(name = "accessibility", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Accessibility accessibility = Accessibility.normal;
+    @JsonProperty(value = "accessibility", required = true)
+    @Setter(AccessLevel.PUBLIC)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @OrderBy("id")
+    private Set<AccessibilityProcess> accessibility;
 
     @JsonIgnore
     @NotNull

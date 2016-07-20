@@ -13,7 +13,7 @@ import ru.phi.modules.api.ExceptionService;
 import ru.phi.modules.entity.Error;
 import ru.phi.modules.entity.Token;
 import ru.phi.modules.repository.ErrorRepository;
-import ru.phi.modules.security.Utilities;
+import ru.phi.modules.security.SecurityUtilities;
 
 import javax.persistence.Column;
 import javax.servlet.http.HttpServletResponse;
@@ -56,7 +56,7 @@ final class ExceptionServiceImpl implements ExceptionService {
         PrintWriter printWriter = new PrintWriter(writer);
         ex.printStackTrace(printWriter);
         error.setTrace(writer.toString().substring(0, maxLength));
-        final Optional<Token> token = Utilities.currentToken();
+        final Optional<Token> token = SecurityUtilities.currentToken();
         if (token.isPresent())
             error.setUser(token.get().getUser());
         repository.save(error);

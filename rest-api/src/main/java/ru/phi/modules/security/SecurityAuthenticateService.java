@@ -43,11 +43,11 @@ class SecurityAuthenticateService implements AuthenticateService {
     public Token authenticate(String key) throws AuthenticationException {
         Optional<String> opKey = Optional.ofNullable(key);
         if (!opKey.isPresent())
-            throw new AuthenticationException("Empty token");
+            throw new AuthenticationException("Не установлен ключ доступа");
         final String tokenKey = opKey.get();
         final Token token = tokenRepository.findByKey(tokenKey);
         if (token == null)
-            throw new AuthenticationException(format("Token \"{0}\" not found", tokenKey));
+            throw new AuthenticationException(format("Ключ \"{0}\" не зарегистрирован в сервисе", tokenKey));
         return token;
     }
 
@@ -61,7 +61,7 @@ class SecurityAuthenticateService implements AuthenticateService {
         final Token token = new Token();
         token.setExpiredAt(LocalDateTime.now().plus(365, ChronoUnit.DAYS));
         token.setUser(user);
-        token.setKey(Utilities.generateTokenKey());
+        token.setKey(SecurityUtilities.generateTokenKey());
         processScope(token, user.getRole(), scopes);
         tokenRepository.save(token);
         user.getTokens().clear();

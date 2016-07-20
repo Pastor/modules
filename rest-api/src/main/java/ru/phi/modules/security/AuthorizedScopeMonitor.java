@@ -26,7 +26,7 @@ final class AuthorizedScopeMonitor {
     @Transactional
     @Around("execution(@ru.phi.modules.security.AuthorizedScope * *.*(..)) && @annotation(scope)")
     public Object scoped(ProceedingJoinPoint point, AuthorizedScope scope) throws Throwable {
-        final Optional<Token> token = Utilities.currentToken();
+        final Optional<Token> token = SecurityUtilities.currentToken();
         if (token.isPresent()) {
             final Token one = repository.findOne(token.get().getId());
             final Set<ru.phi.modules.entity.Scope> scopes = one.getScopes();

@@ -7,10 +7,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import ru.phi.modules.Utilities;
 import ru.phi.modules.entity.*;
 import ru.phi.modules.exceptions.AuthenticationException;
 import ru.phi.modules.exceptions.ObjectNotFoundException;
 import ru.phi.modules.exceptions.ValidationException;
+import ru.phi.modules.repository.AccessibilityProcessRepository;
 import ru.phi.modules.repository.ElementRepository;
 import ru.phi.modules.repository.EndPointRepository;
 import ru.phi.modules.repository.GeoPointRepository;
@@ -33,6 +35,9 @@ class ElementController extends AbstractController {
 
     @Autowired
     private ElementRepository elementRepository;
+
+    @Autowired
+    private AccessibilityProcessRepository acp;
 
     @RequestMapping(value = "/elements", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public
@@ -86,9 +91,9 @@ class ElementController extends AbstractController {
 
     @AuthorizedScope(scopes = {"element"})
     @RequestMapping(value = "/elements/{id}/endpoints", method = RequestMethod.PUT)
-    public void putEndPoints(@AuthorizedToken Token token,
-                             @PathVariable("id") Long id,
-                             @RequestBody(required = false) EndPoint[] endpoints)
+    public void updateEndPoints(@AuthorizedToken Token token,
+                                @PathVariable("id") Long id,
+                                @RequestBody(required = false) EndPoint[] endpoints)
             throws AuthenticationException {
         final Element one = elementRepository.findOne(id);
         if (one == null)
@@ -105,6 +110,7 @@ class ElementController extends AbstractController {
                 p.setUser(user);
                 p.setPoint(point);
                 p.setType(endPoint.getType());
+                p.setAccessibility(listEndPoints(endPoint.getAccessibility()));
                 p = endPointRepository.save(p);
                 byPoint.add(p);
             }
@@ -116,10 +122,28 @@ class ElementController extends AbstractController {
             point.setUser(user);
             point.setType(EndPointType.both);
             point.setPoint(one.getPoint());
+            point.setAccessibility(Sets.newHashSet(Utilities.standard(acp)));
             points.add(endPointRepository.save(point));
         }
         one.setEndPoints(points);
         elementRepository.save(one);
+    }
+
+    private Set<AccessibilityProcess> listEndPoints(Set<AccessibilityProcess> accessibility) {
+        final Set<AccessibilityProcess> processes = Sets.newHashSet();
+        for (AccessibilityProcess process : accessibility) {
+            final Accessibility a = process.getAccessibility();
+            if (a == null)
+                throw new ValidationException("Поле accessibility не может быть пустым");
+            final AccessibilityType type = process.getType();
+            if (type == null)
+                throw new ValidationException("Поле accessibility не может быть пустым");
+            final AccessibilityProcess ap = acp.findByAccessibilityAndType(
+                    a,
+                    type);
+            processes.add(ap);
+        }
+        return processes;
     }
 
     @AuthorizedScope(scopes = {"element"})
@@ -135,6 +159,7 @@ class ElementController extends AbstractController {
         point.setUser(user);
         point.setType(EndPointType.both);
         point.setPoint(one.getPoint());
+        point.setAccessibility(Sets.newHashSet(Utilities.standard(acp)));
         points.add(endPointRepository.save(point));
         one.setEndPoints(points);
         elementRepository.save(one);

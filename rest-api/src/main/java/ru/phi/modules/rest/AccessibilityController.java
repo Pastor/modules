@@ -5,9 +5,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import ru.phi.modules.entity.Accessibility;
+import ru.phi.modules.Utilities;
 import ru.phi.modules.entity.AccessibilityProcess;
-import ru.phi.modules.entity.AccessibilityType;
 import ru.phi.modules.exceptions.AuthenticationException;
 import ru.phi.modules.repository.AccessibilityProcessRepository;
 
@@ -36,13 +35,6 @@ class AccessibilityController {
 
     @PostConstruct
     private void construct() {
-        for (Accessibility accessibility : Accessibility.values()) {
-            for (AccessibilityType type : AccessibilityType.values()) {
-                final AccessibilityProcess entity = new AccessibilityProcess();
-                entity.setAccessibility(accessibility);
-                entity.setType(type);
-                acp.save(entity);
-            }
-        }
+        Utilities.register(acp);
     }
 }

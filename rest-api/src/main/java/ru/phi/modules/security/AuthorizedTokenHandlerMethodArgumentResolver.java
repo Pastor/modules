@@ -27,7 +27,7 @@ class AuthorizedTokenHandlerMethodArgumentResolver implements HandlerMethodArgum
                                   NativeWebRequest webRequest,
                                   WebDataBinderFactory binderFactory) throws Exception {
         if (this.supportsParameter(parameter)) {
-            final Optional<Token> token = Utilities.currentToken();
+            final Optional<Token> token = SecurityUtilities.currentToken();
             if (token.isPresent()) {
                 return token.get();
             }

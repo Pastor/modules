@@ -14,7 +14,7 @@ import ru.phi.modules.RestMvcConfiguration;
 import ru.phi.modules.entity.*;
 import ru.phi.modules.repository.*;
 import ru.phi.modules.security.RestSecurityConfiguration;
-import ru.phi.modules.security.Utilities;
+import ru.phi.modules.security.SecurityUtilities;
 import ru.phi.modules.strong.StaticConfiguration;
 
 import javax.annotation.PostConstruct;
@@ -144,8 +144,9 @@ public class DemoConfiguration {
                 acp.findByAccessibilityAndType(Accessibility.eyeless, AccessibilityType.not_information),
                 acp.findByAccessibilityAndType(Accessibility.brainless, AccessibilityType.not_information)
         );
-        final EndPoint point1 = createEndPoint(pastor, point(pastor, 34.00000, 76.000000), EndPointType.exit);
-        final EndPoint point2 = createEndPoint(pastor, point(pastor, 34.60000, 76.009000), EndPointType.enter);
+        final AccessibilityProcess standard = ru.phi.modules.Utilities.standard(acp);
+        final EndPoint point1 = createEndPoint(pastor, point(pastor, 34.00000, 76.000000), EndPointType.exit, standard);
+        final EndPoint point2 = createEndPoint(pastor, point(pastor, 34.60000, 76.009000), EndPointType.enter, standard);
         element.setEndPoints(Sets.newHashSet(point1, point2));
         elementRepository.save(element);
         element = createElement(
@@ -195,7 +196,7 @@ public class DemoConfiguration {
         token.setUser(user);
         token.setExpiredAt(LocalDateTime.now().plus(365, ChronoUnit.DAYS));
         token.setScopes(Sets.newHashSet(scopes));
-        final String key = Utilities.generateTokenKey();
+        final String key = SecurityUtilities.generateTokenKey();
         token.setKey(key);
         log.info("Token for {}: {}", user.getUsername(), key);
         tokenRepository.save(token);
@@ -229,7 +230,8 @@ public class DemoConfiguration {
         element.setAddress(address);
         final GeoPoint point = point(user, latitude, longitude);
         element.setPoint(point);
-        element.setEndPoints(Sets.newHashSet(createEndPoint(user, point, EndPointType.both)));
+        final AccessibilityProcess standard = ru.phi.modules.Utilities.standard(acp);
+        element.setEndPoints(Sets.newHashSet(createEndPoint(user, point, EndPointType.both, standard)));
         element.setCategories(Sets.newHashSet(category));
         element.setAccessibilityProcesses(Sets.newHashSet(processes));
         final Element save = elementRepository.save(element);
@@ -312,11 +314,12 @@ public class DemoConfiguration {
         return elementRepository.save(element);
     }
 
-    private EndPoint createEndPoint(User user, GeoPoint point, EndPointType type) {
+    private EndPoint createEndPoint(User user, GeoPoint point, EndPointType type, AccessibilityProcess... processes) {
         final EndPoint endPoint = new EndPoint();
         endPoint.setUser(user);
         endPoint.setType(type);
         endPoint.setPoint(point);
+        endPoint.setAccessibility(Sets.newHashSet(processes));
         return endPointRepository.save(endPoint);
     }
 }

@@ -1,12 +1,14 @@
-package ru.phi.modules.repository;
+package ru.phi.modules.security;
 
-import org.junit.After;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
@@ -14,14 +16,17 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ru.phi.modules.JpaConfiguration;
-import ru.phi.modules.entity.Accessibility;
-import ru.phi.modules.entity.News;
-import ru.phi.modules.entity.Profile;
-import ru.phi.modules.entity.User;
+import ru.phi.modules.RestMvcConfiguration;
+import ru.phi.modules.exceptions.AuthenticationException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebIntegrationTest(randomPort = true)
-@ContextConfiguration(classes = {JpaConfiguration.class})
+@ContextConfiguration(classes = {
+        RestSecurityConfiguration.class,
+        JpaConfiguration.class,
+        RestMvcConfiguration.class,
+        SecurityAuthenticateServiceTest.ScannerConfiguration.class
+})
 @TestPropertySource({"classpath:application.properties"})
 @SqlGroup({
         @Sql(
@@ -42,41 +47,19 @@ import ru.phi.modules.entity.User;
         )
 })
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public final class NewsRepositoryTest {
-    @Autowired
-    private NewsRepository newsRepository;
+public final class SecurityAuthenticateServiceTest {
 
     @Autowired
-    private UserRepository userRepository;
+    private SecurityAuthenticateService service;
 
-    @Autowired
-    private ProfileRepository profileRepository;
-
-
-    @After
-    public void tearDown() throws Exception {
-        newsRepository.deleteAll();
-        userRepository.deleteAll();
-        profileRepository.deleteAll();
+    @Test(expected = AuthenticationException.class)
+    public void authenticateWithNullKey() throws Exception {
+        service.authenticate(null);
     }
 
-    @Test
-    public void createNews() throws Exception {
-        User user = new User();
-        user.setUsername("username");
-        user.setPassword("password");
-        user = userRepository.save(user);
-        Profile profile = new Profile();
-        profile.setUser(user);
-        profile.setLastName("Last");
-        profile.setFirstName("First");
-        profile.setAccessibility(Accessibility.eyeless);
-        profile.setEmail("m@me.com");
-        profile = profileRepository.save(profile);
-        final News news = new News();
-        news.setTitle("Title");
-        news.setBref("Bref");
-        news.setProfile(profile);
-        newsRepository.save(news);
+    @Configuration
+    @ComponentScan({"ru.phi.modules.exceptions"})
+    public static class ScannerConfiguration {
+
     }
 }
