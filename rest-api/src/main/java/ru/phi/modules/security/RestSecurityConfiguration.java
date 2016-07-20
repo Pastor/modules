@@ -43,6 +43,7 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/static/fonts/*")
                 .antMatchers(HttpMethod.GET, "/static/i18n/*")
                 .antMatchers(HttpMethod.GET, "/static/images/*")
+                .antMatchers(HttpMethod.GET, "/static/scripts/*")
                 .antMatchers(HttpMethod.POST, "/rest/v1/token")
                 .antMatchers(HttpMethod.GET, "/rest/v1/ping/clear")
                 .antMatchers(HttpMethod.GET, "/rest/v1/version")

@@ -2,6 +2,7 @@ package ru.phi.modules.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.hibernate.annotations.Proxy;
 
@@ -17,32 +18,32 @@ import javax.validation.constraints.NotNull;
 @Proxy(lazy = false)
 public final class Settings extends AbstractEntity {
 
+    @JsonProperty("filter")
     @Column(name = "filter")
     private String filter;
 
+    @JsonProperty("quality")
     @PrimaryKeyJoinColumn(name = "quality_id", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     private Quality quality;
 
     @Column(name = "route_type")
     @Enumerated(EnumType.STRING)
     private RouteType routeType = RouteType.BEST;
 
-    @Column(name = "start_longitude")
-    private Double startLongitude;
+    @JsonProperty("start")
+    @PrimaryKeyJoinColumn(name = "stop_point_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    private GeoPoint start;
 
-    @Column(name = "start_latitude")
-    private Double startLatitude;
-
-    @Column(name = "end_longitude")
-    private Double endLongitude;
-
-    @Column(name = "end_latitude")
-    private Double endLatitude;
+    @JsonProperty("stop")
+    @PrimaryKeyJoinColumn(name = "stop_point_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    private GeoPoint stop;
 
     @JsonIgnore
     @NotNull
     @NonNull
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, optional = false)
     private Profile profile;
 }

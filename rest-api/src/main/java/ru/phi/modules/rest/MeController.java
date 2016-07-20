@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping({"/rest/v1/", "/rest/"})
 @RestController
 @Transactional
-class MeController {
+class MeController extends AbstractController {
 
     @Autowired
     private SettingsRepository settingsRepository;
@@ -57,7 +57,7 @@ class MeController {
     @RequestMapping(value = "/me", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public
     @ResponseBody
-    void putMe(@AuthorizedToken Token token, @RequestBody Profile profile) throws AuthenticationException {
+    void updateMe(@AuthorizedToken Token token, @RequestBody Profile profile) throws AuthenticationException {
         final User user = token.getUser();
         final Profile meProfile = user.getProfile();
         if (meProfile == null) {
@@ -111,7 +111,7 @@ class MeController {
                        @RequestParam(name = "size", defaultValue = "10", required = false) Integer size)
             throws AuthenticationException {
         final User user = token.getUser();
-        if (user != null && user.getProfile() != null) {
+        if (user.getProfile() != null) {
             final Sort sort = new Sort(Sort.Direction.DESC, "createdAt");
             final PageRequest pageable = new PageRequest(page, size, sort);
             return newsRepository.findByProfile(user.getProfile(), pageable).getContent();
@@ -139,16 +139,14 @@ class MeController {
     public void putSettings(@AuthorizedToken Token token, @RequestBody Settings settings)
             throws AuthenticationException {
         final User user = token.getUser();
-        if (user != null && user.getProfile() != null) {
+        if (user.getProfile() != null) {
             final Profile profile = update(user.getProfile());
             if (profile.getSettings() != null) {
                 /**FIXME: Копирование параметровю Следует переписать */
                 final Settings meSettings = profile.getSettings();
                 meSettings.setFilter(settings.getFilter());
-                meSettings.setStartLatitude(settings.getStartLatitude());
-                meSettings.setStartLongitude(settings.getStartLongitude());
-                meSettings.setEndLatitude(settings.getEndLatitude());
-                meSettings.setEndLongitude(settings.getEndLongitude());
+                meSettings.setStart(point(user, settings.getStart()));
+                meSettings.setStop(point(user, settings.getStop()));
                 if (settings.getQuality() != null) {
                     final Quality quality = qualityRepository.findOne(settings.getQuality().getId());
                     meSettings.setQuality(quality);

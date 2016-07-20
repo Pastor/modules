@@ -2,6 +2,7 @@ package ru.phi.modules.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.hibernate.annotations.Proxy;
 
@@ -17,11 +18,12 @@ import javax.validation.constraints.NotNull;
 @Proxy(lazy = false)
 public final class Statistic extends AbstractEntity {
 
-    @Column(name = "longitude")
-    private double longitude;
-
-    @Column(name = "latitude")
-    private double latitude;
+    @JsonProperty("point")
+    @NotNull
+    @NonNull
+    @PrimaryKeyJoinColumn(name = "point_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, optional = false)
+    private GeoPoint point;
 
     @JsonIgnore
     @NotNull

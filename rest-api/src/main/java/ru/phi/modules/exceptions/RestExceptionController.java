@@ -40,6 +40,13 @@ final class RestExceptionController extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, null, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
+    @ExceptionHandler({ValidationException.class})
+    public
+    @ResponseBody
+    ResponseEntity<Object> handleValidationException(Exception ex, WebRequest request) {
+        return handleExceptionInternal(ex, null, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
     @ExceptionHandler({ObjectNotFoundException.class})
     public
     @ResponseBody

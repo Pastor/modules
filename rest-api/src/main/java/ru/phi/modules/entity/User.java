@@ -15,10 +15,12 @@ import java.util.Set;
 @Table(name = "User")
 @Data
 @EqualsAndHashCode(callSuper = true, exclude = {
-        "tokens", "profile", "elements", "elementCategories", "qualities", "statistics", "errors"
+        "tokens", "profile", "elements", "elementCategories",
+        "qualities", "statistics", "errors", "geoPoints", "endPoints"
 })
 @ToString(exclude = {
-        "tokens", "profile", "elements", "elementCategories", "qualities", "statistics", "errors"
+        "tokens", "profile", "elements", "elementCategories",
+        "qualities", "statistics", "errors", "geoPoints", "endPoints"
 })
 @NoArgsConstructor
 @Proxy(lazy = false)
@@ -84,6 +86,18 @@ public final class User extends AbstractEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     @OrderBy("id")
     private Set<Error> errors;
+
+    @JsonIgnore
+    @Setter(AccessLevel.NONE)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    @OrderBy("id")
+    private Set<GeoPoint> geoPoints;
+
+    @JsonIgnore
+    @Setter(AccessLevel.NONE)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    @OrderBy("id")
+    private Set<EndPoint> endPoints;
 
     @JsonIgnore
     @Setter(AccessLevel.NONE)

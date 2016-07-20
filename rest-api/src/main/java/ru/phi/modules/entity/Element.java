@@ -14,8 +14,12 @@ import java.util.Set;
 @Entity
 @Table(name = "Element")
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = {"categories", "user", "accessibilityProcesses"})
-@ToString(exclude = {"categories", "user", "accessibilityProcesses"})
+@EqualsAndHashCode(callSuper = true, exclude = {
+        "categories", "user", "accessibilityProcesses", "endPoints", "polygon", "point"
+})
+@ToString(exclude = {
+        "categories", "user", "accessibilityProcesses", "endPoints", "polygon", "point"
+})
 @NoArgsConstructor
 @Proxy(lazy = false)
 public final class Element extends AbstractEntity {
@@ -26,7 +30,7 @@ public final class Element extends AbstractEntity {
     @Column(name = "full_name")
     private String fullName;
 
-    @NotNull
+    @NotNull(message = "Адрес не может быть пустым")
     @NonNull
     @NotEmpty
     @Column(name = "address", nullable = false)
@@ -36,30 +40,42 @@ public final class Element extends AbstractEntity {
     @Column(name = "info")
     private String info;
 
+    @JsonProperty("point")
     @NotNull
     @NonNull
-    @Column(name = "longitude", nullable = false)
-    private double longitude;
+    @PrimaryKeyJoinColumn(name = "point_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, optional = false)
+    private GeoPoint point;
 
-    @NotNull
-    @NonNull
-    @Column(name = "latitude", nullable = false)
-    private double latitude;
+
+    @JsonProperty("polygon")
+    @Setter(value = AccessLevel.PUBLIC)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @OrderBy("id")
+    private Set<GeoPoint> polygon;
 
     @JsonIgnore
     @NotNull
     @NonNull
     @PrimaryKeyJoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, optional = false)
     private User user;
 
+    @JsonProperty("end_points")
     @Setter(value = AccessLevel.PUBLIC)
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @OrderBy("id")
+    private Set<EndPoint> endPoints;
+
+    @JsonProperty("categories")
+    @Setter(value = AccessLevel.PUBLIC)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @OrderBy("id")
     private Set<ElementCategory> categories;
 
+    @JsonProperty("accessibility_process")
     @Setter(value = AccessLevel.PUBLIC)
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @OrderBy("id")
     private Set<AccessibilityProcess> accessibilityProcesses;
 }

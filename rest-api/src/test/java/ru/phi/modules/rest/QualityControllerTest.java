@@ -1,6 +1,8 @@
 package ru.phi.modules.rest;
 
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import ru.phi.modules.AbstractRestTest;
 import ru.phi.modules.entity.Accessibility;
 import ru.phi.modules.entity.Quality;
@@ -12,6 +14,7 @@ import java.util.List;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public final class QualityControllerTest extends AbstractRestTest {
 
     @Test(expected = ObjectNotFoundException.class)
@@ -92,14 +95,5 @@ public final class QualityControllerTest extends AbstractRestTest {
         environment.createQuality(token.getKey(), quality);
         final List<Quality> qualities = environment.qualities(token.getKey());
         assertEquals(qualities.size(), 3L);
-    }
-
-    private Quality createQuality(String name, String template, Accessibility accessibility) {
-        final Quality quality = new Quality();
-        quality.setName(name);
-        quality.setTemplate(template);
-        quality.setAccessibility(accessibility);
-        quality.setUser(successUser);
-        return qualityRepository.save(quality);
     }
 }

@@ -1,6 +1,8 @@
 package ru.phi.modules.rest;
 
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import ru.phi.modules.AbstractRestTest;
 import ru.phi.modules.entity.Error;
 import ru.phi.modules.entity.Token;
@@ -10,6 +12,7 @@ import java.util.UUID;
 
 import static junit.framework.TestCase.assertEquals;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public final class ErrorControllerTest extends AbstractRestTest {
 
     @Test

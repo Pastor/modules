@@ -3,8 +3,6 @@ package ru.phi.modules.rest;
 import com.google.common.io.CharStreams;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,8 +42,7 @@ class VersionController {
             produces = "application/yaml;charset=UTF-8",
             headers = {
             })
-    public
-    String swagger() throws IOException {
+    public String swagger() throws IOException {
         try (Reader reader = new InputStreamReader(VersionController.class.getResourceAsStream("/api.v1.0.3.yaml"))) {
             return CharStreams.toString(reader);
         }

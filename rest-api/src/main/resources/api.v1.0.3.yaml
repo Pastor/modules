@@ -32,6 +32,8 @@ tags:
     description: Статистика использования сервиса
   - name: Error
     description: Ошибки сервиса
+  - name: EndPoints
+    description: Точки доступа до объекта
 basePath: /rest/v1
 produces:
   - application/json
@@ -529,6 +531,75 @@ paths:
         200:
           description: Элемент удален
       operationId: delete_element
+      security: 
+        - token: []    
+  /elements/{id}/endpoints:
+    get:
+      summary: Получение точек доступа
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+      tags:
+        - EndPoints
+        - Elements
+      responses:
+        200:
+          description: Информация о элементе
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EndPoint'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Изменение точек доступа
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/EndPoint'
+      tags:
+        - EndPoints
+      responses:
+        200:
+          description: Информация обновлена
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      operationId: update_endpoints
+      security: 
+        - token: [] 
+    delete:
+      summary: Удаление точек доступа
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: integer
+          format: int64
+          description: Уникальный идентификатор
+      tags:
+        - EndPoints
+      responses:
+        200:
+          description: Точки удалены
+      operationId: delete_endpoints
       security: 
         - token: []    
   /categories:
@@ -1192,8 +1263,7 @@ definitions:
     required:
       - name
       - address
-      - latitude
-      - longitude
+      - point
       - categories
     properties:
       id:
@@ -1209,14 +1279,12 @@ definitions:
       address:
         type: string
         description: Адрес нахождения элемента
-      latitude:
-        type: number
-        format: double
-        description: Широта
-      longitude:
-        type: number
-        format: double
-        description: Долгота
+      point:
+        $ref: '#/definitions/GeoPoint'
+      end_points:
+          type: array
+          items: 
+            $ref: '#/definitions/EndPoint'
       categories:
         type: array
         description: Категории к которым относится объект
@@ -1227,21 +1295,14 @@ definitions:
       Объект описывающий запись статистики использования сервиса.
     type: object
     required:
-      - latitude
-      - longitude
+      - point
     properties:
       id:
         type: integer
         format: int64
         description: Уникальный идентификатор
-      latitude:
-        type: number
-        format: double
-        description: Широта
-      longitude:
-        type: number
-        format: double
-        description: Долгота
+      point:
+        $ref: '#/definitions/GeoPoint'
       type:
         type: string
         description: Тип записи
@@ -1288,18 +1349,45 @@ definitions:
       route_type:
         type: string
         description: Тип прокладываемого маршрута
-      start_latitude:
+      start:
+        $ref: '#/definitions/GeoPoint'
+      stop:
+        $ref: '#/definitions/GeoPoint'
+  GeoPoint:
+    description: Координата
+    type: object
+    required:
+      - longitude
+      - latitude
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: Уникальный идентификатор
+      longitude:
         type: number
         format: double
-      start_longitude:
+        description: Широта
+      latitude:
         type: number
         format: double
-      end_latitude:
-        type: number
-        format: double
-      end_longitude:
-        type: number
-        format: double
+        description: Долгота
+  EndPoint:
+    description: Точка взаимодействия
+    type: object
+    required:
+      - point
+      - type
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: Уникальный идентификатор
+      type:
+        type: string
+        description: Тип точки
+      point:
+        $ref: '#/definitions/GeoPoint'
   ElementCategory:
     description: Категория объекта
     type: object

@@ -63,6 +63,9 @@ public class DemoConfiguration {
     @Autowired
     private AccessibilityProcessRepository acp;
 
+    @Autowired
+    private GeoPointRepository geoPointRepository;
+
     @Transactional
     @PostConstruct
     private void construct() {
@@ -206,8 +209,7 @@ public class DemoConfiguration {
         element.setName(name);
         element.setFullName(fullName);
         element.setAddress(address);
-        element.setLatitude(latitude);
-        element.setLongitude(longitude);
+        element.setPoint(ru.phi.modules.Utilities.point(geoPointRepository, user, latitude, longitude));
         element.setCategories(Sets.newHashSet(category));
         element.setAccessibilityProcesses(Sets.newHashSet(processes));
         final Element save = elementRepository.save(element);

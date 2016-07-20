@@ -18,7 +18,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 @RequestMapping({"/rest/v1/", "/rest/"})
 @RestController
-class StatisticController {
+class StatisticController extends AbstractController {
 
     @Autowired
     private StatisticRepository statisticRepository;
@@ -45,6 +45,7 @@ class StatisticController {
             throws AuthenticationException {
         statistic.clear();
         statistic.setUser(token.getUser());
+        statistic.setPoint(point(token.getUser(), statistic.getPoint()));
         statisticRepository.save(statistic);
         return statistic;
     }

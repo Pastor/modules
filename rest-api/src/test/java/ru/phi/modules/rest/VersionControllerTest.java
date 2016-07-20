@@ -1,12 +1,15 @@
 package ru.phi.modules.rest;
 
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import ru.phi.modules.AbstractRestTest;
 import ru.phi.modules.entity.Version;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public final class VersionControllerTest extends AbstractRestTest {
 
     @Test

@@ -29,8 +29,7 @@ public final class StatisticControllerTest extends AbstractRestTest {
     public void createStatistic() throws Exception {
         final Token token = newToken("statistic");
         final Statistic statistic = new Statistic();
-        statistic.setLatitude(54.00000);
-        statistic.setLongitude(55.00000);
+        statistic.setPoint(point(successUser, 54.00000, 55.000000));
         environment.createStatistic(token.getKey(), statistic);
         assertEquals(statisticRepository.count(), 1L);
     }
@@ -48,8 +47,7 @@ public final class StatisticControllerTest extends AbstractRestTest {
 
     private void createStatistic(double longitude, double latitude) {
         final Statistic statistic = new Statistic();
-        statistic.setLatitude(latitude);
-        statistic.setLongitude(longitude);
+        statistic.setPoint(point(successUser, latitude, longitude));
         statistic.setUser(successUser);
         statisticRepository.save(statistic);
     }

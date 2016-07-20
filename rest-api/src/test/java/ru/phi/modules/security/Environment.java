@@ -11,17 +11,18 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
-import ru.phi.modules.entity.Error;
 import ru.phi.modules.entity.*;
+import ru.phi.modules.entity.Error;
 import ru.phi.modules.exceptions.AuthenticationException;
 import ru.phi.modules.exceptions.ObjectNotFoundException;
+import ru.phi.modules.exceptions.ValidationException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
+import static junit.framework.TestCase.assertEquals;
 
 @Slf4j
 public final class Environment {
@@ -55,6 +56,9 @@ public final class Environment {
                         throw new ObjectNotFoundException();
                     } else if (statusCode == HttpStatus.NOT_ACCEPTABLE) {
                         showError(response);
+                    } else if (statusCode == HttpStatus.BAD_REQUEST) {
+                        showError(response);
+                        throw new ValidationException();
                     }
                 }
 
@@ -220,8 +224,12 @@ public final class Environment {
         return template.getForObject("http://localhost:" + port + "/rest/v1/errors/count?token={token}", Long.class, token);
     }
 
-    public Long qualitiesCount(String token) {
-        return template.getForObject("http://localhost:" + port + "/rest/v1/qualities/count?token={token}", Long.class, token);
+    public Long categoriesCount(String token) {
+        return template.getForObject("http://localhost:" + port + "/rest/v1/categories/count?token={token}", Long.class, token);
+    }
+
+    public Long elementsCount(String token) {
+        return template.getForObject("http://localhost:" + port + "/rest/v1/elements/count?token={token}", Long.class, token);
     }
 
     public void update(String token, Long id, News news) {
@@ -230,6 +238,18 @@ public final class Environment {
 
     public void update(String token, Long id, Quality quality) {
         template.put("http://localhost:" + port + "/rest/v1/qualities/{id}?token={token}", quality, id, token);
+    }
+
+    public void update(String token, Long id, Element element) {
+        template.put("http://localhost:" + port + "/rest/v1/elements/{id}?token={token}", element, id, token);
+    }
+
+    public void update(String token, Long id, EndPoint[] endPoints) {
+        template.put("http://localhost:" + port + "/rest/v1/elements/{id}/endpoints?token={token}", endPoints, id, token);
+    }
+
+    public void update(String token, Long id, ElementCategory category) {
+        template.put("http://localhost:" + port + "/rest/v1/categories/{id}?token={token}", category, id, token);
     }
 
     public void publish(String token, Long id) {
@@ -242,6 +262,18 @@ public final class Environment {
 
     public void deleteNews(String token, Long id) {
         template.delete("http://localhost:" + port + "/rest/v1/news/{id}?token={token}", id, token);
+    }
+
+    public void deleteEndpoints(String token, Long id) {
+        template.delete("http://localhost:" + port + "/rest/v1/elements/{id}/endpoints?token={token}", id, token);
+    }
+
+    public void deleteElement(String token, Long id) {
+        template.delete("http://localhost:" + port + "/rest/v1/elements/{id}?token={token}", id, token);
+    }
+
+    public void deleteCategory(String token, Long id) {
+        template.delete("http://localhost:" + port + "/rest/v1/categories/{id}?token={token}", id, token);
     }
 
     public void deleteQuality(String token, Long id) {
@@ -258,6 +290,20 @@ public final class Environment {
     public News createNews(String token, News news) {
         final ResponseEntity<News> entity = template.postForEntity("http://localhost:" + port + "/rest/v1/news?token={token}",
                 news, News.class, token);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return entity.getBody();
+    }
+
+    public Element createElement(String token, Element element) {
+        final ResponseEntity<Element> entity = template.postForEntity("http://localhost:" + port + "/rest/v1/elements?token={token}",
+                element, Element.class, token);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return entity.getBody();
+    }
+
+    public ElementCategory createCategory(String token, ElementCategory category) {
+        final ResponseEntity<ElementCategory> entity = template.postForEntity("http://localhost:" + port + "/rest/v1/categories?token={token}",
+                category, ElementCategory.class, token);
         assertEquals(entity.getStatusCode(), HttpStatus.OK);
         return entity.getBody();
     }
@@ -336,5 +382,39 @@ public final class Environment {
     private static String basic(String username, String password) throws UnsupportedEncodingException {
         final String token = username + ":" + password;
         return "Basic " + new String(Base64.encode(token.getBytes("UTF-8")), "UTF-8");
+    }
+
+    public List<Element> elements(String token) {
+        final ResponseEntity<Element[]> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/elements?token={token}",
+                Element[].class, token);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return Lists.newArrayList(entity.getBody());
+    }
+
+    public List<EndPoint> endpoints(String token, Long id) {
+        final ResponseEntity<EndPoint[]> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/elements/{id}/endpoints?token={token}",
+                EndPoint[].class, id, token);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return Lists.newArrayList(entity.getBody());
+    }
+
+    public Element getElement(String token, Long id) {
+        final ResponseEntity<Element> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/elements/{id}?token={token}", Element.class, id, token);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return entity.getBody();
+    }
+
+    public List<ElementCategory> categories(String token) {
+        final ResponseEntity<ElementCategory[]> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/categories?token={token}",
+                ElementCategory[].class, token);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return Lists.newArrayList(entity.getBody());
+    }
+
+    public ElementCategory getCategory(String token, Long id) {
+        final ResponseEntity<ElementCategory> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/categories/{id}?token={token}",
+                ElementCategory.class, id, token);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return entity.getBody();
     }
 }

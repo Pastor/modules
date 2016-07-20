@@ -12,8 +12,8 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "Quality")
 @Data
-@EqualsAndHashCode(callSuper = true)
-@ToString
+@EqualsAndHashCode(callSuper = true, exclude = {"user"})
+@ToString(exclude = {"user"})
 @NoArgsConstructor
 @Proxy(lazy = false)
 public final class Quality extends AbstractEntity {

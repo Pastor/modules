@@ -40,8 +40,8 @@ class ElementCategoryController {
     @RequestMapping(value = "/categories", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public
     @ResponseBody
-    ElementCategory createCategory(@AuthorizedToken Token token,
-                                   @RequestBody ElementCategory category)
+    ElementCategory create(@AuthorizedToken Token token,
+                           @RequestBody ElementCategory category)
             throws AuthenticationException {
         category.clear();
         category.setUser(token.getUser());
@@ -76,6 +76,8 @@ class ElementCategoryController {
     @RequestMapping(value = "/categories/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public void delete(@PathVariable("id") Long id)
             throws AuthenticationException {
+        if (!elementCategoryRepository.exists(id))
+            throw new ObjectNotFoundException(id);
         elementCategoryRepository.delete(id);
     }
 

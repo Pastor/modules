@@ -13,8 +13,8 @@ import java.util.Set;
 @Entity
 @Table(name = "Element_Category")
 @Data
-@EqualsAndHashCode(callSuper = true)
-@ToString
+@EqualsAndHashCode(callSuper = true, exclude = {"elements", "user"})
+@ToString(exclude = {"elements", "user"})
 @NoArgsConstructor
 @Proxy(lazy = false)
 public final class ElementCategory extends AbstractEntity {
@@ -32,12 +32,12 @@ public final class ElementCategory extends AbstractEntity {
     @NotNull
     @NonNull
     @PrimaryKeyJoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, optional = false)
     private User user;
 
     @JsonIgnore
     @Setter(AccessLevel.NONE)
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH, mappedBy = "categories")
     @OrderBy("id")
     private Set<Element> elements;
 
