@@ -140,6 +140,9 @@ public abstract class AbstractRestTest {
     protected final void register(String scopeName) {
         final Scope scope = new Scope();
         scope.setName(scopeName);
+        scope.setRole(UserRole.admin);
+        scopeRepository.save(scope);
+        scope.clear();
         scope.setRole(UserRole.user);
         scopeRepository.save(scope);
     }
