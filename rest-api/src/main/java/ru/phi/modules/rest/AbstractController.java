@@ -10,13 +10,13 @@ abstract class AbstractController {
     @Autowired
     protected GeoPointRepository geoPointRepository;
 
-    protected final GeoPoint point(User user, GeoPoint point) {
+    protected GeoPoint point(User user, GeoPoint point) {
         if (point == null)
             return null;
         return point(user, point.getLatitude(), point.getLongitude());
     }
 
-    protected final GeoPoint point(User user, double latitude, double longitude) {
+    protected GeoPoint point(User user, double latitude, double longitude) {
         return ru.phi.modules.Utilities.point(geoPointRepository, user, latitude, longitude);
     }
 }

@@ -79,6 +79,9 @@ public abstract class AbstractRestTest {
     protected EndPointRepository endPointRepository;
 
     @Autowired
+    protected AccessibilityProcessRepository accessibilityProcessRepository;
+
+    @Autowired
     protected ObjectMapper objectMapper;
 
     @Value("${local.server.port}")
@@ -105,7 +108,7 @@ public abstract class AbstractRestTest {
         successUserWithoutProfile = userRepository.save(successUserWithoutProfile);
 
         successProfile.setUser(successUser);
-        successProfile.setAccessibility(Accessibility.BAROOW);
+        successProfile.setAccessibility(Accessibility.baroow);
         successProfile.setEmail("viruszold@mail.ru");
         successProfile.setFirstName("Иванов");
         successProfile.setLastName("Михаил");
@@ -135,7 +138,7 @@ public abstract class AbstractRestTest {
     protected final void register(String scopeName) {
         final Scope scope = new Scope();
         scope.setName(scopeName);
-        scope.setRole(UserRole.USER);
+        scope.setRole(UserRole.user);
         scopeRepository.save(scope);
     }
 

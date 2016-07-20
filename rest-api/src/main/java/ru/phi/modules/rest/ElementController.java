@@ -72,9 +72,11 @@ class ElementController extends AbstractController {
         elementRepository.save(one);
     }
 
-    @AuthorizedScope(scopes = {"element"})
-    @RequestMapping(value = "/elements/{id}/endpoints", method = RequestMethod.GET)
-    public Set<EndPoint> getEndPoints(@PathVariable("id") Long id)
+    @RequestMapping(value = "/elements/{id}/endpoints", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public
+    @ResponseBody
+    Set<EndPoint> getEndPoints(@PathVariable("id") Long id)
             throws AuthenticationException {
         final Element one = elementRepository.findOne(id);
         if (one == null)
@@ -112,7 +114,7 @@ class ElementController extends AbstractController {
         if (points.size() == 0) {
             final EndPoint point = new EndPoint();
             point.setUser(user);
-            point.setType(EndPointType.BOTH);
+            point.setType(EndPointType.both);
             point.setPoint(one.getPoint());
             points.add(endPointRepository.save(point));
         }
@@ -131,7 +133,7 @@ class ElementController extends AbstractController {
         final Set<EndPoint> points = Sets.newHashSet();
         final EndPoint point = new EndPoint();
         point.setUser(user);
-        point.setType(EndPointType.BOTH);
+        point.setType(EndPointType.both);
         point.setPoint(one.getPoint());
         points.add(endPointRepository.save(point));
         one.setEndPoints(points);
@@ -139,7 +141,7 @@ class ElementController extends AbstractController {
     }
 
     @AuthorizedScope(scopes = {"element"})
-    @RequestMapping(value = "/elements/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(value = "/elements/{id}", method = RequestMethod.DELETE)
     public void delete(@PathVariable("id") Long id)
             throws AuthenticationException {
         if (!elementRepository.exists(id))

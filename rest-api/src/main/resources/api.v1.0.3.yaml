@@ -34,11 +34,44 @@ tags:
     description: Ошибки сервиса
   - name: EndPoints
     description: Точки доступа до объекта
+  - name: Accessibilities
+    description: Доступность
 basePath: /rest/v1
 produces:
   - application/json
   - application/xml
 paths:
+  /accessibility/processes:
+    get:
+      summary: Список уровней доступности
+      parameters:
+        - name: size
+          in: query
+          description: |
+            Ограничения количества элементов на странице.
+          required: false
+          type: number
+          format: int64
+        - name: page
+          in: query
+          description: Номер страницы запроса.
+          required: false
+          type: number
+          format: int64  
+      tags:
+        - Accessibilities
+      operationId: get_accessibility_processes
+      responses:
+        200:
+          description: Список уровней доступности
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/AccessibilityProcess'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
   /errors:
     get:
       summary: Получение списка ошибок в порядке убывания
@@ -1306,6 +1339,25 @@ definitions:
       type:
         type: string
         description: Тип записи
+  AccessibilityProcess:
+    description: Уровень доступности.
+    type: object
+    required:
+      - accessibility
+      - process
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: Уникальный идентификатор
+      accessibility:
+        type: string
+        format: accessibility
+        description: Категория доступности
+      process:
+        type: string
+        format: process
+        description: Уровень доступности
   News:
     description: Новость
     type: object

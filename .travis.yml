@@ -1,0 +1,6 @@
+sudo: false
+language: java
+script: mvn clean package --batch-mode
+jdk:
+  - oraclejdk8
+

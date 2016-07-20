@@ -44,5 +44,8 @@ public class StaticConfiguration extends WebMvcConfigurerAdapter {
         if (!registry.hasMappingForPattern("/**")) {
             registry.addResourceHandler("/**").addResourceLocations(RESOURCE_LOCATIONS);
         }
+        if (!registry.hasMappingForPattern("/api")) {
+            registry.addResourceHandler("/api").addResourceLocations("classpath:/META-INF/resources/api/index.html");
+        }
     }
 }

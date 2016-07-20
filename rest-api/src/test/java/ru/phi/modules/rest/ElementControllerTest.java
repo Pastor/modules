@@ -69,7 +69,7 @@ public final class ElementControllerTest extends AbstractRestTest {
 
     @Test
     public void list() throws Exception {
-        final Token token = newToken("element");
+        final Token token = newToken();
         final int size = 6;
         createElements(size);
         final List<Element> elements = environment.elements(token.getKey());
@@ -78,7 +78,7 @@ public final class ElementControllerTest extends AbstractRestTest {
 
     @Test
     public void get() throws Exception {
-        final Token token = newToken("element");
+        final Token token = newToken();
         final Element element = createElement(successUser, "NAME", "FULL_NAME", "ADDRESS", 54.0000, 55.00000, hospital);
         final Element element2 = environment.getElement(token.getKey(), element.getId());
         assertNotNull(element2);
@@ -99,7 +99,7 @@ public final class ElementControllerTest extends AbstractRestTest {
 
     @Test
     public void getEndPoints() throws Exception {
-        final Token token = newToken("element");
+        final Token token = newToken();
         final Element element = createElementWithEndPoints();
         final List<EndPoint> endPoints = environment.endpoints(token.getKey(), element.getId());
         assertEquals(endPoints.size(), 5);
@@ -108,11 +108,11 @@ public final class ElementControllerTest extends AbstractRestTest {
     protected final Element createElementWithEndPoints() {
         Element element = createElement(successUser, "NAME", "FULL_NAME", "ADDRESS", 54.0090, 55.90000, hospital);
         final Set<EndPoint> endpoints = Sets.newHashSet(
-                createEndpoint(successUser, 34.00000, 54.00000, EndPointType.ENTER),
-                createEndpoint(successUser, 34.10000, 54.00000, EndPointType.ENTER),
-                createEndpoint(successUser, 34.20000, 54.00000, EndPointType.ENTER),
-                createEndpoint(successUser, 34.30000, 54.00000, EndPointType.ENTER),
-                createEndpoint(successUser, 34.40000, 54.00000, EndPointType.ENTER)
+                createEndpoint(successUser, 34.00000, 54.00000, EndPointType.enter),
+                createEndpoint(successUser, 34.10000, 54.00000, EndPointType.enter),
+                createEndpoint(successUser, 34.20000, 54.00000, EndPointType.enter),
+                createEndpoint(successUser, 34.30000, 54.00000, EndPointType.enter),
+                createEndpoint(successUser, 34.40000, 54.00000, EndPointType.enter)
         );
         element.setEndPoints(endpoints);
         element = elementRepository.save(element);
@@ -124,8 +124,8 @@ public final class ElementControllerTest extends AbstractRestTest {
         final Token token = newToken("element");
         final Element element = createElementWithEndPoints();
         final Set<EndPoint> endpoints = Sets.newHashSet(
-                createEndpoint(successUser, 34.00000, 54.00000, EndPointType.ENTER),
-                createEndpoint(successUser, 34.40000, 54.04000, EndPointType.ENTER)
+                createEndpoint(successUser, 34.00000, 54.00000, EndPointType.enter),
+                createEndpoint(successUser, 34.40000, 54.04000, EndPointType.enter)
         );
         environment.update(token.getKey(), element.getId(), endpoints.toArray(new EndPoint[endpoints.size()]));
         final Element one = environment.getElement(token.getKey(), element.getId());
@@ -150,7 +150,7 @@ public final class ElementControllerTest extends AbstractRestTest {
         point.setLongitude(0);
         point.setLatitude(0);
         endPoint.setPoint(point);
-        endPoint.setType(EndPointType.BOTH);
+        endPoint.setType(EndPointType.both);
         environment.update(token.getKey(), element.getId(), new EndPoint[]{endPoint});
         final Element one = environment.getElement(token.getKey(), element.getId());
         assertEquals(one.getEndPoints().size(), 1);

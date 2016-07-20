@@ -6,6 +6,7 @@ import com.google.common.hash.Hashing;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 import ru.phi.modules.JpaConfiguration;
@@ -29,6 +30,7 @@ import java.time.temporal.ChronoUnit;
         RestSecurityConfiguration.class,
         StaticConfiguration.class
 })
+@DependsOn({"accessibilityController.v1"})
 public class DemoConfiguration {
 
     private static final HashFunction hash = Hashing.goodFastHash(256);
@@ -66,6 +68,9 @@ public class DemoConfiguration {
     @Autowired
     private GeoPointRepository geoPointRepository;
 
+    @Autowired
+    private EndPointRepository endPointRepository;
+
     @Transactional
     @PostConstruct
     private void construct() {
@@ -81,30 +86,30 @@ public class DemoConfiguration {
         final Scope scopeError = registerScope("error");
         log.info("Создание пользователей");
         final User pastor = createUser("pastor", "+79265943742", "123456",
-                "viruszold@mail.ru", UserRole.ADMIN);
+                "viruszold@mail.ru", UserRole.admin);
         final User vasia = createUser("vasia", "+79265940000", "123456",
-                "vasia@mail.ru", UserRole.USER);
+                "vasia@mail.ru", UserRole.user);
         final User content = createUser("content", "+79265941111", "123456",
-                "content@mail.ru", UserRole.CONTENT);
+                "content@mail.ru", UserRole.content);
         log.info("Сщздание токенов");
         createToken(pastor, scopeCategory, scopeElement, scopeNews, scopePing, scopeProfile, scopeQuality,
                 scopeSettings, scopeStatistic, scopeError);
         createToken(vasia, scopeProfile, scopeSettings);
         createToken(content, scopeProfile, scopeSettings, scopeNews);
         log.info("Создание профилей для пользователей");
-        final Profile vasiaProfile = createProfile(vasia, "Залупа", "Василий", "Николаевич", Accessibility.BAROOW);
-        final Profile pastorProfile = createProfile(pastor, "Хлебников", "Андрей", "Александрович", Accessibility.NORMAL);
-        final Profile contentProfile = createProfile(content, "Контент", "Михаил", "Андреевич", Accessibility.EYELESS);
+        final Profile vasiaProfile = createProfile(vasia, "Залупа", "Василий", "Николаевич", Accessibility.baroow);
+        final Profile pastorProfile = createProfile(pastor, "Хлебников", "Андрей", "Александрович", Accessibility.normal);
+        final Profile contentProfile = createProfile(content, "Контент", "Михаил", "Андреевич", Accessibility.eyeless);
         log.info("Создание шаблонов UI");
-        createQuality(pastor, "Нормальный", "normal", Accessibility.NORMAL);
-        createQuality(pastor, "Слабовидещие", "eyeless", Accessibility.EYELESS);
+        createQuality(pastor, "Нормальный", "normal", Accessibility.normal);
+        createQuality(pastor, "Слабовидещие", "eyeless", Accessibility.eyeless);
         log.info("Создание категорий");
         final ElementCategory hospital = createCategory(pastor, "Поликлиника");
         final ElementCategory emergency = createCategory(pastor, "Станция скорой медицинской помощи");
         final ElementCategory underground = createCategory(pastor, "Подземный переход");
         log.info("Создание объектов инфраструктуры");
-        registeAcessibilityProcess();
-        createElement(
+        Element element;
+        element = createElement(
                 pastor,
                 "Станция скорой медицинской помощи",
                 "МБУЗ Химкинская станция скорой медицинской помощи",
@@ -112,12 +117,21 @@ public class DemoConfiguration {
                 56.00000000,
                 53.00000000,
                 emergency,
-                acp.findByAccessibilityAndType(Accessibility.BAROOW, AccessibilityType.CONDITION),
-                acp.findByAccessibilityAndType(Accessibility.LEGLESS, AccessibilityType.CONDITION),
-                acp.findByAccessibilityAndType(Accessibility.EYELESS, AccessibilityType.CONDITION),
-                acp.findByAccessibilityAndType(Accessibility.BRAINLESS, AccessibilityType.NOT_INFORMATION)
+                acp.findByAccessibilityAndType(Accessibility.baroow, AccessibilityType.condition),
+                acp.findByAccessibilityAndType(Accessibility.legless, AccessibilityType.condition),
+                acp.findByAccessibilityAndType(Accessibility.eyeless, AccessibilityType.condition),
+                acp.findByAccessibilityAndType(Accessibility.brainless, AccessibilityType.not_information)
         );
-        createElement(
+        registerPolygon(
+                element,
+                point(pastor, 87.00000, 45.000000),
+                point(pastor, 87.10000, 45.100000),
+                point(pastor, 87.20000, 45.200000),
+                point(pastor, 87.30000, 45.300000),
+                point(pastor, 87.40000, 45.400000),
+                point(pastor, 87.50000, 45.500000)
+        );
+        element = createElement(
                 pastor,
                 "Центральная городская больница",
                 "МБУЗ \"Химкинская Центральная городская больница\", педиатрический корпус",
@@ -125,12 +139,16 @@ public class DemoConfiguration {
                 46.00000000,
                 53.45000000,
                 hospital,
-                acp.findByAccessibilityAndType(Accessibility.BAROOW, AccessibilityType.NOT_INFORMATION),
-                acp.findByAccessibilityAndType(Accessibility.LEGLESS, AccessibilityType.NOT_INFORMATION),
-                acp.findByAccessibilityAndType(Accessibility.EYELESS, AccessibilityType.NOT_INFORMATION),
-                acp.findByAccessibilityAndType(Accessibility.BRAINLESS, AccessibilityType.NOT_INFORMATION)
+                acp.findByAccessibilityAndType(Accessibility.baroow, AccessibilityType.not_information),
+                acp.findByAccessibilityAndType(Accessibility.legless, AccessibilityType.not_information),
+                acp.findByAccessibilityAndType(Accessibility.eyeless, AccessibilityType.not_information),
+                acp.findByAccessibilityAndType(Accessibility.brainless, AccessibilityType.not_information)
         );
-        createElement(
+        final EndPoint point1 = createEndPoint(pastor, point(pastor, 34.00000, 76.000000), EndPointType.exit);
+        final EndPoint point2 = createEndPoint(pastor, point(pastor, 34.60000, 76.009000), EndPointType.enter);
+        element.setEndPoints(Sets.newHashSet(point1, point2));
+        elementRepository.save(element);
+        element = createElement(
                 pastor,
                 "Центральная городская больница",
                 "МБУЗ \"Химкинская Центральная городская больница\", травмотолого-ортопедическое отделение полеклинники",
@@ -138,12 +156,12 @@ public class DemoConfiguration {
                 46.00000000,
                 53.45000000,
                 hospital,
-                acp.findByAccessibilityAndType(Accessibility.BAROOW, AccessibilityType.NOT_INFORMATION),
-                acp.findByAccessibilityAndType(Accessibility.LEGLESS, AccessibilityType.NOT_INFORMATION),
-                acp.findByAccessibilityAndType(Accessibility.EYELESS, AccessibilityType.NOT_INFORMATION),
-                acp.findByAccessibilityAndType(Accessibility.BRAINLESS, AccessibilityType.NOT_INFORMATION)
+                acp.findByAccessibilityAndType(Accessibility.baroow, AccessibilityType.not_information),
+                acp.findByAccessibilityAndType(Accessibility.legless, AccessibilityType.not_information),
+                acp.findByAccessibilityAndType(Accessibility.eyeless, AccessibilityType.not_information),
+                acp.findByAccessibilityAndType(Accessibility.brainless, AccessibilityType.not_information)
         );
-        createElement(
+        element = createElement(
                 pastor,
                 "Центральная городская больница",
                 "МБУЗ \"Химкинская Центральная городская больница\", хирургический корпус",
@@ -151,12 +169,12 @@ public class DemoConfiguration {
                 46.00000000,
                 53.45000000,
                 hospital,
-                acp.findByAccessibilityAndType(Accessibility.BAROOW, AccessibilityType.NOT_INFORMATION),
-                acp.findByAccessibilityAndType(Accessibility.LEGLESS, AccessibilityType.NOT_INFORMATION),
-                acp.findByAccessibilityAndType(Accessibility.EYELESS, AccessibilityType.NOT_INFORMATION),
-                acp.findByAccessibilityAndType(Accessibility.BRAINLESS, AccessibilityType.NOT_INFORMATION)
+                acp.findByAccessibilityAndType(Accessibility.baroow, AccessibilityType.not_information),
+                acp.findByAccessibilityAndType(Accessibility.legless, AccessibilityType.not_information),
+                acp.findByAccessibilityAndType(Accessibility.eyeless, AccessibilityType.not_information),
+                acp.findByAccessibilityAndType(Accessibility.brainless, AccessibilityType.not_information)
         );
-        createElement(
+        element = createElement(
                 pastor,
                 "Переход",
                 "",
@@ -209,12 +227,18 @@ public class DemoConfiguration {
         element.setName(name);
         element.setFullName(fullName);
         element.setAddress(address);
-        element.setPoint(ru.phi.modules.Utilities.point(geoPointRepository, user, latitude, longitude));
+        final GeoPoint point = point(user, latitude, longitude);
+        element.setPoint(point);
+        element.setEndPoints(Sets.newHashSet(createEndPoint(user, point, EndPointType.both)));
         element.setCategories(Sets.newHashSet(category));
         element.setAccessibilityProcesses(Sets.newHashSet(processes));
         final Element save = elementRepository.save(element);
         log.info("Создан объект {}", save);
         return save;
+    }
+
+    private GeoPoint point(User user, double latitude, double longitude) {
+        return ru.phi.modules.Utilities.point(geoPointRepository, user, latitude, longitude);
     }
 
     private ElementCategory createCategory(User user, String name) {
@@ -278,19 +302,21 @@ public class DemoConfiguration {
     private Scope registerScope(String scopeName) {
         final Scope scope = new Scope();
         scope.setName(scopeName);
-        scope.setRole(UserRole.USER);
+        scope.setRole(UserRole.user);
         log.info(MessageFormat.format("Создана область {0}", scopeName));
         return scopeRepository.save(scope);
     }
 
-    private void registeAcessibilityProcess() {
-        for (Accessibility accessibility : Accessibility.values()) {
-            for (AccessibilityType type : AccessibilityType.values()) {
-                final AccessibilityProcess entity = new AccessibilityProcess();
-                entity.setAccessibility(accessibility);
-                entity.setType(type);
-                acp.save(entity);
-            }
-        }
+    private Element registerPolygon(Element element, GeoPoint... points) {
+        element.setPolygon(Sets.newHashSet(points));
+        return elementRepository.save(element);
+    }
+
+    private EndPoint createEndPoint(User user, GeoPoint point, EndPointType type) {
+        final EndPoint endPoint = new EndPoint();
+        endPoint.setUser(user);
+        endPoint.setType(type);
+        endPoint.setPoint(point);
+        return endPointRepository.save(endPoint);
     }
 }

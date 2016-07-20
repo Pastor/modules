@@ -46,13 +46,13 @@ public final class MeControllerTest extends AbstractRestTest {
     public void updateMeWithQuality() throws Exception {
         final Token token = newToken("profile");
         final Profile profile = environment.me(token.getKey());
-        profile.setQuality(createQuality("NAME", "TEMPLATE", Accessibility.EYELESS));
+        profile.setQuality(createQuality("NAME", "TEMPLATE", Accessibility.eyeless));
         environment.putMe(profile, token.getKey());
         final Profile profile2 = environment.me(token.getKey());
         assertEquals(profile2.getEmail(), successProfile.getEmail());
         assertEquals(profile2.getQuality().getName(), "NAME");
         assertEquals(profile2.getQuality().getTemplate(), "TEMPLATE");
-        assertEquals(profile2.getQuality().getAccessibility(), Accessibility.EYELESS);
+        assertEquals(profile2.getQuality().getAccessibility(), Accessibility.eyeless);
     }
 
     @Test
@@ -133,13 +133,13 @@ public final class MeControllerTest extends AbstractRestTest {
         Settings settings = environment.meSettings(token.getKey());
         assertNotNull(settings);
         assertNull(settings.getFilter());
-        settings.setQuality(createQuality("QUALITY", "TEMPLATE", Accessibility.NORMAL));
+        settings.setQuality(createQuality("QUALITY", "TEMPLATE", Accessibility.normal));
         environment.putSettings(settings, token.getKey());
         final Settings settings2 = environment.meSettings(token.getKey());
         assertNotNull(settings2);
         assertNotNull(settings2.getQuality());
         assertEquals(settings2.getQuality().getName(), "QUALITY");
-        assertEquals(settings2.getQuality().getAccessibility(), Accessibility.NORMAL);
+        assertEquals(settings2.getQuality().getAccessibility(), Accessibility.normal);
         assertEquals(settings2.getQuality().getTemplate(), "TEMPLATE");
     }
 
@@ -147,13 +147,13 @@ public final class MeControllerTest extends AbstractRestTest {
     public void updateNewSettings() throws Exception {
         final Token token = newToken("profile", "settings");
         final Settings settings = new Settings();
-        settings.setQuality(createQuality("QUALITY", "TEMPLATE", Accessibility.NORMAL));
+        settings.setQuality(createQuality("QUALITY", "TEMPLATE", Accessibility.normal));
         environment.putSettings(settings, token.getKey());
         final Settings settings2 = environment.meSettings(token.getKey());
         assertNotNull(settings2);
         assertNotNull(settings2.getQuality());
         assertEquals(settings2.getQuality().getName(), "QUALITY");
-        assertEquals(settings2.getQuality().getAccessibility(), Accessibility.NORMAL);
+        assertEquals(settings2.getQuality().getAccessibility(), Accessibility.normal);
         assertEquals(settings2.getQuality().getTemplate(), "TEMPLATE");
     }
 

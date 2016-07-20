@@ -49,7 +49,7 @@ public final class User extends AbstractEntity {
     @NonNull
     @Column(name = "role", nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private UserRole role = UserRole.USER;
+    private UserRole role = UserRole.user;
 
     @JsonIgnore
     @Setter(AccessLevel.NONE)

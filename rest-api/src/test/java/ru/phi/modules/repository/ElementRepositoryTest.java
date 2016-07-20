@@ -56,7 +56,7 @@ public final class ElementRepositoryTest {
     private Set<ElementCategory> createCategories() {
         final User user = new User();
         user.setEmail("e@m.ru");
-        user.setRole(UserRole.USER);
+        user.setRole(UserRole.user);
         user.setPhone("000000000");
         user.setUsername("username");
         user.setPassword("00000000000000000000000");

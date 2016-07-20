@@ -50,7 +50,7 @@ public final class Profile extends AbstractEntity {
     @NonNull
     @Column(name = "accessibility", nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private Accessibility accessibility = Accessibility.NORMAL;
+    private Accessibility accessibility = Accessibility.normal;
 
     @JsonProperty("quality")
     @PrimaryKeyJoinColumn(name = "quality_id", referencedColumnName = "id")

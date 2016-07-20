@@ -2,6 +2,7 @@ package ru.phi.modules.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.hibernate.annotations.Proxy;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -19,12 +20,14 @@ import java.util.Set;
 @Proxy(lazy = false)
 public final class ElementCategory extends AbstractEntity {
 
+    @JsonProperty("name")
     @NotNull
     @NonNull
     @NotEmpty
     @Column(name = "name", nullable = false)
     private String name;
 
+    @JsonProperty("icon")
     @Column(name = "icon", nullable = true)
     private String icon;
 

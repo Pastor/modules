@@ -61,7 +61,7 @@ public class NewsRepositoryTest {
         profile.setUser(user);
         profile.setLastName("Last");
         profile.setFirstName("First");
-        profile.setAccessibility(Accessibility.EYELESS);
+        profile.setAccessibility(Accessibility.eyeless);
         profile.setEmail("m@me.com");
         profile = profileRepository.save(profile);
         final News news = new News();

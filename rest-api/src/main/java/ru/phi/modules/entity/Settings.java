@@ -29,7 +29,7 @@ public final class Settings extends AbstractEntity {
 
     @Column(name = "route_type")
     @Enumerated(EnumType.STRING)
-    private RouteType routeType = RouteType.BEST;
+    private RouteType routeType = RouteType.best;
 
     @JsonProperty("start")
     @PrimaryKeyJoinColumn(name = "stop_point_id", referencedColumnName = "id")

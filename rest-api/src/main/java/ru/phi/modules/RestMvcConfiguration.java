@@ -50,8 +50,10 @@ public class RestMvcConfiguration extends WebMvcConfigurerAdapter {
         registry.addMapping("/rest/v1/errors/count").allowedMethods("GET");
         registry.addMapping("/rest/v1/statistics").allowedMethods("POST", "GET");
         registry.addMapping("/rest/v1/statistics/count").allowedMethods("GET");
+        registry.addMapping("/rest/v1/accessibility/processes").allowedMethods("GET");
         registry.addMapping("/rest/v1/elements").allowedMethods("POST", "GET");
         registry.addMapping("/rest/v1/elements/{id}").allowedMethods("PUT", "GET", "DELETE");
+        registry.addMapping("/rest/v1/elements/{id}/endpoints").allowedMethods("PUT", "GET", "DELETE");
         registry.addMapping("/rest/v1/elements/count").allowedMethods("GET");
         registry.addMapping("/rest/v1/me").allowedMethods("PUT", "GET");
         registry.addMapping("/rest/v1/me/settings").allowedMethods("PUT", "GET");
@@ -74,12 +76,15 @@ public class RestMvcConfiguration extends WebMvcConfigurerAdapter {
     public ObjectMapper objectMapper() {
         final Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
         final ObjectMapper objectMapper = builder.createXmlMapper(false).build();
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        objectMapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
-        objectMapper.configure(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS, false);
-        objectMapper.configure(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
-        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        objectMapper.configure(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
+        objectMapper.disable(
+                SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,
+                SerializationFeature.WRITE_NULL_MAP_VALUES,
+                SerializationFeature.WRITE_EMPTY_JSON_ARRAYS,
+                SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS,
+                SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        objectMapper.disable(
+                DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS
+        );
         return objectMapper;
     }
 }
