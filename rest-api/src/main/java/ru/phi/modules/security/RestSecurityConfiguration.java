@@ -72,6 +72,7 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/rest/v1/news/{id}")
                 .antMatchers(HttpMethod.GET, "/rest/v1/news/{id}/content")
                 .antMatchers(HttpMethod.GET, "/rest/v1/news/count")
+                .antMatchers(HttpMethod.POST, "/rest/v1/token")
                 .antMatchers(HttpMethod.GET, "/rest/v1/token");
     }
 

@@ -11,7 +11,7 @@ import java.util.Set;
 @Entity
 @Table(name = "Scope")
 @Data
-@EqualsAndHashCode(of = {"name"}, callSuper = false)
+@EqualsAndHashCode(of = {"name", "role"}, callSuper = false)
 @NoArgsConstructor
 @ToString(exclude = {"tokens"})
 public final class Scope extends AbstractEntity {

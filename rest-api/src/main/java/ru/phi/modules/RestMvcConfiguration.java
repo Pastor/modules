@@ -66,6 +66,7 @@ public class RestMvcConfiguration extends WebMvcConfigurerAdapter {
         registry.addMapping("/rest/v1/news/{id}/publish").allowedMethods("PUT");
         registry.addMapping("/rest/v1/news/{id}/content").allowedMethods("PUT", "GET");
         registry.addMapping("/rest/v1/news/count").allowedMethods("GET");
+        registry.addMapping("/rest/v1/token").allowedMethods("POST", "PUT");
         registry.addMapping("/rest/v1/categories").allowedMethods("POST", "GET");
         registry.addMapping("/rest/v1/categories/{id}").allowedMethods("PUT", "GET", "DELETE");
         registry.addMapping("/rest/v1/categories/count").allowedMethods("GET");

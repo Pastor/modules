@@ -84,6 +84,7 @@ public class DemoConfiguration {
         final Scope scopeNews = registerScope("news");
         final Scope scopeStatistic = registerScope("statistic");
         final Scope scopeError = registerScope("error");
+        registerScope("empty");
         log.info("Создание пользователей");
         final User pastor = createUser("pastor", "+79265943742", "123456",
                 "viruszold@mail.ru", UserRole.admin);
@@ -303,7 +304,11 @@ public class DemoConfiguration {
 
     private Scope registerScope(String scopeName) {
         final Scope scope = new Scope();
+        scope.clear();
         scope.setName(scopeName);
+        scope.setRole(UserRole.admin);
+        scopeRepository.save(scope);
+        scope.clear();
         scope.setRole(UserRole.user);
         log.info(MessageFormat.format("Создана область {0}", scopeName));
         return scopeRepository.save(scope);
