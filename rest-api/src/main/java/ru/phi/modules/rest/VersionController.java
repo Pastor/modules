@@ -15,6 +15,7 @@ import ru.phi.modules.repository.VersionRepository;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
@@ -43,8 +44,10 @@ class VersionController {
             headers = {
             })
     public String swagger() throws IOException {
-        try (Reader reader = new InputStreamReader(VersionController.class.getResourceAsStream("/api.v1.0.3.yaml"))) {
-            return CharStreams.toString(reader);
+        try (final InputStream stream = VersionController.class.getResourceAsStream("/api.v1.0.3.yaml")) {
+            try (Reader reader = new InputStreamReader(stream)) {
+                return CharStreams.toString(reader);
+            }
         }
     }
 

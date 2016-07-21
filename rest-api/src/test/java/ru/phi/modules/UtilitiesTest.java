@@ -1,5 +1,7 @@
 package ru.phi.modules;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,10 +15,12 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ru.phi.modules.entity.GeoPoint;
+import ru.phi.modules.entity.Scope;
 import ru.phi.modules.entity.User;
 import ru.phi.modules.entity.UserRole;
 import ru.phi.modules.exceptions.SystemException;
 import ru.phi.modules.repository.GeoPointRepository;
+import ru.phi.modules.repository.ScopeRepository;
 import ru.phi.modules.repository.UserRepository;
 
 import static junit.framework.TestCase.assertNotNull;
@@ -44,6 +48,19 @@ public final class UtilitiesTest {
 
     @Autowired
     private GeoPointRepository geoPointRepository;
+
+    @Autowired
+    private ScopeRepository scp;
+
+    @Before
+    public void setUp() throws Exception {
+        scp.deleteAll();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Utilities.register(scp);
+    }
 
     @Test
     public void pointWithGeo() throws Exception {
@@ -78,6 +95,25 @@ public final class UtilitiesTest {
     public void pointWithPointNull() throws Exception {
         final User user = registerUser();
         assertNull(Utilities.point(geoPointRepository, user, null));
+    }
+
+    @Test
+    public void registerScopes() throws Exception {
+        Utilities.register(scp);
+    }
+
+    @Test
+    public void registerScopesAlreadyRegistered() throws Exception {
+        Utilities.register(scp);
+        Utilities.register(scp);
+    }
+
+    @Test
+    public void registerScopesRegisteredNotAtAll() throws Exception {
+        Utilities.register(scp);
+        final Scope scope = scp.findByRole(UserRole.admin).iterator().next();
+        scp.delete(scope);
+        Utilities.register(scp);
     }
 
     protected User registerUser() {

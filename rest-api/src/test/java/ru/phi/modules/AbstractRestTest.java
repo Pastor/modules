@@ -55,7 +55,7 @@ public abstract class AbstractRestTest {
     protected TokenRepository tokenRepository;
 
     @Autowired
-    protected ScopeRepository scopeRepository;
+    protected ScopeRepository scp;
 
     @Autowired
     protected ProfileRepository profileRepository;
@@ -141,10 +141,10 @@ public abstract class AbstractRestTest {
         final Scope scope = new Scope();
         scope.setName(scopeName);
         scope.setRole(UserRole.admin);
-        scopeRepository.save(scope);
+        scp.save(scope);
         scope.clear();
         scope.setRole(UserRole.user);
-        scopeRepository.save(scope);
+        scp.save(scope);
     }
 
     @After

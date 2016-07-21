@@ -69,9 +69,7 @@ class MeController extends AbstractController {
             meProfile.setFirstName(profile.getLastName());
             meProfile.setLastName(profile.getLastName());
             meProfile.setEmail(profile.getEmail());
-            if (profile.getAccessibility() != null) {
-                meProfile.setAccessibility(profile.getAccessibility());
-            }
+            meProfile.setAccessibility(profile.getAccessibility());
             meProfile.setCity(profile.getCity());
             meProfile.setAddress(profile.getAddress());
             if (profile.getQuality() != null) {
@@ -89,7 +87,7 @@ class MeController extends AbstractController {
     Settings getSettings(@AuthorizedToken Token token)
             throws AuthenticationException {
         final User user = token.getUser();
-        if (user != null && user.getProfile() != null) {
+        if (user.getProfile() != null) {
             final Profile profile = user.getProfile();
             Settings settings = profile.getSettings();
             if (settings == null) {
@@ -124,7 +122,7 @@ class MeController extends AbstractController {
     public long meCount(@AuthorizedToken Token token)
             throws AuthenticationException {
         final User user = token.getUser();
-        if (user != null && user.getProfile() != null) {
+        if (user.getProfile() != null) {
             return newsRepository.profileCount(user.getProfile());
         }
         return 0;
@@ -136,7 +134,7 @@ class MeController extends AbstractController {
 
     @AuthorizedScope(scopes = {"profile", "settings"})
     @RequestMapping(value = "/me/settings", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public void putSettings(@AuthorizedToken Token token, @RequestBody Settings settings)
+    public void updateSettings(@AuthorizedToken Token token, @RequestBody Settings settings)
             throws AuthenticationException {
         final User user = token.getUser();
         if (user.getProfile() != null) {

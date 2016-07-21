@@ -1,6 +1,6 @@
 package ru.phi.modules;
 
-interface Constants {
+public interface Constants {
     String STORAGE_HIBERNATE_DIALECT = "storage.hibernate.dialect";
     String STORAGE_HIBERNATE_DDL = "storage.hibernate.ddl";
     String STORAGE_HIBERNATE_SHOW_SQL = "storage.hibernate.sow_sql";
@@ -11,4 +11,17 @@ interface Constants {
     String STORAGE_JDBC_DRIVER = "storage.jdbc.driver_class";
     String STORAGE_JDBC_USERNAME = "storage.jdbc.username";
     String STORAGE_JDBC_PASSWORD = "storage.jdbc.password";
+
+    String[] definedScopes = {
+            "profile",
+            "settings",
+            "ping",
+            "element",
+            "category",
+            "quality",
+            "news",
+            "statistic",
+            "error",
+            "empty"
+    };
 }

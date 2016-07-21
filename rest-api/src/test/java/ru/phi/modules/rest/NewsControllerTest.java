@@ -7,6 +7,7 @@ import ru.phi.modules.AbstractRestTest;
 import ru.phi.modules.entity.News;
 import ru.phi.modules.entity.Token;
 import ru.phi.modules.exceptions.ObjectNotFoundException;
+import ru.phi.modules.exceptions.ValidationException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -161,6 +162,16 @@ public final class NewsControllerTest extends AbstractRestTest {
     @Test
     public void create() throws Exception {
         final Token token = newToken("news");
+        final News news = new News();
+        news.setTitle("B");
+        news.setBref("P");
+        final News n = environment.createNews(token.getKey(), news);
+        assertEquals(n.getBref(), news.getBref());
+    }
+
+    @Test(expected = ValidationException.class)
+    public void createWithoutProfile() throws Exception {
+        final Token token = newTokenWithoutProfile("news");
         final News news = new News();
         news.setTitle("B");
         news.setBref("P");

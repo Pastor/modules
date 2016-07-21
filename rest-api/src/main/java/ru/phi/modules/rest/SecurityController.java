@@ -31,7 +31,7 @@ class SecurityController {
                  WebRequest request)
             throws AuthenticationException, UnsupportedEncodingException {
         final Basic basic = Basic.parse(request);
-        if (scopes == null || scopes.isEmpty()) {
+        if (scopes.isEmpty()) {
             return service.authenticate(basic.username, basic.password, null);
         } else {
             return service.authenticate(basic.username, basic.password, Sets.newHashSet(scopes.split(",")));
@@ -45,7 +45,7 @@ class SecurityController {
     void update(@AuthorizedToken Token token, @RequestParam(name = "scopes", required = false) String scopes, WebRequest request)
             throws AuthenticationException, UnsupportedEncodingException {
 
-        if (scopes == null || scopes.isEmpty()) {
+        if (scopes.isEmpty()) {
             service.updateToken(token, null);
         } else {
             service.updateToken(token, Sets.newHashSet(scopes.split(",")));

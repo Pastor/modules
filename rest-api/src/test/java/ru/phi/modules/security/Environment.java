@@ -198,6 +198,13 @@ public final class Environment {
         return Lists.newArrayList(entity.getBody());
     }
 
+    public List<String> scopes(String token) {
+        final ResponseEntity<String[]> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/scopes?token={token}",
+                String[].class, token);
+        assertEquals(entity.getStatusCode(), HttpStatus.OK);
+        return Lists.newArrayList(entity.getBody());
+    }
+
     public List<AccessibilityProcess> accessibilityProcesses() {
         final ResponseEntity<AccessibilityProcess[]> entity = template.getForEntity("http://localhost:" + port + "/rest/v1/accessibility/processes?page=0&size=1000",
                 AccessibilityProcess[].class);

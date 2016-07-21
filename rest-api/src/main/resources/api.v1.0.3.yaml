@@ -2,7 +2,14 @@ swagger: '2.0'
 info:
   title: "Социальный навигатор"
   description: |
-    `API` для `"Социального навигатора"`
+    ***API*** для ***"Социального навигатора"***
+  contact:
+    name: Поддержка
+    url: https://www.socnavi.ru/support
+    email: support@socnavi.ru
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: "1.0.3"
 #host: http://api.socnavi.ru
 host: 127.0.0.1:9090
@@ -12,6 +19,8 @@ schemes:
 tags:
   - name: Users
     description: Пользователи
+  - name: Scopes
+    description: Области доступа
   - name: Profiles
     description: Профиль пользователя
   - name: News
@@ -41,6 +50,25 @@ produces:
   - application/json
   - application/xml
 paths:
+  /scopes:
+    get:
+      summary: Список лоступных пользователю областей доступа
+      tags:
+        - Scopes
+      operationId: get_scopes
+      responses:
+        200:
+          description: Список областей доступа
+          schema:
+            type: array
+            items:
+              type: string
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security: 
+        - token: [] 
   /accessibility/processes:
     get:
       summary: Список уровней доступности
@@ -870,6 +898,7 @@ paths:
         - token: []    
   /users/{id}:
     get:
+      deprecated: true
       summary: Получение информации о пользователе
       description: |
         Получение информации о пользователе по его уникальному идентификатору.
@@ -895,6 +924,7 @@ paths:
       security: 
         - token: []
     delete:
+      deprecated: true
       summary: Удаление пользователя
       description: |
         Пользователь помечается как удаленный. Для получение удаленных пользователей надо воспользоваться параметром фильтра show_deleted.
@@ -918,6 +948,7 @@ paths:
       security: 
         - token: []
     put:
+      deprecated: true
       summary: Обновление информации о пользователе
       parameters:
         - name: id
@@ -951,6 +982,7 @@ paths:
         - token: []
   /users:
     get:
+      deprecated: true
       summary: Пользователи
       description: |
         Получение списка пользователей.
@@ -985,6 +1017,7 @@ paths:
       security: 
         - token: []
     post:
+      deprecated: true
       summary: Создание пользователя
       parameters:
         - name: token
@@ -1261,6 +1294,13 @@ definitions:
       accessibility:
         type: string
         description: Категория доступности
+        enum:
+          - baroow
+          - normal
+          - eyeless
+          - legless
+          - brainless
+          - other
       template:
         type: string
         description: Шаблон отображения интерфейса
@@ -1354,6 +1394,13 @@ definitions:
         type: string
         format: accessibility
         description: Категория доступности
+        enum:
+          - baroow
+          - normal
+          - eyeless
+          - legless
+          - brainless
+          - other
       process:
         type: string
         format: process
@@ -1438,6 +1485,10 @@ definitions:
       type:
         type: string
         description: Тип точки
+        enum:
+          - exit
+          - enter
+          - both
       point:
         $ref: '#/definitions/GeoPoint'
   ElementCategory:
@@ -1482,6 +1533,14 @@ definitions:
       accessibility:
         type: string
         description: Ограничения.
+        format: accessibility
+        enum:
+          - baroow
+          - normal
+          - eyeless
+          - legless
+          - brainless
+          - other
       address:
         type: string
         description: Адрес места жительства.

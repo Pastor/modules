@@ -9,6 +9,9 @@ import ru.phi.modules.entity.Profile;
 import ru.phi.modules.entity.Settings;
 import ru.phi.modules.entity.Token;
 import ru.phi.modules.exceptions.AuthenticationException;
+import ru.phi.modules.exceptions.ValidationException;
+
+import java.lang.reflect.Field;
 
 import static junit.framework.TestCase.*;
 
@@ -35,6 +38,20 @@ public final class MeControllerTest extends AbstractRestTest {
         final Token token = newToken("profile");
         final Profile profile = environment.me(token.getKey());
         profile.setMiddleName("Иванович");
+        environment.putMe(profile, token.getKey());
+        final Profile profile2 = environment.me(token.getKey());
+        assertEquals(profile.getEmail(), successProfile.getEmail());
+        assertEquals(profile.getEmail(), profile2.getEmail());
+        assertEquals(profile2.getMiddleName(), "Иванович");
+    }
+
+    @Test(expected = ValidationException.class)
+    public void updateMeWithoutAccessibility() throws Exception {
+        final Token token = newToken("profile");
+        final Profile profile = environment.me(token.getKey());
+        final Field accessibility = Profile.class.getDeclaredField("accessibility");
+        accessibility.setAccessible(true);
+        accessibility.set(profile, null);
         environment.putMe(profile, token.getKey());
         final Profile profile2 = environment.me(token.getKey());
         assertEquals(profile.getEmail(), successProfile.getEmail());
@@ -141,6 +158,16 @@ public final class MeControllerTest extends AbstractRestTest {
         assertEquals(settings2.getQuality().getName(), "QUALITY");
         assertEquals(settings2.getQuality().getAccessibility(), Accessibility.normal);
         assertEquals(settings2.getQuality().getTemplate(), "TEMPLATE");
+    }
+
+    @Test
+    public void updateSettingsWithoutProfile() throws Exception {
+        final Token token = newTokenWithoutProfile("profile", "settings");
+        final Settings settings = new Settings();
+        settings.setQuality(createQuality("QUALITY", "TEMPLATE", Accessibility.normal));
+        environment.putSettings(settings, token.getKey());
+        final Settings settings2 = environment.meSettings(token.getKey());
+        assertNull(settings2);
     }
 
     @Test

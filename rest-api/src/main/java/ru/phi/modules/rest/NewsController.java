@@ -10,6 +10,7 @@ import ru.phi.modules.entity.News;
 import ru.phi.modules.entity.Token;
 import ru.phi.modules.exceptions.AuthenticationException;
 import ru.phi.modules.exceptions.ObjectNotFoundException;
+import ru.phi.modules.exceptions.ValidationException;
 import ru.phi.modules.repository.NewsRepository;
 import ru.phi.modules.security.AuthorizedScope;
 import ru.phi.modules.security.AuthorizedToken;
@@ -121,11 +122,12 @@ class NewsController {
     public
     @ResponseBody
     News createNews(@AuthorizedToken Token token,
-                    @RequestBody News news)
-            throws AuthenticationException {
+                    @RequestBody News news) {
         news.clear();
-        if (token.getUser() != null && token.getUser().getProfile() != null) {
+        if (token.getUser().getProfile() != null) {
             news.setProfile(token.getUser().getProfile());
+        } else {
+            throw new ValidationException("Только пользователь с профилем может создавать новости");
         }
         newsRepository.save(news);
         return news;

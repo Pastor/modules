@@ -21,6 +21,7 @@ import javax.annotation.PostConstruct;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Slf4j
 @Configuration
@@ -30,7 +31,7 @@ import java.time.temporal.ChronoUnit;
         RestSecurityConfiguration.class,
         StaticConfiguration.class
 })
-@DependsOn({"accessibilityController.v1"})
+@DependsOn({"accessibilityController.v1", "scopeController.v1"})
 public class DemoConfiguration {
 
     private static final HashFunction hash = Hashing.goodFastHash(256);
@@ -51,7 +52,7 @@ public class DemoConfiguration {
     private QualityRepository qualityRepository;
 
     @Autowired
-    private ScopeRepository scopeRepository;
+    private ScopeRepository scp;
 
     @Autowired
     private SettingsRepository settingsRepository;
@@ -74,17 +75,6 @@ public class DemoConfiguration {
     @Transactional
     @PostConstruct
     private void construct() {
-        log.info("Создание областей доступа");
-        final Scope scopeProfile = registerScope("profile");
-        final Scope scopeSettings = registerScope("settings");
-        final Scope scopePing = registerScope("ping");
-        final Scope scopeElement = registerScope("element");
-        final Scope scopeCategory = registerScope("category");
-        final Scope scopeQuality = registerScope("quality");
-        final Scope scopeNews = registerScope("news");
-        final Scope scopeStatistic = registerScope("statistic");
-        final Scope scopeError = registerScope("error");
-        registerScope("empty");
         log.info("Создание пользователей");
         final User pastor = createUser("pastor", "+79265943742", "123456",
                 "viruszold@mail.ru", UserRole.admin);
@@ -93,10 +83,10 @@ public class DemoConfiguration {
         final User content = createUser("content", "+79265941111", "123456",
                 "content@mail.ru", UserRole.content);
         log.info("Сщздание токенов");
-        createToken(pastor, scopeCategory, scopeElement, scopeNews, scopePing, scopeProfile, scopeQuality,
-                scopeSettings, scopeStatistic, scopeError);
-        createToken(vasia, scopeProfile, scopeSettings);
-        createToken(content, scopeProfile, scopeSettings, scopeNews);
+        final List<Scope> adminScopes = scp.findByRole(pastor.getRole());
+        createToken(pastor, adminScopes.toArray(new Scope[adminScopes.size()]));
+        createToken(vasia, scope(vasia, "profile"), scope(vasia, "settings"));
+        createToken(content, scope(content, "profile"), scope(content, "settings"), scope(content, "news"));
         log.info("Создание профилей для пользователей");
         final Profile vasiaProfile = createProfile(vasia, "Залупа", "Василий", "Николаевич", Accessibility.baroow);
         final Profile pastorProfile = createProfile(pastor, "Хлебников", "Андрей", "Александрович", Accessibility.normal);
@@ -190,6 +180,10 @@ public class DemoConfiguration {
         createNews(pastorProfile, "Вторая версия API", "Вторая версия API", "<h1>ВТОРАЯ ВЕРСИЯ API</h1>");
         createNews(pastorProfile, "Третья версия API", "Третья версия API", "<h1>ТРЕТЬЯ ВЕРСИЯ API</h1>");
         log.info("Окончание");
+    }
+
+    private Scope scope(User user, String scopeName) {
+        return scp.findByNameAndRole(scopeName, user.getRole());
     }
 
     private void createToken(User user, Scope... scopes) {
@@ -300,18 +294,6 @@ public class DemoConfiguration {
 
     private static String hash(String text) {
         return hash.hashUnencodedChars(text).toString().toUpperCase();
-    }
-
-    private Scope registerScope(String scopeName) {
-        final Scope scope = new Scope();
-        scope.clear();
-        scope.setName(scopeName);
-        scope.setRole(UserRole.admin);
-        scopeRepository.save(scope);
-        scope.clear();
-        scope.setRole(UserRole.user);
-        log.info(MessageFormat.format("Создана область {0}", scopeName));
-        return scopeRepository.save(scope);
     }
 
     private Element registerPolygon(Element element, GeoPoint... points) {
