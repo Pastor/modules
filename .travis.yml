@@ -1,6 +1,8 @@
 sudo: false
 language: java
-script: mvn clean package --batch-mode
+script: mvn clean package 
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 jdk:
   - oraclejdk8
 
