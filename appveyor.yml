@@ -19,6 +19,8 @@ build_script:
   - mvn clean package --batch-mode
 test_script:
   - mvn clean install --batch-mode
+after_test:
+  - bash <(curl -s https://codecov.io/bash)
 cache:
   - C:\maven\
   - C:\Users\appveyor\.m2
