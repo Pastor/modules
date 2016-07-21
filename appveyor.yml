@@ -23,7 +23,7 @@ after_test:
   - bash <(curl -s https://codecov.io/bash)
 deploy:
   release: socnavi-v$(appveyor_build_version)
-  description: 'Release'
+  description: 'release-v$(appveyor_build_version)'
   provider: GitHub
   auth_token:
     secure: ${GITHUB_KEY}
@@ -33,6 +33,9 @@ deploy:
   on:
     branch: master
     appveyor_repo_tag: true
+environment:
+  GITHUB_KEY:
+    secure: p3IWU2j2AAvNZCJ/H29mT9OUO4tTQxoCXz5LhUsW/4JF4tBAaQdjUsP5MLg44s6Q
 cache:
   - C:\maven\
   - C:\Users\appveyor\.m2
