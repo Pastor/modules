@@ -4,14 +4,13 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import ru.phi.modules.AbstractRestTest;
-import ru.phi.modules.entity.Accessibility;
-import ru.phi.modules.entity.Profile;
-import ru.phi.modules.entity.Settings;
-import ru.phi.modules.entity.Token;
+import ru.phi.modules.entity.*;
 import ru.phi.modules.exceptions.AuthenticationException;
 import ru.phi.modules.exceptions.ValidationException;
 
 import java.lang.reflect.Field;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.*;
 
@@ -24,6 +23,14 @@ public final class MeControllerTest extends AbstractRestTest {
         final Token token = newToken("profile");
         final Profile profile = environment.me(token.getKey());
         assertEquals(profile.getEmail(), successProfile.getEmail());
+    }
+
+    @Test
+    public void meScopes() throws Exception {
+        final Token token = newToken("profile");
+        final List<String> scopes = environment.meScopes(token.getKey());
+        assertTrue(scopes.contains("profile"));
+        assertEquals(scopes, token.getScopes().stream().map(Scope::getName).collect(Collectors.toList()));
     }
 
     @Test

@@ -8,15 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import ru.phi.modules.entity.*;
 import ru.phi.modules.exceptions.AuthenticationException;
-import ru.phi.modules.repository.NewsRepository;
-import ru.phi.modules.repository.ProfileRepository;
-import ru.phi.modules.repository.QualityRepository;
-import ru.phi.modules.repository.SettingsRepository;
+import ru.phi.modules.repository.*;
 import ru.phi.modules.security.AuthorizedScope;
 import ru.phi.modules.security.AuthorizedToken;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 @RequestMapping({"/rest/v1/", "/rest/"})
@@ -36,6 +35,9 @@ class MeController extends AbstractController {
     @Autowired
     private QualityRepository qualityRepository;
 
+    @Autowired
+    private TokenRepository tokenRepository;
+
     @AuthorizedScope(scopes = {"profile"})
     @RequestMapping(value = "/me", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public
@@ -51,6 +53,16 @@ class MeController extends AbstractController {
             profile = profileRepository.save(profile);
         }
         return profile;
+    }
+
+    @AuthorizedScope(scopes = {"profile"})
+    @RequestMapping(value = "/me/scopes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public
+    @ResponseBody
+    List<String> meScopes(@AuthorizedToken Token token)
+            throws AuthenticationException {
+        final Set<Scope> scopes = tokenRepository.findOne(token.getId()).getScopes();
+        return scopes.stream().map(Scope::getName).collect(Collectors.toList());
     }
 
     @AuthorizedScope(scopes = {"profile"})

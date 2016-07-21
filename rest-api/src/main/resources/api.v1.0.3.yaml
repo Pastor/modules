@@ -52,7 +52,7 @@ produces:
 paths:
   /scopes:
     get:
-      summary: Список лоступных пользователю областей доступа
+      summary: Список доступных пользователю областей доступа
       tags:
         - Scopes
       operationId: get_scopes
@@ -1084,6 +1084,26 @@ paths:
       operationId: update_self
       security: 
         - token: []     
+  /me/scopes:
+    get:
+      summary: Список установленных пользователю областей доступа
+      tags:
+        - Scopes
+        - Profiles
+      operationId: get_me_scopes
+      responses:
+        200:
+          description: Список областей доступа
+          schema:
+            type: array
+            items:
+              type: string
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security: 
+        - token: []
   /me/settings:
     get:
       summary: Текущие настройки пользователя
