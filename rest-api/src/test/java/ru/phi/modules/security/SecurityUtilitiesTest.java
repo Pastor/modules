@@ -30,11 +30,8 @@ public final class SecurityUtilitiesTest {
 
     @Test
     public void currentTokenWithAuthentication() throws Exception {
-        final SecurityContextImpl context = new SecurityContextImpl();
-        SecurityContextHolder.setContext(context);
-        final Token token = new Token();
-        context.setAuthentication(new AuthenticationWithToken(token, null, null, null));
-        assertEquals(Optional.of(token), SecurityUtilities.currentToken());
+        final Optional<Token> token = Environment.registerAuthentication();
+        assertEquals(token, SecurityUtilities.currentToken());
     }
 
     @Test
@@ -42,6 +39,6 @@ public final class SecurityUtilitiesTest {
         final String key = SecurityUtilities.generateTokenKey();
         assertNotNull(key);
         assertFalse(key.isEmpty());
-        assertTrue(key.length() >= 256/4);
+        assertTrue(key.length() >= 256 / 4);
     }
 }

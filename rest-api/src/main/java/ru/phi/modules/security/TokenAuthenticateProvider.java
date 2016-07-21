@@ -28,7 +28,7 @@ class TokenAuthenticateProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         final Optional<String> token = (Optional<String>) authentication.getPrincipal();
         if (!token.isPresent())
-            throw new BadCredentialsException("Empty token");
+            throw new BadCredentialsException("Ключ доступа не установлен");
         final Token keyToken;
         final String tokenKey = token.get();
         try {

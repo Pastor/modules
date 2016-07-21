@@ -18,7 +18,7 @@ import static java.text.MessageFormat.format;
 
 @SuppressWarnings("unused")
 @Aspect
-@Component
+@Component("authorizedScopeMonitor.v1")
 final class AuthorizedScopeMonitor {
 
     @Autowired

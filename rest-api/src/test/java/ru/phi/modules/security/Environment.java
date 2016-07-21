@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
@@ -21,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Optional;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -430,5 +433,19 @@ public final class Environment {
                 ElementCategory.class, id, token);
         assertEquals(entity.getStatusCode(), HttpStatus.OK);
         return entity.getBody();
+    }
+
+    public static Optional<Token> registerAuthentication() {
+        final SecurityContextImpl context = new SecurityContextImpl();
+        SecurityContextHolder.setContext(context);
+        final Token token = new Token();
+        context.setAuthentication(new AuthenticationWithToken(token, null, null, null));
+        return Optional.of(token);
+    }
+
+    public static void registerNullAuthentication() {
+        final SecurityContextImpl context = new SecurityContextImpl();
+        SecurityContextHolder.setContext(context);
+        context.setAuthentication(null);
     }
 }
