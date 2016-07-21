@@ -24,7 +24,7 @@ import java.util.Set;
 
 @SuppressWarnings("unused")
 @RequestMapping({"/rest/v1/", "/rest/"})
-@RestController
+@RestController("elementController.v1")
 class ElementController extends AbstractController {
 
     @Autowired

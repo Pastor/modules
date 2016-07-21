@@ -20,8 +20,8 @@ import java.util.List;
 
 @SuppressWarnings("unused")
 @RequestMapping({"/rest/v1/", "/rest/"})
-@RestController
 @Transactional
+@RestController("newsController.v1")
 class NewsController {
 
     @Autowired

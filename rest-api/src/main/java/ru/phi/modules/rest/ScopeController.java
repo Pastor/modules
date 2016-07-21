@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 @RequestMapping({"/rest/v1/", "/rest/"})
 @RestController("scopeController.v1")
-class ScopesController {
+class ScopeController {
     @Autowired
     private ScopeRepository scopeRepository;
 

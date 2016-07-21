@@ -11,8 +11,8 @@ import ru.phi.modules.security.AuthorizedToken;
 
 @SuppressWarnings("unused")
 @RequestMapping({"/rest/v1/", "/rest/"})
-@RestController
 @Transactional
+@RestController("pingController.v1")
 class PingController {
 
     @AuthorizedScope(scopes = {"ping"})

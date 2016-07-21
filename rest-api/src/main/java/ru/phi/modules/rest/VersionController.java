@@ -20,10 +20,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 @SuppressWarnings("unused")
-@RequestMapping({"/rest/v1/", "/rest/"})
-@RestController
-@Transactional
 @Slf4j
+@RequestMapping({"/rest/v1/", "/rest/"})
+@Transactional
+@RestController("versionController.v1")
 class VersionController {
 
     @Autowired

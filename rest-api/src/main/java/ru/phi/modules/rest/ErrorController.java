@@ -14,7 +14,7 @@ import java.util.List;
 
 @SuppressWarnings("unused")
 @RequestMapping({"/rest/v1/", "/rest/"})
-@RestController
+@RestController("errorController.v1")
 class ErrorController {
 
     @Autowired

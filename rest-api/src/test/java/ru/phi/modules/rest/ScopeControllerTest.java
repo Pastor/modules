@@ -12,7 +12,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public final class ScopesControllerTest extends AbstractRestTest {
+public final class ScopeControllerTest extends AbstractRestTest {
 
     @Test
     public void list() throws Exception {

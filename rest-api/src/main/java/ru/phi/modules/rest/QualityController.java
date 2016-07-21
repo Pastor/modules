@@ -17,7 +17,7 @@ import java.util.List;
 
 @SuppressWarnings("unused")
 @RequestMapping({"/rest/v1/", "/rest/"})
-@RestController
+@RestController("qualityController.v1")
 class QualityController {
 
     @Autowired
