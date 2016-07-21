@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.phi.modules.entity.Element;
 
-@Repository
 @Transactional
+@Repository("elementRepository.v1")
 public interface ElementRepository extends PagingAndSortingRepository<Element, Long> {
 }

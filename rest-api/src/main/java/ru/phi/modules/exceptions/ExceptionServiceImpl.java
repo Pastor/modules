@@ -9,35 +9,28 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.WebRequest;
+import ru.phi.modules.Utilities;
 import ru.phi.modules.api.ExceptionService;
 import ru.phi.modules.entity.Error;
 import ru.phi.modules.entity.Token;
 import ru.phi.modules.repository.ErrorRepository;
 import ru.phi.modules.security.SecurityUtilities;
 
-import javax.persistence.Column;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.Field;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
 @Slf4j
-@Service("exceptionService")
+@Service("exceptionService.v1")
 final class ExceptionServiceImpl implements ExceptionService {
 
     private static final int maxLength;
 
     static {
-        try {
-            final Field field = Error.class.getDeclaredField("trace");
-            final Column[] columns = field.getAnnotationsByType(Column.class);
-            maxLength = columns[0].length() - 1;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        maxLength = Utilities.entityColumnLength(Error.class, "trace");
     }
 
     @Autowired

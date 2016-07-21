@@ -18,7 +18,7 @@ import java.util.List;
 
 @SuppressWarnings("unused")
 @RequestMapping({"/rest/v1/", "/rest/"})
-@RestController
+@RestController("elementCategoryController.v1")
 class ElementCategoryController {
 
     @Autowired
@@ -81,7 +81,6 @@ class ElementCategoryController {
         elementCategoryRepository.delete(id);
     }
 
-    @AuthorizedScope(scopes = {"category"})
     @RequestMapping(value = "/categories/count", method = RequestMethod.GET)
     public long count() {
         return elementCategoryRepository.count();

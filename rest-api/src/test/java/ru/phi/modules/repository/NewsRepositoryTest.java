@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
@@ -20,7 +19,6 @@ import ru.phi.modules.entity.Profile;
 import ru.phi.modules.entity.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebIntegrationTest(randomPort = true)
 @ContextConfiguration(classes = {JpaConfiguration.class})
 @TestPropertySource({"classpath:application.properties"})
 @SqlGroup({

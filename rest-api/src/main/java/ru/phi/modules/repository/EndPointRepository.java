@@ -7,7 +7,7 @@ import ru.phi.modules.entity.GeoPoint;
 
 import java.util.Set;
 
-@Repository
+@Repository("endPointRepository.v1")
 public interface EndPointRepository extends PagingAndSortingRepository<EndPoint, Long> {
     Set<EndPoint> findByPoint(GeoPoint point);
 }

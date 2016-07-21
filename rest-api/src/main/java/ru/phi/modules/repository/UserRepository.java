@@ -6,7 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.phi.modules.entity.User;
 
-@Repository
+@Repository("userRepository.v1")
 public interface UserRepository extends PagingAndSortingRepository<User, Long> {
 
     @Query(value = "SELECT u FROM User u WHERE u.username = :username AND u.password = :password")

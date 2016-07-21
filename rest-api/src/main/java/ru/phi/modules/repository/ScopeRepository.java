@@ -7,7 +7,7 @@ import ru.phi.modules.entity.UserRole;
 
 import java.util.List;
 
-@Repository
+@Repository("scopeRepository.v1")
 public interface ScopeRepository extends PagingAndSortingRepository<Scope, Long> {
     Scope findByNameAndRole(String name, UserRole role);
 

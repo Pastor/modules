@@ -95,7 +95,7 @@ public final class ElementCategoryControllerTest extends AbstractRestTest {
 
     @Test
     public void count() throws Exception {
-        final Token token = newToken("category");
+        final Token token = newToken();
         createCategory(successUser, "NAME1");
         createCategory(successUser, "NAME2");
         final Long count = environment.categoriesCount(token.getKey());

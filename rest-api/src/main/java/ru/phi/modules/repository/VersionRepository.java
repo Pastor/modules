@@ -6,8 +6,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.phi.modules.entity.Version;
 
-@Repository
+
 @Transactional
+@Repository("versionRepository.v1")
 public interface VersionRepository extends PagingAndSortingRepository<Version, Long> {
 
     @Query(value = "SELECT v FROM Version v ORDER BY v.createdAt ASC")

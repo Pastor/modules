@@ -7,6 +7,8 @@ import ru.phi.modules.repository.AccessibilityProcessRepository;
 import ru.phi.modules.repository.GeoPointRepository;
 import ru.phi.modules.repository.ScopeRepository;
 
+import javax.persistence.Column;
+import java.lang.reflect.Field;
 import java.text.MessageFormat;
 
 @Slf4j
@@ -68,5 +70,15 @@ public final class Utilities {
 
     public static AccessibilityProcess standard(AccessibilityProcessRepository acp) {
         return acp.findByAccessibilityAndType(Accessibility.normal, AccessibilityType.full);
+    }
+
+    public static int entityColumnLength(Class entityClass, String fieldName) {
+        try {
+            final Field field = entityClass.getDeclaredField(fieldName);
+            final Column[] columns = field.getAnnotationsByType(Column.class);
+            return columns[0].length() - 1;
+        } catch (NoSuchFieldException | SecurityException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

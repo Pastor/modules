@@ -6,7 +6,7 @@ import ru.phi.modules.entity.Accessibility;
 import ru.phi.modules.entity.AccessibilityProcess;
 import ru.phi.modules.entity.AccessibilityType;
 
-@Repository
+@Repository("accessibilityProcessRepository.v1")
 public interface AccessibilityProcessRepository extends PagingAndSortingRepository<AccessibilityProcess, Long> {
     AccessibilityProcess findByAccessibilityAndType(Accessibility accessibility, AccessibilityType type);
 }

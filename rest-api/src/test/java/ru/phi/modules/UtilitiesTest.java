@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
@@ -27,7 +26,6 @@ import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebIntegrationTest(randomPort = true)
 @ContextConfiguration(classes = {JpaConfiguration.class})
 @TestPropertySource({"classpath:application.properties"})
 @SqlGroup({
@@ -114,6 +112,16 @@ public final class UtilitiesTest {
         final Scope scope = scp.findByRole(UserRole.admin).iterator().next();
         scp.delete(scope);
         Utilities.register(scp);
+    }
+
+    @Test
+    public void entityColumnLength() throws Exception {
+        Utilities.entityColumnLength(ru.phi.modules.entity.Error.class, "trace");
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void faultEntityColumnLength() throws Exception {
+        Utilities.entityColumnLength(ru.phi.modules.entity.User.class, "trace");
     }
 
     protected User registerUser() {
