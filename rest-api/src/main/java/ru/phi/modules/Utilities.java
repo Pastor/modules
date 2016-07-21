@@ -37,12 +37,17 @@ public final class Utilities {
     }
 
     public static void register(AccessibilityProcessRepository acp) {
-        for (Accessibility accessibility : Accessibility.values()) {
-            for (AccessibilityType type : AccessibilityType.values()) {
-                final AccessibilityProcess entity = new AccessibilityProcess();
-                entity.setAccessibility(accessibility);
-                entity.setType(type);
-                acp.save(entity);
+        if (Accessibility.values().length * AccessibilityType.values().length != acp.count()) {
+            for (Accessibility accessibility : Accessibility.values()) {
+                for (AccessibilityType type : AccessibilityType.values()) {
+                    final AccessibilityProcess find = acp.findByAccessibilityAndType(accessibility, type);
+                    if (find == null) {
+                        final AccessibilityProcess entity = new AccessibilityProcess();
+                        entity.setAccessibility(accessibility);
+                        entity.setType(type);
+                        acp.save(entity);
+                    }
+                }
             }
         }
     }

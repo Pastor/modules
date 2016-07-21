@@ -7,21 +7,26 @@ import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "Geo_Point")
-@Data
-@EqualsAndHashCode(callSuper = true, of = {"latitude", "longitude"})
+@Getter
+@Setter
 @ToString(exclude = {"user", "elements", "endPoints", "polyElements"})
 @NoArgsConstructor
 @Proxy(lazy = false)
 public final class GeoPoint extends AbstractEntity {
 
+    @Getter
+    @Setter
     @NotNull
     @Column(name = "longitude", nullable = false)
     private double longitude;
 
+    @Getter
+    @Setter
     @NotNull
     @Column(name = "latitude", nullable = false)
     private double latitude;
@@ -34,8 +39,9 @@ public final class GeoPoint extends AbstractEntity {
     private User user;
 
     @JsonIgnore
+    @Getter(AccessLevel.PUBLIC)
     @Setter(AccessLevel.NONE)
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "point", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "point", cascade = CascadeType.DETACH)
     @OrderBy("id")
     private Set<Element> elements;
 
@@ -50,4 +56,18 @@ public final class GeoPoint extends AbstractEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "point", cascade = CascadeType.ALL)
     @OrderBy("id")
     private Set<EndPoint> endPoints;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GeoPoint geoPoint = (GeoPoint) o;
+        return Double.compare(geoPoint.longitude, longitude) == 0 &&
+                Double.compare(geoPoint.latitude, latitude) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(longitude, latitude);
+    }
 }

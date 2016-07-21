@@ -187,6 +187,10 @@ public abstract class AbstractRestTest {
         return point(user, point.getLatitude(), point.getLongitude());
     }
 
+    protected final GeoPoint point(double latitude, double longitude) {
+        return point(successUser, latitude, longitude);
+    }
+
     protected final GeoPoint point(User user, double latitude, double longitude) {
         return ru.phi.modules.Utilities.point(geoPointRepository, user, latitude, longitude);
     }
