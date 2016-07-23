@@ -42,7 +42,6 @@ public final class News extends AbstractEntity {
 
     @JsonIgnore
     @NotNull
-    @NonNull
     @Column(name = "visible", nullable = false)
     private boolean visible = false;
 
