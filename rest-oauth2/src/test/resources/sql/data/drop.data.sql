@@ -1,0 +1,15 @@
+DELETE FROM News;
+DELETE FROM Error;
+DELETE FROM Settings;
+DELETE FROM Profile;
+DELETE FROM Quality;
+DELETE FROM Version;
+DELETE FROM Statistic;
+DELETE FROM Element;
+DELETE FROM Element_Accessibility_Process;
+DELETE FROM Element_Element_Category;
+-- DELETE FROM Element_Category_Element;
+DELETE FROM Element_Category;
+DELETE FROM End_Point;
+DELETE FROM Geo_Point;
+DELETE FROM User;

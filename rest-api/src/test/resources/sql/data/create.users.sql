@@ -1,1 +1,0 @@
-INSERT INTO "User"("username", "password") VALUES('pastor', '123456');

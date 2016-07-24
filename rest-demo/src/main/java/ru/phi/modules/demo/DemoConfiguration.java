@@ -1,37 +1,48 @@
 package ru.phi.modules.demo;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.OAuth2Request;
+import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Base64Utils;
+import ru.phi.modules.Constants;
 import ru.phi.modules.JpaConfiguration;
-import ru.phi.modules.RestMvcConfiguration;
 import ru.phi.modules.entity.*;
+import ru.phi.modules.oauth2.AuthorizationServerConfiguration;
+import ru.phi.modules.oauth2.RestMvcConfiguration;
 import ru.phi.modules.repository.*;
-import ru.phi.modules.security.RestSecurityConfiguration;
-import ru.phi.modules.security.SecurityUtilities;
 import ru.phi.modules.strong.StaticConfiguration;
 
 import javax.annotation.PostConstruct;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static ru.phi.modules.Constants.*;
 
 @Slf4j
 @Configuration
 @Import({
         JpaConfiguration.class,
         RestMvcConfiguration.class,
-        RestSecurityConfiguration.class,
         StaticConfiguration.class
 })
-@DependsOn({"accessibilityController.v1", "scopeController.v1"})
+@org.springframework.context.annotation.Profile("oauth2")
+@ComponentScan(basePackages = {"ru.phi.modules.oauth2"})
+@DependsOn({"accessibilityController.v1", "authorizationServerConfiguration.v1"})
 public class DemoConfiguration {
 
     private static final HashFunction hash = Hashing.goodFastHash(256);
@@ -52,13 +63,7 @@ public class DemoConfiguration {
     private QualityRepository qualityRepository;
 
     @Autowired
-    private ScopeRepository scp;
-
-    @Autowired
     private SettingsRepository settingsRepository;
-
-    @Autowired
-    private TokenRepository tokenRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -72,6 +77,9 @@ public class DemoConfiguration {
     @Autowired
     private EndPointRepository endPointRepository;
 
+    @Autowired
+    private VersionRepository versionRepository;
+
     @Transactional
     @PostConstruct
     private void construct() {
@@ -83,10 +91,6 @@ public class DemoConfiguration {
         final User content = createUser("content", "+79265941111", "123456",
                 "content@mail.ru", UserRole.content);
         log.info("Сщздание токенов");
-        final List<Scope> adminScopes = scp.findByRole(pastor.getRole());
-        createToken(pastor, adminScopes.toArray(new Scope[adminScopes.size()]));
-        createToken(vasia, scope(vasia, "profile"), scope(vasia, "settings"));
-        createToken(content, scope(content, "profile"), scope(content, "settings"), scope(content, "news"));
         log.info("Создание профилей для пользователей");
         final Profile vasiaProfile = createProfile(vasia, "Залупа", "Василий", "Николаевич", Accessibility.baroow);
         final Profile pastorProfile = createProfile(pastor, "Хлебников", "Андрей", "Александрович", Accessibility.normal);
@@ -179,22 +183,22 @@ public class DemoConfiguration {
         createNews(pastorProfile, "Первая версия API", "Первая версия API", "<h1>ПЕРВАЯ ВЕРСИЯ API</h1>");
         createNews(pastorProfile, "Вторая версия API", "Вторая версия API", "<h1>ВТОРАЯ ВЕРСИЯ API</h1>");
         createNews(pastorProfile, "Третья версия API", "Третья версия API", "<h1>ТРЕТЬЯ ВЕРСИЯ API</h1>");
+
+        final Version v = new Version();
+        v.setMajor(1L);
+        v.setMinor(0L);
+        v.setBuild(3L);
+        v.setRc(Boolean.TRUE);
+        v.setSupport("support@me.com");
+        versionRepository.save(v);
+
+        log.info(MessageFormat.format("client-id: {0}", CLIENT_ID));
+        log.info(MessageFormat.format("client-secret: {0}", password(CLIENT_SECRET)));
+        log.info(MessageFormat.format("user-password[pastor]: {0}", hash("123456")));
+        log.info(MessageFormat.format("user-access-token[pastor]: {0}", accessToken(pastor, Constants.CLIENT_SCOPES)));
+        log.info(MessageFormat.format("authorization: {0}", "Basic " + new String(Base64Utils.encode((CLIENT_ID + ":" + CLIENT_SECRET).getBytes()))));
+
         log.info("Окончание");
-    }
-
-    private Scope scope(User user, String scopeName) {
-        return scp.findByNameAndRole(scopeName, user.getRole());
-    }
-
-    private void createToken(User user, Scope... scopes) {
-        final Token token = new Token();
-        token.setUser(user);
-        token.setExpiredAt(LocalDateTime.now().plus(365, ChronoUnit.DAYS));
-        token.setScopes(Sets.newHashSet(scopes));
-        final String key = SecurityUtilities.generateTokenKey();
-        token.setKey(key);
-        log.info("Token for {}: {}", user.getUsername(), key);
-        tokenRepository.save(token);
     }
 
     private News createNews(Profile profile, String title, String bref, String content) {
@@ -308,5 +312,40 @@ public class DemoConfiguration {
         endPoint.setPoint(point);
         endPoint.setAccessibility(Sets.newHashSet(processes));
         return endPointRepository.save(endPoint);
+    }
+
+    private static String password(String password) {
+        return AuthorizationServerConfiguration.passwordEncoder.encode(password);
+    }
+
+    @Autowired
+    private AuthorizationServerTokenServices tokenService;
+
+    private String accessToken(User user, String... scopes) {
+        final Map<String, String> params = Maps.newConcurrentMap();
+        params.put("scope", Joiner.on(' ').join(scopes));
+        params.put("username", user.getUsername());
+        params.put("password", hash(user.getPassword()));
+        params.put("client_id", CLIENT_ID);
+        params.put("client_secret", password(CLIENT_SECRET));
+        params.put("grant_type", "password");
+        final Set<UserRole> authorities = Sets.newHashSet(user.getRole());
+        final UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, null, authorities);
+        token.setDetails(user);
+        final OAuth2Authentication authentication = new OAuth2Authentication(new OAuth2Request(
+                params,
+                CLIENT_ID,
+                authorities,
+                true,
+                Sets.newHashSet(scopes),
+                Sets.newHashSet(RESOURCE_ID),
+                "http://localhost/empty",
+                Sets.newHashSet("token"),
+                Maps.newHashMap()),
+                token);
+        authentication.setDetails(user);
+        authentication.setAuthenticated(true);
+        final org.springframework.security.oauth2.common.OAuth2AccessToken accessToken = tokenService.createAccessToken(authentication);
+        return accessToken.getValue();
     }
 }
