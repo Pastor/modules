@@ -33,6 +33,12 @@ import java.util.Set;
 
 import static ru.phi.modules.Constants.*;
 
+/**
+ * todo: 1. Добить все объекты (координаты+полигоны)
+ * todo: 2. Завести OSRM-backend на Ubuntu с 3 профилями
+ * todo: 3. Посмотреть, как настраивать профили через Lua-скрипты
+ * todo: 4. Для bicycle.lua - поправить отображение поворотов на улицы с неизвестными именами
+ */
 @Slf4j
 @Configuration
 @Import({
