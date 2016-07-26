@@ -58,9 +58,8 @@ L.Routing.Localization['ru'] = {
 };
 
 var mapLayer = leafletOptions.layer;
-var overlay = leafletOptions.overlay;
-var baselayer = ls.get('layer') ? mapLayer[0][ls.get('layer')] : mapLayer[0]['Mapbox Streets'];
-var layers = ls.get('getOverlay') && [baselayer, overlay['Small Components']] || baselayer;
+var baseURL = window.location.href.split('?')[0];
+var layers = mapLayer[0][baseURL.indexOf('sight') >= 0 ? 'openstreetmap.org' : 'Mapbox Streets'];
 var map = L.map('map', {
   zoomControl: false,
   dragging: true,
@@ -81,25 +80,7 @@ mapLayer = mapLayer.reduce(function(title, layer) {
   return title;
 });
 
-/* Leaflet Controls */
-L.control.layers(mapLayer, overlay, {
-  position: 'bottomleft'
-}).addTo(map);
-
 L.control.scale({imperial: false}).addTo(map);
-
-/* Store User preferences */
-// store baselayer changes
-map.on('baselayerchange', function(e) {
-  ls.set('layer', e.name);
-});
-// store overlay add or remove
-map.on('overlayadd', function(e) {
-  ls.set('getOverlay', true);
-});
-map.on('overlayremove', function(e) {
-  ls.set('getOverlay', false);
-});
 
 /* OSRM setup */
 var ReversablePlan = L.Routing.Plan.extend({
@@ -193,7 +174,7 @@ var lrmControl = L.Routing.control({
 }).addTo(map);
 
 var profControl = profile.control(mergedOptions.profile, leafletOptions.services, options.profile).addTo(map);
-state(map, lrmControl, profControl, mergedOptions);
+state(map, lrmControl, profControl, mergedOptions).update();
 
 plan.on('waypointgeocoded', function(e) {
   if (plan._waypoints.filter(function(wp) { return !!wp.latLng; }).length < 2) {

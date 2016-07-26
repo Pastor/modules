@@ -19,25 +19,25 @@ module.exports = {
     zoom: 15,
     waypoints: [],
     language: 'ru',
-    profile: 'bicycle',
+    profile: 'bus',
     alternative: 0,
     layer: streets
   },
   services: {
-    bicycle: {
-      label: 'Велосипед',
-      // path: 'http://localhost:5000/route/v1'
-      path: 'https://router.project-osrm.org/route/v1'
+    bus: {
+      label: 'Для низкопольного общественного транспорта',
+      path: 'http://52.201.214.44:5000/route/v1'
+      // path: 'https://router.project-osrm.org/route/v1'
     },
-    walk: {
-      label: 'Пешеход',
-      // path: 'http://localhost:5000/route/v1'
-      path: 'https://router.project-osrm.org/route/v1'
+    peop: {
+      label: 'Для пешеходов',
+      path: 'http://52.201.214.44:5000/route/v1'
+      // path: 'https://router.project-osrm.org/route/v1'
     },
-    car: {
-      label: 'Автомобиль',
-      // path: 'http://localhost:5000/route/v1'
-      path: 'https://router.project-osrm.org/route/v1'
+    wheelchair: {
+      label: 'Для передвижения на инвалидной коляске',
+      path: 'http://52.201.214.44:5000/route/v1'
+      // path: 'https://router.project-osrm.org/route/v1'
     }
   },
   layer: [{
