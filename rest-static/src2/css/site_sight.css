@@ -1,0 +1,201 @@
+/* todo: black borders around plus/minus buttons */
+
+::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color: black;
+    font-weight: bold;
+}
+
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color: black;
+    opacity: 1;
+    font-weight: bold;
+}
+
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color: black;
+    opacity: 1;
+    font-weight: bold;
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: black;
+    font-weight: bold;
+}
+
+#logo {
+    width: 518px;
+    height: 114px;
+    display: block;
+    background: transparent url(../images_sight/logo.png) no-repeat;
+}
+
+.header {
+    padding-top: 20px;
+    display: table;
+    width: 100%;
+    height: 165px;
+    background-color: black;
+}
+
+.headerLinkSmall {
+    font-size: 16px;
+    font-family: "Roboto Condensed";
+    color: white;
+    text-decoration: underline;
+}
+
+.headerTextSmall {
+    font-size: 14px;
+    font-family: "Roboto Condensed";
+    color: white;
+    text-decoration: none;
+}
+
+.smaller {
+    font-size: 12px;
+}
+
+#searchButton {
+    background-repeat: no-repeat;
+    background-image: url(../images_sight/search_but.png);
+    background-color: transparent;
+}
+
+#searchButton:hover {
+    background-image: url(../images_sight/search_but_h.png);
+}
+
+#searchButton:active:hover {
+    background-image: url(../images_sight/search_but_a.png);
+}
+
+#loginButton {
+    background-repeat: no-repeat;
+    background-image: url(../images_sight/login_but.png);
+    background-color: transparent;
+}
+
+#loginButton:hover {
+    background-image: url(../images_sight/login_but_h.png);
+}
+
+#loginButton:active:hover {
+    background-image: url(../images_sight/login_but_a.png);
+}
+
+.routePanel {
+    position: absolute;
+    left: 40px;
+    top: 185px;
+    width: 330px;
+}
+
+.routeHeader {
+    height: 60px;
+    line-height: 60px;
+    vertical-align: middle;
+    text-align: center;
+    background-color: #FED73C;
+    color: black;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.routeBody {
+    background-color: black;
+    height: 390px;
+    display: block;
+}
+
+#routeStart {
+    width: 305px;
+    height: 40px;
+}
+
+#routeEnd {
+    width: 305px;
+    height: 40px;
+}
+
+#reverseButton {
+    background-repeat: no-repeat;
+    background-image: url(../images_sight/ch_but.png);
+    background-color: transparent;
+    width: 153px;
+    height: 20px;
+    display: block;
+}
+
+#reverseButton:active:hover {
+    background-image: url(../images_sight/ch_but_a.png);
+}
+
+#reverseButton:hover {
+    background-image: url(../images_sight/ch_but_h.png);
+}
+
+#routeButton {
+    background-repeat: no-repeat;
+    background-image: url(../images_sight/route_but.png);
+    background-color: transparent;
+    width: 310px;
+    height: 40px;
+    display: block;
+}
+
+#routeButton:active:hover {
+    background-image: url(../images_sight/route_but_a.png);
+}
+
+#routeButton:hover {
+    background-image: url(../images_sight/route_but_h.png);
+}
+
+#socialLink {
+    width: 45px;
+    height: 45px;
+    display: block;
+    background-repeat: no-repeat;
+    background-image: url(../images_sight/soc-ico.png);
+    background-color: transparent;
+}
+
+#socialLink:hover {
+    background-image: url(../images_sight/soc-ico_h.png);
+}
+
+#socialLink:active:hover {
+    background-image: url(../images_sight/soc-ico_a.png);
+}
+
+#showLocation {
+    width: 45px;
+    height: 45px;
+    display: block;
+    background-repeat: no-repeat;
+    background-image: url(../images_sight/show-ico.png);
+    background-color: transparent;
+}
+
+#showLocation:hover {
+    background-image: url(../images_sight/show-ico_h.png);
+}
+
+#showLocation:active:hover {
+    background-image: url(../images_sight/show-ico_a.png);
+}
+
+#showLocationText {
+    text-transform: uppercase;
+}
+
+.sightChoice {
+    color: rgb(253, 215, 60);
+    text-transform: uppercase;
+}
+
+.profChoice {
+    color: rgb(253, 215, 60);
+    text-transform: uppercase;
+    font-size: 16px;
+}
