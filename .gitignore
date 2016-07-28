@@ -2,3 +2,5 @@
 *.iml
 target
 mail
+*.ppk
+osrm-backend/osm/khimky.osm
