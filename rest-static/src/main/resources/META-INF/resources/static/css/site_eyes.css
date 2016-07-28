@@ -2,7 +2,7 @@
     width: 518px;
     height: 114px;
     display: block;
-    background: transparent url(../images/logo.png) no-repeat;
+    background: transparent url(../images_eyes/logo.png) no-repeat;
 }
 
 .header {
@@ -33,30 +33,30 @@
 
 #searchButton {
     background-repeat: no-repeat;
-    background-image: url(../images/search_but.png);
+    background-image: url(../images_eyes/search_but.png);
     background-color: transparent;
 }
 
 #searchButton:hover {
-    background-image: url(../images/search_but_h.png);
+    background-image: url(../images_eyes/search_but_h.png);
 }
 
 #searchButton:active:hover {
-    background-image: url(../images/search_but_a.png);
+    background-image: url(../images_eyes/search_but_a.png);
 }
 
 #loginButton {
     background-repeat: no-repeat;
-    background-image: url(../images/login_but.png);
+    background-image: url(../images_eyes/login_but.png);
     background-color: transparent;
 }
 
 #loginButton:hover {
-    background-image: url(../images/login_but_h.png);
+    background-image: url(../images_eyes/login_but_h.png);
 }
 
 #loginButton:active:hover {
-    background-image: url(../images/login_but_a.png);
+    background-image: url(../images_eyes/login_but_a.png);
 }
 
 .leaflet-bar a,
@@ -69,30 +69,30 @@
 
 .leaflet-control-zoom-in {
     background-repeat: no-repeat;
-    background-image: url(../images/plus.png);
+    background-image: url(../images_eyes/plus.png);
     background-color: transparent;
 }
 
 .leaflet-control-zoom-in:hover {
-    background-image: url(../images/plus_h.png);
+    background-image: url(../images_eyes/plus_h.png);
 }
 
 .leaflet-control-zoom-in:active:hover {
-    background-image: url(../images/plus_a.png);
+    background-image: url(../images_eyes/plus_a.png);
 }
 
 .leaflet-control-zoom-out {
     background-repeat: no-repeat;
-    background-image: url(../images/minus.png);
+    background-image: url(../images_eyes/minus.png);
     background-color: transparent;
 }
 
 .leaflet-control-zoom-out:hover {
-    background-image: url(../images/minus_h.png);
+    background-image: url(../images_eyes/minus_h.png);
 }
 
 .leaflet-control-zoom-out:active:hover {
-    background-image: url(../images/minus_a.png);
+    background-image: url(../images_eyes/minus_a.png);
 }
 
 .routePanel {
@@ -130,7 +130,7 @@
 
 #reverseButton {
     background-repeat: no-repeat;
-    background-image: url(../images/ch_but.png);
+    background-image: url(../images_eyes/ch_but.png);
     background-color: transparent;
     width: 153px;
     height: 20px;
@@ -138,16 +138,16 @@
 }
 
 #reverseButton:active:hover {
-    background-image: url(../images/ch_but_a.png);
+    background-image: url(../images_eyes/ch_but_a.png);
 }
 
 #reverseButton:hover {
-    background-image: url(../images/ch_but_h.png);
+    background-image: url(../images_eyes/ch_but_h.png);
 }
 
 #routeButton {
     background-repeat: no-repeat;
-    background-image: url(../images/route_but.png);
+    background-image: url(../images_eyes/route_but.png);
     background-color: transparent;
     width: 230px;
     height: 40px;
@@ -155,11 +155,11 @@
 }
 
 #routeButton:active:hover {
-    background-image: url(../images/route_but_a.png);
+    background-image: url(../images_eyes/route_but_a.png);
 }
 
 #routeButton:hover {
-    background-image: url(../images/route_but_h.png);
+    background-image: url(../images_eyes/route_but_h.png);
 }
 
 .socialIcon {
@@ -171,15 +171,15 @@
 }
 
 #socialLink .socialIcon {
-    background-image: url(../images/soc-ico.png);
+    background-image: url(../images_eyes/soc-ico.png);
 }
 
 #socialLink:hover .socialIcon {
-    background-image: url(../images/soc-ico_h.png);
+    background-image: url(../images_eyes/soc-ico_h.png);
 }
 
 #socialLink:active .socialIcon, #socialLink .socialIcon:active {
-    background-image: url(../images/soc-ico_a.png);
+    background-image: url(../images_eyes/soc-ico_a.png);
 }
 
 .locationIcon {
@@ -191,15 +191,15 @@
 }
 
 #locationLink .locationIcon {
-    background-image: url(../images/show-ico.png);
+    background-image: url(../images_eyes/show-ico.png);
 }
 
 #locationLink:hover .locationIcon {
-    background-image: url(../images/show-ico_h.png);
+    background-image: url(../images_eyes/show-ico_h.png);
 }
 
 #locationLink:active .locationIcon, #locationLink .locationIcon:active {
-    background-image: url(../images/show-ico_a.png);
+    background-image: url(../images_eyes/show-ico_a.png);
 }
 
 .sightChoice {
