@@ -1,22 +1,111 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8"/>
-  <title>Open Source Routing Machine DEMO</title>
-  <meta name='viewport' content='initial-scale=1.0 maximum-scale=1.0'>
-  <link rel="shortcut icon" href="favicon.ico"/>
-  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.5/leaflet.css'/>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.5/leaflet.js'></script>
-  <link rel="stylesheet" href="css/fonts.css"/>
-  <link href='css/site.css' rel='stylesheet'/>
+    <meta charset="utf-8"/>
+    <title>Социальный навигатор города Химки</title>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css'/>
+    <script>L_NO_TOUCH = true;</script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js'></script>
+    <link href='css/site_common.css' rel='stylesheet'/>
+    <link href='css/site_eyes.css' rel='stylesheet'/>
+    <script>
+        if (window.location.href.indexOf('sight=glasses') >= 0) {
+            document.write('<link href="css/site_glasses.css" rel="stylesheet"/>');
+        }
+    </script>
 </head>
 <body>
-  <img src="images/header.png" usemap="#navigation">
-  <map id="navigation" name="navigation">
-    <area shape="rect" coords="1120,45,1315,85" href="index_sight.html">
-    <area shape="rect" coords="630,30,830,90" href="">
-  </map>
-  <div id='map' class='map'></div>
-  <script src='bundle.raw.js'></script>
+    <div class="header">
+        <div class="headerColumn" style="padding-left: 40px;">
+            <span id="logo"></span>
+        </div>
+        <div class="headerColumn">
+            <a href="#" id="socialLink" style="width: 100%;">
+                <div class="tableDisplay">
+                    <span class="tableColumn socialIcon" id="soc"></span>
+                    <span class="headerLinkSmall tableColumn" style="padding-left: 10px;">Социальные<br>организации города</span>
+                </div>
+            </a>
+            <div class="headerText" style="padding-top: 5px;">ПОИСК ПО КАРТЕ</div>
+            <form>
+                <div class="tableDisplay" style="padding-top: 5px;">
+                    <input placeholder="Введите запрос" class="searchColumn headerInput" id="searchInput">
+                    <button id="searchButton" class="searchColumn"></button>
+                </div>
+            </form>
+        </div>
+        <div class="headerColumn">
+            <form>
+                <div id="loginPanel">
+                    <div class="headerText">ВХОД НА САЙТ</div>
+                    <input placeholder="Логин" class="headerInput" id="loginInput"><br>
+                    <input placeholder="Пароль" class="headerInput" id="passwordInput"><br>
+                    <div class="tableDisplay" style="padding-top: 5px; width: 100%;">
+                        <div class="tableColumn" style="padding-right: 10px;">
+                            <a href="#"><span class="headerLinkSmall smaller">Забыли пароль?</span></a><br>
+                            <a href="#"><span class="headerLinkSmall smaller">Регистрация</span></a><br>
+                        </div>
+                        <button id="loginButton" class="tableColumn"></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="headerColumn">
+            <div class="headerText">ОТОБРАЖЕНИЕ САЙТА</div>
+            <table class="profileTable" style="padding-top: 10px;">
+                <tr id="glassesSight">
+                    <td class="sightRow" style="background-position: 1px 0;"><a href="#" class="sightButton"></a></td>
+                    <td style="padding-left: 10px;"><a href="#" class="headerTextSmall sightChoice">Для людей<br>с нарушением зрения</a></td>
+                </tr>
+                <tr id="eyesSight">
+                    <td class="sightRow" style="background-position: 1px -44px;"><a href="#" class="sightButton"></a></td>
+                    <td style="padding-left: 10px;"><a href="#" class="headerTextSmall sightChoice">Для людей<br>с нормальным зрением</a></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id='map' class='map'></div>
+    <div class="routePanel">
+        <div class="headerText routeHeader">ПОСТРОИТЬ МАРШРУТ</div>
+        <div class="routeBody">
+            <div class="routeRow" style="padding-left: 10px;">
+                <table class="profileTable">
+                    <tr id="busProf">
+                        <td class="profileRow" style="background-position: 1px 0;"><a href="#" class="profButton"></a></td>
+                        <td style="padding-left: 10px;"><a href="#" class="headerTextSmall profChoice">Для низкопольного общественного транспорта</a></td>
+                    </tr>
+                    <tr id="peopProf">
+                        <td class="profileRow" style="background-position: 1px -60px;"><a href="#" class="profButton"></a></td>
+                        <td style="padding-left: 10px;"><a href="#" class="headerTextSmall profChoice">Для пешехода</a></td>
+                    </tr>
+                    <tr id="wheelchairProf">
+                        <td class="profileRow" style="background-position: 1px -90px;"><a href="#" class="profButton"></a></td>
+                        <td style="padding-left: 10px;"><a href="#" class="headerTextSmall profChoice">Для передвижения на инвалидной коляске</a></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="routeRow">
+                <input placeholder="Адрес отправления" id="routeStart" class="headerInput">
+            </div>
+            <div class="routeRow">
+                <button id="reverseButton"></button>
+            </div>
+            <div class="routeRow">
+                <input placeholder="Адрес назначения" id="routeEnd" class="headerInput">
+            </div>
+            <div class="routeRow">
+                <button id="routeButton"></button>
+            </div>
+            <div style="display: table; margin: 0 auto; padding-top: 10px;">
+                <a href="#" onclick="locateToCurrent()" style="text-decoration: none;" id="locationLink">
+                    <div class="tableDisplay">
+                        <span class="tableColumn locationIcon"></span>
+                        <span class="headerTextSmall tableColumn accessText" style="padding-left: 10px;">Показать текущее<br>местоположение</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <script src='bundle.js'></script>
 </body>
 </html>

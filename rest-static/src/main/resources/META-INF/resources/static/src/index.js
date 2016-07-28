@@ -1,269 +1,369 @@
 'use strict';
 
-var Geocoder = require('leaflet-control-geocoder');
-var LRM = require('leaflet-routing-machine');
-var locate = require('leaflet.locatecontrol');
-var options = require('./lrm_options');
+// todo: отображение объектов
+// todo: определение текущего местоположения???
 var links = require('./links');
-var leafletOptions = require('./leaflet_options');
-var ls = require('local-storage');
-var profile = require('./profile');
-var state = require('./state');
-var localization = require('./localization');
-var yandex = require('./yandex');
+require('leaflet');
+var locate = require('leaflet.locatecontrol');
+var myNominatim = require('./my_nominatim');
+require('leaflet-routing-machine');
 
-var parsedOptions = links.parse(window.location.search.slice(1));
-
-var mergedOptions = L.extend(leafletOptions.defaultState, parsedOptions);
-var local = localization.get(mergedOptions.language);
-
-L.Routing.Localization['ru'] = {
-  directions: {
-    N: 'сервер',
-    NE: 'северо-восток',
-    E: 'восток',
-    SE: 'юго-восток',
-    S: 'юг',
-    SW: 'юго-запад',
-    W: 'запад',
-    NW: 'северо-запад'
-  },
-  instructions: {
-    // instruction, postfix if the road is named
-    'Head': ['Направляйтесь к {dir}', ' по {road}'],
-    'Continue': ['Продолжайте движение к {dir}', ' по {road}'],
-    'SlightRight': ['Правее', ' на {road}'],
-    'Right': ['Направо', ' на {road}'],
-    'SharpRight': ['Круто направо', ' на {road}'],
-    'TurnAround': ['Развернитесь'],
-    'SharpLeft': ['Круто налево', ' на {road}'],
-    'Left': ['Налево', ' на {road}'],
-    'SlightLeft': ['Левее', ' на {road}'],
-    'WaypointReached': ['Пришли'],
-    'Roundabout': ['Take the {exitStr} exit in the roundabout', ' onto {road}'],
-    'DestinationReached': ['Пришли']
-  },
-  formatOrder: function(n) {
-    if (n == 12)
-      return n + 'ый';
-    var i = n % 10 - 1,
-        suffix = ['ый', 'ой', 'ий', 'ый', 'ый', 'ой', 'ой', 'ой', 'ый'];
-    return suffix[i] ? n + suffix[i] : n + 'ый';
-  },
-  ui: {
-    startPlaceholder: 'Начало',
-    viaPlaceholder: 'Через {viaNumber}',
-    endPlaceholder: 'Конец'
-  }
+var streets = L.tileLayer('https://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}@2x.png?access_token=pk.eyJ1IjoibXNsZWUiLCJhIjoiclpiTWV5SSJ9.P_h8r37vD8jpIH1A6i1VRg', {
+        attribution: '<a href="https://www.mapbox.com/about/maps">© Mapbox</a> <a href="http://openstreetmap.org/copyright">© OpenStreetMap</a> | <a href="http://mapbox.com/map-feedback/">Improve this map</a>'
+    }),
+    outdoors = L.tileLayer('https://api.tiles.mapbox.com/v4/mapbox.outdoors/{z}/{x}/{y}@2x.png?access_token=pk.eyJ1IjoibXNsZWUiLCJhIjoiclpiTWV5SSJ9.P_h8r37vD8jpIH1A6i1VRg', {
+        attribution: '<a href="https://www.mapbox.com/about/maps">© Mapbox</a> <a href="http://openstreetmap.org/copyright">© OpenStreetMap</a> | <a href="http://mapbox.com/map-feedback/">Improve this map</a>'
+    }),
+    satellite = L.tileLayer('https://api.tiles.mapbox.com/v4/mapbox.streets-satellite/{z}/{x}/{y}@2x.png?access_token=pk.eyJ1IjoibXNsZWUiLCJhIjoiclpiTWV5SSJ9.P_h8r37vD8jpIH1A6i1VRg', {
+        attribution: '<a href="https://www.mapbox.com/about/maps">© Mapbox</a> <a href="http://openstreetmap.org/copyright">© OpenStreetMap</a> | <a href="http://mapbox.com/map-feedback/">Improve this map</a>'
+    }),
+    osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="http://www.openstreetmap.org/copyright/en">OpenStreetMap</a> contributors'
+    });
+var allLayers = {
+    'Mapbox Streets': streets,
+    'Mapbox Outdoors': outdoors,
+    'Mapbox Streets Satellite': satellite,
+    'openstreetmap.org': osm
 };
+var defaultState = {
+    zoom: 15,
+    center: L.latLng(55.889167, 37.445),
+    waypoints: [],
+    alternative: 0,
+    profile: 'bus',
+    sight: 'eyes'
+};
+var services = {
+    bus: {
+        path: 'http://52.201.214.44:5000/route/v1'
+        //path: 'https://router.project-osrm.org/route/v1'
+    },
+    peop: {
+        path: 'http://52.201.214.44:5000/route/v1'
+        // path: 'http://localhost:5000/route/v1'
+        // path: 'https://router.project-osrm.org/route/v1'
+    },
+    wheelchair: {
+        path: 'http://52.201.214.44:5000/route/v1'
+        // path: 'http://localhost:5000/route/v1'
+        // path: 'https://router.project-osrm.org/route/v1'
+    }
+};
+var sights = ['glasses', 'eyes'];
 
-var mapLayer = leafletOptions.layer;
-var baseURL = window.location.href.split('?')[0];
-var layers = mapLayer[0][baseURL.indexOf('sight') >= 0 ? 'openstreetmap.org' : 'Mapbox Streets'];
+var queryOptions = links.parse(window.location.search.slice(1));
+var hashOptions = links.parse(window.location.hash.slice(1));
+var state = L.extend(defaultState, queryOptions, hashOptions);
+
+var layers = allLayers[state.sight === 'glasses' ? 'openstreetmap.org' : 'Mapbox Streets'];
 var map = L.map('map', {
-  zoomControl: false,
-  dragging: true,
-  layers: layers,
-  maxZoom: 18
-}).setView(mergedOptions.center, mergedOptions.zoom);
+    zoomControl: false,
+    dragging: true,
+    layers: layers,
+    maxZoom: 18
+}).setView(state.center, state.zoom);
 
 L.control.zoom({
-  zoomInTitle: 'Увеличить',
-  zoomOutTitle: 'Уменьшить'
+    zoomInText: '',
+    zoomInTitle: 'Увеличить',
+    zoomOutText: '',
+    zoomOutTitle: 'Уменьшить',
+    position: 'topright'
 }).addTo(map);
 
-// Pass basemap layers
-mapLayer = mapLayer.reduce(function(title, layer) {
-  title[layer.label] = L.tileLayer(layer.tileLayer, {
-    id: layer.label
-  });
-  return title;
+L.control.scale({
+    imperial: false,
+    position: 'bottomright'
+}).addTo(map);
+
+var locate = L.control.locate({
+    follow: false,
+    setView: true,
+    remainActive: false,
+    keepCurrentZoomLevel: true,
+    stopFollowingOnDrag: false,
+    onLocationError: function (err) {
+        alert(err.message)
+    },
+    onLocationOutsideMapBounds: function (context) {
+        alert(context.options.strings.outsideMapBoundsMsg);
+    },
+    showPopup: false,
+    locateOptions: {},
 });
-
-L.control.scale({imperial: false}).addTo(map);
-
-/* OSRM setup */
-var ReversablePlan = L.Routing.Plan.extend({
-  createGeocoders: function() {
-    var container = L.Routing.Plan.prototype.createGeocoders.call(this);
-    return container;
-  }
-});
-
-/* Setup markers */
-function makeIcon(i, n) {
-  var url = 'images/marker-via-icon-2x.png';
-  var markerList = ['images/marker-start-icon-2x.png', 'images/marker-end-icon-2x.png'];
-  if (i === 0) {
-    return L.icon({
-      iconUrl: markerList[0],
-      iconSize: [20, 56],
-      iconAnchor: [10, 28]
-    });
-  }
-  if (i === n - 1) {
-    return L.icon({
-      iconUrl: markerList[1],
-      iconSize: [20, 56],
-      iconAnchor: [10, 28]
-    });
-  } else {
-    return L.icon({
-      iconUrl: url,
-      iconSize: [20, 56],
-      iconAnchor: [10, 28]
-    });
-  }
-}
-
-var plan = new ReversablePlan([], {
-  // geocoder: yandex.factory(),
-  geocoder: Geocoder.nominatim({
-    reverseQueryParams: {'accept-language': 'ru'}
-  }),
-  routeWhileDragging: true,
-  createMarker: function(i, wp, n) {
-    var options = {
-      draggable: this.draggableWaypoints,
-      icon: makeIcon(i, n)
-    };
-    var marker = L.marker(wp.latLng, options);
-    marker.on('click', function() {
-      plan.spliceWaypoints(i, 1);
-    });
-    return marker;
-  },
-  routeDragInterval: options.lrm.routeDragInterval,
-  addWaypoints: true,
-  waypointMode: 'snap',
-  position: 'topright',
-  useZoomParameter: options.lrm.useZoomParameter,
-  reverseWaypoints: true,
-  dragStyles: options.lrm.dragStyles,
-  geocodersClassName: options.lrm.geocodersClassName,
-  geocoderPlaceholder: function(i, n) {
-    var startend = [local['Start - press enter to drop marker'], local['End - press enter to drop marker']];
-    var via = [local['Via point - press enter to drop marker']];
-    if (i === 0) {
-      return startend[0];
-    }
-    if (i === (n - 1)) {
-      return startend[1];
+locate.addTo(map);
+window.locateToCurrent = function() {
+    var shouldStop = (locate._event === undefined || locate._map.getBounds().contains(locate._event.latlng) || !locate.options.setView || locate._isOutsideMapBounds());
+    if (!locate.options.remainActive && (locate._active && shouldStop)) {
+        locate.stop();
     } else {
-      return via;
+        locate.start();
     }
-  }
-});
+}
 
-// add marker labels
+L.Routing.Localization['ru'] = {
+    directions: {
+        N: 'сервер',
+        NE: 'северо-восток',
+        E: 'восток',
+        SE: 'юго-восток',
+        S: 'юг',
+        SW: 'юго-запад',
+        W: 'запад',
+        NW: 'северо-запад'
+    },
+    instructions: {
+        // instruction, postfix if the road is named
+        'Head': ['Направляйтесь к {dir}', ' по {road}'],
+        'Continue': ['Продолжайте движение к {dir}', ' по {road}'],
+        'SlightRight': ['Правее', ' на {road}'],
+        'Right': ['Направо', ' на {road}'],
+        'SharpRight': ['Направо и назад', ' на {road}'],
+        'TurnAround': ['Развернитесь'],
+        'SharpLeft': ['Налево и назад', ' на {road}'],
+        'Left': ['Налево', ' на {road}'],
+        'SlightLeft': ['Левее', ' на {road}'],
+        'WaypointReached': ['Пришли'],
+        'Roundabout': ['На {exitStr} выезд в кольцевом перекрестке', ' на {road}'],
+        'DestinationReached': ['Пришли']
+    },
+    formatOrder: function(n) {
+        if (n == 12)
+            return n + 'ый';
+        var i = n % 10 - 1,
+            suffix = ['ый', 'ой', 'ий', 'ый', 'ый', 'ой', 'ой', 'ой', 'ый'];
+        return suffix[i] ? n + suffix[i] : n + 'ый';
+    },
+    ui: {
+        startPlaceholder: 'Адрес отправления',
+        viaPlaceholder: 'Через {viaNumber}',
+        endPlaceholder: 'Адрес назначения'
+    }
+};
+function makeIcon(i, n) {
+    var icon;
+    if (i === 0) {
+        icon = 'marker-start-icon.png';
+    } else if (i === n - 1) {
+        icon = 'marker-end-icon.png';
+    } else {
+        icon = 'marker-via-icon.png';
+    }
+    return L.icon({
+        iconUrl: 'images/' + icon,
+        iconSize: [20, 56],
+        iconAnchor: [10, 28]
+    });
+}
+var ReversablePlan = L.Routing.Plan.extend({
+    createGeocoders: function() {
+        var container = L.DomUtil.create('div', '');
+
+        this._geocoderContainer = container;
+        this._geocoderElems = [];
+
+        if (this.options.reverseWaypoints) {
+            var reverseBtn = document.getElementById('reverseButton');
+            L.DomEvent.addListener(reverseBtn, 'click', function() {
+                this._waypoints.reverse();
+                this.setWaypoints(this._waypoints);
+            }, this);
+        }
+
+        this._updateGeocoders();
+        this.on('waypointsspliced', this._updateGeocoders);
+
+        return container;
+    }
+});
+var plan = new ReversablePlan(state.waypoints, {
+    // geocoder: yandex.factory(),
+    geocoder: myNominatim.factory({
+        reverseQueryParams: {'accept-language': 'ru'},
+        geocodingQueryParams: {viewbox: '37.21,56.0,37.52,55.85', bounded: 1, 'accept-language': 'ru'}
+    }),
+    routeWhileDragging: true,
+    createMarker: function(i, wp, n) {
+        var options = {
+            draggable: this.draggableWaypoints,
+            icon: makeIcon(i, n)
+        };
+        var marker = L.marker(wp.latLng, options);
+        marker.on('click', function() {
+            plan.spliceWaypoints(i, 1);
+        });
+        return marker;
+    },
+    routeDragInterval: 100,
+    addWaypoints: false,
+    waypointMode: 'snap',
+    position: 'topright',
+    useZoomParameter: false,
+    reverseWaypoints: true,
+    dragStyles: [
+        {color: 'black', opacity: 0.35, weight: 9},
+        {color: 'white', opacity: 0.8, weight: 7}
+    ],
+    language: 'ru',
+    createGeocoder: function(i, wps, options) {
+        var fakes, container, input, remove;
+        fakes = L.DomUtil.create('div', 'fake');
+        container = L.DomUtil.create('div', 'fake', fakes);
+        remove = undefined; // todo: add clear buttons???
+        if (i == 0) {
+            input = document.getElementById('routeStart');
+        } else {
+            input = document.getElementById('routeEnd');
+        }
+        return {
+            container: container,
+            input: input,
+            closeButton: remove
+        };
+    },
+    geocoderClass: function () {
+        return 'headerInput';
+    }
+});
+var formatter = new L.Routing.Formatter({
+    units: 'metric',
+    language: plan.options.language,
+    unitNames: {
+        meters: 'м',
+        kilometers: 'км',
+        yards: 'yd',
+        miles: 'mi',
+        hours: 'ч',
+        minutes: 'мин',
+        seconds: 'сек'
+    },
+});
+formatter.formatTime = function (t) {
+    // More than 30 seconds precision looks ridiculous
+    t = Math.round(t / 30) * 30;
+    var u = this.options.unitNames;
+    if (t > 86400) {
+        return Math.round(t / 3600) + ' ' + u.hours;
+    } else if (t >= 3600) {
+        return Math.floor(t / 3600) + ' ' + u.hours + ' ' +
+            Math.round((t % 3600) / 60) + ' ' + u.minutes;
+    } else if (t >= 300) {
+        return Math.round(t / 60) + ' ' + u.minutes;
+    } else if (t >= 60) {
+        return Math.floor(t / 60) + ' ' + u.minutes +
+            (t % 60 !== 0 ? ' ' + (t % 60) + ' ' + u.seconds : '');
+    } else {
+        return t + ' ' + u.seconds;
+    }
+};
 var lrmControl = L.Routing.control({
-  plan: plan,
-  routeWhileDragging: options.lrm.routeWhileDragging,
-  lineOptions: options.lrm.lineOptions,
-  altLineOptions: options.lrm.altLineOptions,
-  summaryTemplate: options.lrm.summaryTemplate,
-  containerClassName: options.lrm.containerClassName,
-  alternativeClassName: options.lrm.alternativeClassName,
-  stepClassName: options.lrm.stepClassName,
-  language: mergedOptions.language,
-  showAlternatives: options.lrm.showAlternatives,
-  units: mergedOptions.units,
-  serviceUrl: leafletOptions.services[mergedOptions.profile].path,
-  useZoomParameter: options.lrm.useZoomParameter,
-  routeDragInterval: options.lrm.routeDragInterval
+    plan: plan,
+    routeWhileDragging: plan.options.routeWhileDragging,
+    lineOptions: {
+        styles: [
+            {color: '#022bb1', opacity: 0.8, weight: 8},
+            {color: 'white', opacity: 0.3, weight: 6}
+        ]
+    },
+    altLineOptions: {
+        styles: [
+            {color: '#40007d', opacity: 0.4, weight: 8},
+            {color: 'black', opacity: 0.5, weight: 2, dashArray: '2,4'},
+            {color: 'white', opacity: 0.3, weight: 6}
+        ]
+    },
+    summaryTemplate: '<div class="osrm-directions-summary"><h2>{name}</h2><h3>{distance}, {time}</h3></div>',
+    // containerClassName: options.lrm.containerClassName,
+    // alternativeClassName: options.lrm.alternativeClassName,
+    // stepClassName: options.lrm.stepClassName,
+    language: plan.options.language,
+    showAlternatives: true,
+    units: formatter.options.units,
+    formatter: formatter,
+    serviceUrl: services[state.profile].path,
+    useZoomParameter: plan.options.useZoomParameter,
+    routeDragInterval: plan.options.routeDragInterval
 }).addTo(map);
-
-var profControl = profile.control(mergedOptions.profile, leafletOptions.services, options.profile).addTo(map);
-state(map, lrmControl, profControl, mergedOptions).update();
-
-plan.on('waypointgeocoded', function(e) {
-  if (plan._waypoints.filter(function(wp) { return !!wp.latLng; }).length < 2) {
-    map.panTo(e.waypoint.latLng);
-  }
+lrmControl.getPlan().on('waypointgeocoded', function (e) {
+    if (lrmControl.getPlan()._waypoints.filter(function (wp) { return !!wp.latLng; }).length < 2) {
+        map.panTo(e.waypoint.latLng);
+    }
+});
+lrmControl.on('alternateChosen', function (e) {
+    var directions = document.querySelectorAll('.leaflet-routing-alt');
+    if (directions[0].style.display != 'none') {
+        directions[0].style.display = 'none';
+        directions[1].style.display = 'block';
+    } else {
+        directions[0].style.display = 'block';
+        directions[1].style.display = 'none';
+    }
+});
+map.on('click', function (e) {
+    var length = lrmControl.getWaypoints().filter(function (pnt) {
+        return pnt.latLng;
+    }).length;
+    if (!length) {
+        lrmControl.spliceWaypoints(0, 1, e.latlng);
+    } else {
+        if (length === 1) length = length + 1;
+        lrmControl.spliceWaypoints(length - 1, 1, e.latlng);
+    }
 });
 
-// add onClick event
-map.on('click', addWaypoint);
-function addWaypoint(e) {
-  var length = lrmControl.getWaypoints().filter(function(pnt) {
-    return pnt.latLng;
-  });
-  length = length.length;
-  if (!length) {
-    lrmControl.spliceWaypoints(0, 1, e.latlng);
-  } else {
-    if (length === 1) length = length + 1;
-    lrmControl.spliceWaypoints(length - 1, 1, e.latlng);
-  }
+function updateState() {
+    var newParms = links.format(state);
+    try {
+        var loc = window.location;
+        var baseURL = loc.protocol + '//' + loc.host + loc.pathname;
+        var newURL = baseURL.concat('?').concat(newParms);
+        history.replaceState({}, document.title, newURL);
+    } catch (e) {
+        window.location.hash = newParms;
+    }
 }
-
-function poly(lat, lng, h, w, title) {
-  w /= 100000;
-  h /= 100000;
-  var p1 = new L.LatLng(lat - h / 2, lng - w / 2),
-    p2 = new L.LatLng(lat + h / 2, lng - w / 2),
-    p3 = new L.LatLng(lat + h / 2, lng + w / 2),
-    p4 = new L.LatLng(lat - h / 2, lng + w / 2),
-    polygonPoints = [p1, p2, p3, p4];
-  var polygon = new L.Polygon(polygonPoints);
-  polygon.on('mouseover', function(e) {
-    var popup = L.popup({offset: new L.Point(0, -10), autoPan: false})
-      .setLatLng(e.latlng)
-      .setContent(title)
-      .openOn(map);
-  });
-  polygon.on('mouseout', function(e) {
-    map.closePopup();
-  });
-  map.addLayer(polygon);
-  return polygon;
-}
-
-function createPassport(title, access) {
-  return title + '<br><table class="disabled-table">' +
-    '<tr><td>Все категории инвалидов и МГН</td><td>' + access.all + '</td></tr>' +
-    '<tr><td>в том числе инвалиды:</td><td>&nbsp;</td></tr>' +
-    '<tr><td>передвигающиеся на креслах-колясках</td><td>' + access.wheelchair + '</td></tr>' +
-    '<tr><td>с нарушениями опорно-двигательного аппарата</td><td>' + access.mobility + '</td></tr>' +
-    '<tr><td>с нарушениями зрения</td><td>' + access.sight + '</td></tr>' +
-    '<tr><td>с нарушениями слуха</td><td>' + access.hearing + '</td></tr>' +
-    '<tr><td>с нарушениями умственного развития</td><td>' + access.mental + '</td></tr>' +
-    '</table>';
-}
-poly(
-  55.887407, 37.4525, 100, 50,
-  createPassport('МБУЗ «Химкинская Центральная городская поликлиника», 1-е поликлиническое отделение', {
-    all: 'А', wheelchair: 'А', mobility: 'А', sight: 'А', hearing: 'А', mental: 'А'
-  })
-);
-
-// User selected routes
-lrmControl.on('alternateChosen', function(e) {
-  var directions = document.querySelectorAll('.leaflet-routing-alt');
-  if (directions[0].style.display != 'none') {
-    directions[0].style.display = 'none';
-    directions[1].style.display = 'block';
-  } else {
-    directions[0].style.display = 'block';
-    directions[1].style.display = 'none';
-  }
+map.on('zoomend', function () {
+    state.zoom = map.getZoom();
+    updateState();
+});
+map.on('moveend', function () {
+    state.center = map.getCenter();
+    updateState();
+});
+lrmControl.getPlan().on('waypointschanged', function () {
+    state.waypoints = lrmControl.getWaypoints();
+    updateState();
+});
+lrmControl.on('routeselected', function (e) {
+    state.alternative = e.route.routesIndex;
 });
 
-L.control.locate({
-  follow: false,
-  setView: true,
-  remainActive: false,
-  keepCurrentZoomLevel: true,
-  stopFollowingOnDrag: false,
-  onLocationError: function(err) {
-    alert(err.message)
-  },
-  onLocationOutsideMapBounds: function(context) {
-    alert(context.options.strings.outsideMapBoundsMsg);
-  },
-  showPopup: false,
-  locateOptions: {},
-  strings: {
-    title: 'Показать текущее местоположение'
-  }
-}).addTo(map);
+function walkNodes(elem, listener) {
+    var ch = elem.children;
+    for (var i = 0; i < ch.length; i++) {
+        var e = ch[i];
+        if (e.tagName == 'A') {
+            L.DomEvent.on(e, 'click', listener);
+        }
+        walkNodes(e, listener);
+    }
+}
+function selectProfile(keys, idSuffix, propName) {
+    keys.forEach(function (key) {
+        var row = document.getElementById(key + idSuffix);
+        if (key === state[propName]) {
+            row.className = "selectedChoice";
+        } else {
+            var listener = function (e) {
+                L.DomEvent.preventDefault(e);
+                state[propName] = key;
+                updateState();
+                window.location.reload();
+            };
+            walkNodes(row, listener);
+        }
+    });
+}
+selectProfile(sights, 'Sight', 'sight');
+selectProfile(Object.keys(services), 'Prof', 'profile');
