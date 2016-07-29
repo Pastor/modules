@@ -186,39 +186,39 @@ body {
     background-color: transparent;
 }
 
-#busProf .profButton {
+#carProf .profButton {
     background-image: url(../images/bus.png);
 }
 
-#busProf.selectedChoice .profButton {
+#carProf.selectedChoice .profButton {
     background-image: url(../images/bus_a.png);
 }
 
-#busProf:hover .profButton {
+#carProf:hover .profButton {
     background-image: url(../images/bus_h.png);
 }
 
-#peopProf .profButton {
+#footProf .profButton {
     background-image: url(../images/peop.png);
 }
 
-#peopProf.selectedChoice .profButton {
+#footProf.selectedChoice .profButton {
     background-image: url(../images/peop_a.png);
 }
 
-#peopProf:hover .profButton {
+#footProf:hover .profButton {
     background-image: url(../images/peop_h.png);
 }
 
-#wheelchairProf .profButton {
+#bicycleProf .profButton {
     background-image: url(../images/wheelchair.png);
 }
 
-#wheelchairProf.selectedChoice .profButton {
+#bicycleProf.selectedChoice .profButton {
     background-image: url(../images/wheelchair_a.png);
 }
 
-#wheelchairProf:hover .profButton {
+#bicycleProf:hover .profButton {
     background-image: url(../images/wheelchair_h.png);
 }
 
