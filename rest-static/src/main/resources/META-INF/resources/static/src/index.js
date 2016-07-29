@@ -31,21 +31,23 @@ var defaultState = {
     center: L.latLng(55.889167, 37.445),
     waypoints: [],
     alternative: 0,
-    profile: 'bus',
+    profile: 'car',
     sight: 'eyes'
 };
 var services = {
-    bus: {
-        path: 'http://52.201.214.44:5000/route/v1'
+    car: {
+        path: 'http://176.112.215.104:5003/route/v1'
         //path: 'https://router.project-osrm.org/route/v1'
     },
-    peop: {
-        path: 'http://52.201.214.44:5000/route/v1'
+    foot: {
+        path: 'http://176.112.215.104:5001/route/v1'
+        //path: 'http://52.201.214.44:5000/route/v1'
         // path: 'http://localhost:5000/route/v1'
         // path: 'https://router.project-osrm.org/route/v1'
     },
-    wheelchair: {
-        path: 'http://52.201.214.44:5000/route/v1'
+    bicycle: {
+         path: 'http://176.112.215.104:5002/route/v1'
+        //path: 'http://52.201.214.44:5000/route/v1'
         // path: 'http://localhost:5000/route/v1'
         // path: 'https://router.project-osrm.org/route/v1'
     }
