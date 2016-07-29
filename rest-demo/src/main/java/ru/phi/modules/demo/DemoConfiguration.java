@@ -34,8 +34,6 @@ import java.util.Set;
 import static ru.phi.modules.Constants.*;
 
 /**
- * todo: 1. Добить все объекты (координаты+полигоны)
- * todo: 2. Завести OSRM-backend на Ubuntu с 3 профилями
  * todo: 3. Посмотреть, как настраивать профили через Lua-скрипты
  * todo: 4. Для bicycle.lua - поправить отображение поворотов на улицы с неизвестными именами
  */
@@ -115,8 +113,8 @@ public class DemoConfiguration {
                 "Станция скорой медицинской помощи",
                 "МБУЗ Химкинская станция скорой медицинской помощи",
                 "141400, МО, г. Химки, ул. Молодежная д. 9",
-                56.00000000,
-                53.00000000,
+                55.88178,
+                37.41662,
                 emergency,
                 acp.findByAccessibilityAndType(Accessibility.baroow, AccessibilityType.condition),
                 acp.findByAccessibilityAndType(Accessibility.legless, AccessibilityType.condition),
@@ -125,25 +123,48 @@ public class DemoConfiguration {
         );
         registerPolygon(
                 element,
-                point(pastor, 87.00000, 45.000000),
-                point(pastor, 87.10000, 45.100000),
-                point(pastor, 87.20000, 45.200000),
-                point(pastor, 87.30000, 45.300000),
-                point(pastor, 87.40000, 45.400000),
-                point(pastor, 87.50000, 45.500000)
+                point(pastor, 55.88169479, 37.41653824),
+                point(pastor, 55.88175583, 37.41675186),
+                point(pastor, 55.88210678, 37.41642761),
+                point(pastor, 55.88205338, 37.41624069),
+                point(pastor, 55.88191605, 37.41636658),
+                point(pastor, 55.88187408, 37.41622162),
+                point(pastor, 55.88201904, 37.41609192),
+                point(pastor, 55.88194275, 37.4158287),
+                point(pastor, 55.88158798, 37.41615677),
+                point(pastor, 55.88166428, 37.41641998),
+                point(pastor, 55.88180161, 37.4162941),
+                point(pastor, 55.88183594, 37.41640854),
+                point(pastor, 55.88169479, 37.41653824)
         );
         element = createElement(
                 pastor,
                 "Центральная городская больница",
                 "МБУЗ \"Химкинская Центральная городская больница\", педиатрический корпус",
                 "МО, г. Химки, ул. Куркинское ш., д. 11",
-                46.00000000,
-                53.45000000,
+                55.88182068,
+                37.41544724,
                 hospital,
                 acp.findByAccessibilityAndType(Accessibility.baroow, AccessibilityType.not_information),
                 acp.findByAccessibilityAndType(Accessibility.legless, AccessibilityType.not_information),
                 acp.findByAccessibilityAndType(Accessibility.eyeless, AccessibilityType.not_information),
                 acp.findByAccessibilityAndType(Accessibility.brainless, AccessibilityType.not_information)
+        );
+        registerPolygon(
+                element,
+                point(pastor, 55.88182068, 37.41544724),
+                point(pastor, 55.88146973, 37.41579819),
+                point(pastor, 55.88121414, 37.41498566),
+                point(pastor, 55.88156891, 37.41463089),
+                point(pastor, 55.88171387, 37.41509247),
+                point(pastor, 55.88158417, 37.41522217),
+                point(pastor, 55.88147736, 37.41487885),
+                point(pastor, 55.88138962, 37.41496658),
+                point(pastor, 55.8814888, 37.41528702),
+                point(pastor, 55.88142776, 37.41535187),
+                point(pastor, 55.88146973, 37.41548538),
+                point(pastor, 55.8817482, 37.41521072),
+                point(pastor, 55.88182068, 37.41544724)
         );
         final AccessibilityProcess standard = ru.phi.modules.Utilities.standard(acp);
         final EndPoint point1 = createEndPoint(pastor, point(pastor, 34.00000, 76.000000), EndPointType.exit, standard);
@@ -155,26 +176,46 @@ public class DemoConfiguration {
                 "Центральная городская больница",
                 "МБУЗ \"Химкинская Центральная городская больница\", травмотолого-ортопедическое отделение полеклинники",
                 "МО, г. Химки, ул. Куркинское ш., д. 11",
-                46.00000000,
-                53.45000000,
+                55.88243103,
+                37.41345596,
                 hospital,
                 acp.findByAccessibilityAndType(Accessibility.baroow, AccessibilityType.not_information),
                 acp.findByAccessibilityAndType(Accessibility.legless, AccessibilityType.not_information),
                 acp.findByAccessibilityAndType(Accessibility.eyeless, AccessibilityType.not_information),
                 acp.findByAccessibilityAndType(Accessibility.brainless, AccessibilityType.not_information)
         );
+        registerPolygon(
+                element,
+                point(pastor, 55.88243103, 37.41345596),
+                point(pastor, 55.88243103, 37.41405106),
+                point(pastor, 55.88291931, 37.41404724),
+                point(pastor, 55.88291931, 37.41344833),
+                point(pastor, 55.88243103, 37.41345596)
+        );
         element = createElement(
                 pastor,
                 "Центральная городская больница",
                 "МБУЗ \"Химкинская Центральная городская больница\", хирургический корпус",
                 "МО, г. Химки, ул. Куркинское ш., д. 11",
-                46.00000000,
-                53.45000000,
+                55.8832283,
+                37.41239166,
                 hospital,
                 acp.findByAccessibilityAndType(Accessibility.baroow, AccessibilityType.not_information),
                 acp.findByAccessibilityAndType(Accessibility.legless, AccessibilityType.not_information),
                 acp.findByAccessibilityAndType(Accessibility.eyeless, AccessibilityType.not_information),
                 acp.findByAccessibilityAndType(Accessibility.brainless, AccessibilityType.not_information)
+        );
+        registerPolygon(
+                element,
+                point(pastor, 55.8832283, 37.41239166),
+                point(pastor, 55.88344193, 37.41238785),
+                point(pastor, 55.88345337, 37.41345978),
+                point(pastor, 55.88323975, 37.41346359),
+                point(pastor, 55.88323593, 37.41310501),
+                point(pastor, 55.88320923, 37.41310501),
+                point(pastor, 55.88320923, 37.41294861),
+                point(pastor, 55.88323593, 37.41294861),
+                point(pastor, 55.8832283, 37.41239166)
         );
         element = createElement(
                 pastor,
