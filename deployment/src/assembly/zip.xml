@@ -39,6 +39,7 @@
                 <include>startup.bat</include>
                 <include>startup.sh</include>
                 <include>application.properties</include>
+                <include>startup.sh</include>
             </includes>
         </fileSet>
     </fileSets>
