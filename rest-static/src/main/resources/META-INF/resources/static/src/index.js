@@ -284,6 +284,7 @@ var lrmControl = L.Routing.control({
     units: formatter.options.units,
     formatter: formatter,
     serviceUrl: services[state.profile].path,
+    profile: state.profile,
     useZoomParameter: plan.options.useZoomParameter,
     routeDragInterval: plan.options.routeDragInterval
 }).addTo(map);
