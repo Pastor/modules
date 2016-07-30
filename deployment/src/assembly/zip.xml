@@ -37,6 +37,7 @@
             <directory>src/main/content</directory>
             <includes>
                 <include>startup.bat</include>
+                <include>startup.sh</include>
                 <include>application.properties</include>
             </includes>
         </fileSet>

@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.context.WebApplicationContext;
-import ru.phi.modules.OAuth2Application;
+import ru.phi.modules.FakeApplication;
 import ru.phi.modules.Utilities;
 import ru.phi.modules.entity.*;
 import ru.phi.modules.oauth2.AuthorizationServerConfiguration;
@@ -41,7 +41,7 @@ import static ru.phi.modules.Constants.CLIENT_SECRET;
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@SpringApplicationConfiguration(classes = {OAuth2Application.class})
+@SpringApplicationConfiguration(classes = {FakeApplication.class})
 @TestPropertySource({"classpath:application.properties"})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @ActiveProfiles("oauth2")
