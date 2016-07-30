@@ -12,7 +12,7 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: "1.0.3"
 #host: http://api.socnavi.ru
-host: 127.0.0.1:9090
+#host: http://176.112.215.104:9090
 schemes:
   - http
   - https
