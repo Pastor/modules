@@ -68,7 +68,8 @@ paths:
           schema:
             $ref: '#/definitions/Error'
       security: 
-        - token: [] 
+        - token: []
+        - access_token: []
   /accessibility/processes:
     get:
       summary: Список уровней доступности
@@ -121,7 +122,8 @@ paths:
         - Error
       operationId: get_errors
       security: 
-        - token: [] 
+        - token: []
+        - access_token: []
       responses:
         200:
           description: Список ошибок
@@ -140,7 +142,8 @@ paths:
         - Error
       operationId: get_errors_count
       security: 
-        - token: [] 
+        - token: []
+        - access_token: []
       responses:
         200:
           description: Количество ошибок
@@ -216,7 +219,8 @@ paths:
         - Statistic
       operationId: get_statistic_count
       security: 
-        - token: [] 
+        - token: []
+        - access_token: []
       responses:
         200:
           description: Количество элементов статистики
@@ -278,7 +282,8 @@ paths:
             $ref: '#/definitions/Error'
       operationId: add_news
       security: 
-        - token: [] 
+        - token: []
+        - access_token: []
   /news/count:
     get:
       summary: Количество новостей в списке
@@ -340,7 +345,8 @@ paths:
             $ref: '#/definitions/Error'
       operationId: update_news
       security: 
-        - token: [] 
+        - token: []
+        - access_token: []
     delete:
       summary: Удаление новости
       parameters:
@@ -357,7 +363,8 @@ paths:
           description: Новость удалена
       operationId: delete_news
       security: 
-        - token: []    
+        - token: []
+        - access_token: []
   /news/{id}/hide:
     put:
       summary: Сокрытие новости
@@ -380,6 +387,7 @@ paths:
       operationId: hide_news
       security: 
         - token: []
+        - access_token: []
   /news/{id}/publish:
     put:
       summary: Публикация новости
@@ -402,6 +410,7 @@ paths:
       operationId: publish_news
       security: 
         - token: []
+        - access_token: []
   /news/{id}/content:
     get:
       summary: Получение тела новости
@@ -448,7 +457,8 @@ paths:
             $ref: '#/definitions/Error'
       operationId: update_news_content
       security: 
-        - token: [] 
+        - token: []
+        - access_token: []
     delete:
       summary: Удаление тела новости
       parameters:
@@ -465,7 +475,8 @@ paths:
           description: Новость удалена
       operationId: delete_news_content
       security: 
-        - token: []    
+        - token: []
+        - access_token: []
   /elements:
     get:
       summary: Получение списка элементов
@@ -517,7 +528,8 @@ paths:
             $ref: '#/definitions/Error'
       operationId: add_element
       security: 
-        - token: [] 
+        - token: []
+        - access_token: []
   /elements/count:
     get:
       summary: Количество объектов в списке
@@ -579,7 +591,8 @@ paths:
             $ref: '#/definitions/Error'
       operationId: update_element
       security: 
-        - token: [] 
+        - token: []
+        - access_token: []
     delete:
       summary: Удаление элемента
       parameters:
@@ -596,7 +609,8 @@ paths:
           description: Элемент удален
       operationId: delete_element
       security: 
-        - token: []    
+        - token: []
+        - access_token: []
   /elements/{id}/endpoints:
     get:
       summary: Получение точек доступа
@@ -665,7 +679,8 @@ paths:
           description: Точки удалены
       operationId: delete_endpoints
       security: 
-        - token: []    
+        - token: []
+        - access_token: []
   /categories:
     get:
       summary: Получение списка категорий элементов
@@ -840,7 +855,8 @@ paths:
             $ref: '#/definitions/Error'
       operationId: add_quality
       security: 
-        - token: [] 
+        - token: []
+        - access_token: []
   /qualities/{id}:
     get:
       summary: Получение информации о шаблоне
@@ -904,7 +920,8 @@ paths:
           description: Шаблон удален
       operationId: delete_quality
       security: 
-        - token: []    
+        - token: []
+        - access_token: []
   /users/{id}:
     get:
       deprecated: true
@@ -932,6 +949,7 @@ paths:
       operationId: get_user
       security: 
         - token: []
+        - access_token: []
     delete:
       deprecated: true
       summary: Удаление пользователя
@@ -956,6 +974,7 @@ paths:
       operationId: delete_user
       security: 
         - token: []
+        - access_token: []
     put:
       deprecated: true
       summary: Обновление информации о пользователе
@@ -989,6 +1008,7 @@ paths:
       operationId: update_user
       security: 
         - token: []
+        - access_token: []
   /users:
     get:
       deprecated: true
@@ -1025,6 +1045,7 @@ paths:
       operationId: list_users
       security: 
         - token: []
+        - access_token: []
     post:
       deprecated: true
       summary: Создание пользователя
@@ -1054,6 +1075,7 @@ paths:
       operationId: add_user
       security: 
         - token: []
+        - access_token: []
   /me:
     get:
       summary: Текущий профиль пользователя
@@ -1072,6 +1094,7 @@ paths:
       operationId: get_self
       security: 
         - token: []
+        - access_token: []
     put:
       summary: Обновление своего профиля
       parameters:
@@ -1092,7 +1115,8 @@ paths:
             $ref: '#/definitions/Error'
       operationId: update_self
       security: 
-        - token: []     
+        - token: []
+        - access_token: []
   /me/scopes:
     get:
       summary: Список установленных пользователю областей доступа
@@ -1113,6 +1137,7 @@ paths:
             $ref: '#/definitions/Error'
       security: 
         - token: []
+        - access_token: []
   /me/settings:
     get:
       summary: Текущие настройки пользователя
@@ -1131,6 +1156,7 @@ paths:
       operationId: get_settings
       security: 
         - token: []
+        - access_token: []
     put:
       summary: Обновление настроек
       parameters:
@@ -1151,7 +1177,8 @@ paths:
             $ref: '#/definitions/Error'
       operationId: update_settings
       security: 
-        - token: []     
+        - token: []
+        - access_token: []
   /me/news:
     get:
       summary: Новости пользователя
@@ -1187,6 +1214,7 @@ paths:
       operationId: get_me_news
       security: 
         - token: []
+        - access_token: []
   /me/news/count:
     get:
       summary: Количество новостей
@@ -1202,29 +1230,9 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
-    put:
-      summary: Обновление токена
-      description: |
-        Данный вызов предназначен только для тестирования и ограничен вызовом только из под роли `administrator` и типа токена `web`.
-      parameters:
-        - name: scopes
-          in: query
-          type: string
-          format: delim
-          description: Области
-          required: false
-      tags:
-        - Token
-      responses:
-        200:
-          description: Token обновлен
-        default:
-          description: Ошибка получения списка
-          schema:
-            $ref: '#/definitions/Error'
-      operationId: update_token
-      security: 
+      security:
         - token: []
+        - access_token: []
   /version:
     get:
       summary: Текущая версия `API`
