@@ -80,8 +80,21 @@ L.MyNominatim = L.Class.extend({
 
             if (data && data.lat && data.lon) {
                 loc = L.latLng(data.lat, data.lon);
+                var addr = data.address;
+                var name;
+                if (addr.city && addr.road && addr.house_number) {
+                    name = addr.road + ', ' + addr.house_number;
+                    if (addr.suburb) {
+                        name += ', ' + addr.suburb;
+                    }
+                    if (addr.city !== 'Химки') {
+                        name += ', ' + addr.city;
+                    }
+                } else {
+                    name = data.display_name;
+                }
                 result.push({
-                    name: data.display_name,
+                    name: name,
                     center: loc,
                     bounds: L.latLngBounds(loc, loc),
                     properties: data

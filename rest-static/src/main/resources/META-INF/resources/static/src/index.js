@@ -7,6 +7,7 @@ require('leaflet');
 var locate = require('leaflet.locatecontrol');
 var myNominatim = require('./my_nominatim');
 require('leaflet-routing-machine');
+var Util = require('leaflet-control-geocoder/src/util.js');
 
 var streets = L.tileLayer('https://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}@2x.png?access_token=pk.eyJ1IjoibXNsZWUiLCJhIjoiclpiTWV5SSJ9.P_h8r37vD8jpIH1A6i1VRg', {
         attribution: '<a href="https://www.mapbox.com/about/maps">© Mapbox</a> <a href="http://openstreetmap.org/copyright">© OpenStreetMap</a> | <a href="http://mapbox.com/map-feedback/">Improve this map</a>'
@@ -208,6 +209,7 @@ var plan = new ReversablePlan(state.waypoints, {
         {color: 'white', opacity: 0.8, weight: 7}
     ],
     language: 'ru',
+    autocompleteOptions: {noResultsMessage: 'Адрес не найден'},
     createGeocoder: function(i, wps, options) {
         var fakes, container, input, remove;
         fakes = L.DomUtil.create('div', 'fake');
@@ -370,3 +372,44 @@ function selectProfile(keys, idSuffix, propName) {
 }
 selectProfile(sights, 'Sight', 'sight');
 selectProfile(Object.keys(services), 'Prof', 'profile');
+
+function poly(obj, title) {
+    var polygonPoints = [];
+    for (var i = 0; i < obj.polygon.length; i++) {
+        polygonPoints[i] = new L.LatLng(obj.polygon[i].latitude, obj.polygon[i].longitude);
+    }
+    var polygon = new L.Polygon(polygonPoints);
+    polygon.on('mouseover', function(e) {
+        var popup = L.popup({offset: new L.Point(0, -10), autoPan: false})
+            .setLatLng(e.latlng)
+            .setContent(title)
+            .openOn(map);
+    });
+    polygon.on('mouseout', function(e) {
+        map.closePopup();
+    });
+    map.addLayer(polygon);
+    return polygon;
+}
+
+Util.getJSON('http://176.112.215.104/rest/v1/elements', {}, function (data) {
+    for (var i = 0; i < data.length; i++) {
+        var obj = data[i];
+        if (obj.polygon && obj.polygon.length > 0) {
+            var ap = obj.accessibility_process;
+            if (ap) {
+                for (var j = 0; j < ap.length; j++) {
+                    var a = ap[j].accessibility; // normal, baroow, eyeless, legless, brainless, other
+                    var t = ap[j].type; // not_information
+                    // full, //Полный
+                    // parity, //Частичный
+                    // condition, //Условный
+                    // not_at_time, //Временно не доступен
+                    // not_information, // Нет информации
+                    // other
+                }
+            }
+            poly(obj, obj.fullName); // todo: include accessibility desc
+        }
+    }
+});
