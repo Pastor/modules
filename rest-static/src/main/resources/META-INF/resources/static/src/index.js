@@ -47,7 +47,7 @@ var services = {
         // path: 'https://router.project-osrm.org/route/v1'
     },
     bicycle: {
-         path: 'http://176.112.215.104:5002/route/v1'
+        path: 'http://176.112.215.104:5002/route/v1'
         //path: 'http://52.201.214.44:5000/route/v1'
         // path: 'http://localhost:5000/route/v1'
         // path: 'https://router.project-osrm.org/route/v1'
@@ -102,7 +102,7 @@ var locate = L.control.locate({
     locateOptions: {},
 });
 locate.addTo(map);
-window.locateToCurrent = function() {
+window.locateToCurrent = function () {
     var shouldStop = (locate._event === undefined || locate._map.getBounds().contains(locate._event.latlng) || !locate.options.setView || locate._isOutsideMapBounds());
     if (!locate.options.remainActive && (locate._active && shouldStop)) {
         locate.stop();
@@ -137,7 +137,7 @@ L.Routing.Localization['ru'] = {
         'Roundabout': ['На {exitStr} выезд в кольцевом перекрестке', ' на {road}'],
         'DestinationReached': ['Пришли']
     },
-    formatOrder: function(n) {
+    formatOrder: function (n) {
         if (n == 12)
             return n + 'ый';
         var i = n % 10 - 1,
@@ -166,7 +166,7 @@ function makeIcon(i, n) {
     });
 }
 var ReversablePlan = L.Routing.Plan.extend({
-    createGeocoders: function() {
+    createGeocoders: function () {
         var container = L.DomUtil.create('div', '');
 
         this._geocoderContainer = container;
@@ -174,7 +174,7 @@ var ReversablePlan = L.Routing.Plan.extend({
 
         if (this.options.reverseWaypoints) {
             var reverseBtn = document.getElementById('reverseButton');
-            L.DomEvent.addListener(reverseBtn, 'click', function() {
+            L.DomEvent.addListener(reverseBtn, 'click', function () {
                 this._waypoints.reverse();
                 this.setWaypoints(this._waypoints);
             }, this);
@@ -193,13 +193,13 @@ var plan = new ReversablePlan(state.waypoints, {
         geocodingQueryParams: {viewbox: '37.21,56.0,37.52,55.85', bounded: 1, 'accept-language': 'ru'}
     }),
     routeWhileDragging: true,
-    createMarker: function(i, wp, n) {
+    createMarker: function (i, wp, n) {
         var options = {
             draggable: this.draggableWaypoints,
             icon: makeIcon(i, n)
         };
         var marker = L.marker(wp.latLng, options);
-        marker.on('click', function() {
+        marker.on('click', function () {
             plan.spliceWaypoints(i, 1);
         });
         return marker;
@@ -216,7 +216,7 @@ var plan = new ReversablePlan(state.waypoints, {
     ],
     language: 'ru',
     autocompleteOptions: {noResultsMessage: 'Адрес не найден'},
-    createGeocoder: function(i, wps, options) {
+    createGeocoder: function (i, wps, options) {
         var fakes, container, input, remove;
         fakes = L.DomUtil.create('div', 'fake');
         container = L.DomUtil.create('div', 'fake', fakes);
@@ -297,7 +297,9 @@ var lrmControl = L.Routing.control({
     routeDragInterval: plan.options.routeDragInterval
 }).addTo(map);
 lrmControl.getPlan().on('waypointgeocoded', function (e) {
-    if (lrmControl.getPlan()._waypoints.filter(function (wp) { return !!wp.latLng; }).length < 2) {
+    if (lrmControl.getPlan()._waypoints.filter(function (wp) {
+            return !!wp.latLng;
+        }).length < 2) {
         map.panTo(e.waypoint.latLng);
     }
 });
@@ -379,9 +381,16 @@ function selectProfile(keys, idSuffix, propName) {
 selectProfile(sights, 'Sight', 'sight');
 selectProfile(Object.keys(services), 'Prof', 'profile');
 
+var access = [
+    "A",
+    "Б",
+    "ДУ",
+    "ВДН"
+];
+
 function andUndefined(data, propertyName) {
     var value = data[propertyName];
-    return typeof value == 'undefined' ? 'Нет' : value;
+    return typeof value == 'undefined' ? 'Нет' : access[parseInt(value)];
 }
 
 function createPassport(title, access) {
@@ -402,9 +411,9 @@ function poly(object) {
         polygonPoints[i] = new L.LatLng(object.polygon[i].latitude, object.polygon[i].longitude);
     }
     var polygon = new L.Polygon(polygonPoints);
-    polygon.on('mouseover', function(e) {
+    polygon.on('mouseover', function (e) {
 
-        Util.getJSON('http://176.112.215.104/osis/ReadOSI', {'id' : object.uuid}, function (data) {
+        Util.getJSON('http://176.112.215.104/osis/ReadOSI', {'id': object.uuid}, function (data) {
             var popup = L.popup({offset: new L.Point(0, -10), autoPan: false})
                 .setLatLng(e.latlng)
                 .setContent(createPassport(data['Name'], data['Avails']))
@@ -416,13 +425,12 @@ function poly(object) {
         //     .setContent(title)
         //     .openOn(map);
     });
-    polygon.on('mouseout', function(e) {
+    polygon.on('mouseout', function (e) {
         map.closePopup();
     });
     map.addLayer(polygon);
     return polygon;
 }
-
 
 
 Util.getJSON('http://176.112.215.104/rest/v1/elements', {}, function (data) {
