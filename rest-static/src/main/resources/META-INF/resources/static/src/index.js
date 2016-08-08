@@ -70,7 +70,7 @@ var map = L.map('map', {
     zoomControl: false,
     dragging: true,
     layers: layers,
-    maxZoom: 18
+    maxZoom: 25
 }).setView(state.center, state.zoom);
 
 L.control.zoom({
@@ -379,18 +379,35 @@ function selectProfile(keys, idSuffix, propName) {
 selectProfile(sights, 'Sight', 'sight');
 selectProfile(Object.keys(services), 'Prof', 'profile');
 
-function poly(obj, title) {
+function andUndefined(data, propertyName) {
+    var value = data[propertyName];
+    return typeof value == 'undefined' ? 'Нет' : value;
+}
+
+function createPassport(title, access) {
+    return title + '<br><table class="disabled-table">' +
+        '<tr><td>Все категории инвалидов и МГН</td><td>' + andUndefined(access, 'AllCats') + '</td></tr>' +
+        '<tr><td>в том числе инвалиды:</td><td>&nbsp;</td></tr>' +
+        '<tr><td>передвигающиеся на креслах-колясках</td><td>' + andUndefined(access, 'Trolley') + '</td></tr>' +
+        '<tr><td>с нарушениями опорно-двигательного аппарата</td><td>' + andUndefined(access, 'NoWalk') + '</td></tr>' +
+        '<tr><td>с нарушениями зрения</td><td>' + andUndefined(access, 'NoEyes') + '</td></tr>' +
+        '<tr><td>с нарушениями слуха</td><td>' + andUndefined(access, 'NoHear') + '</td></tr>' +
+        '<tr><td>с нарушениями умственного развития</td><td>' + andUndefined(access, 'Brain') + '</td></tr>' +
+        '</table>';
+}
+
+function poly(object) {
     var polygonPoints = [];
-    for (var i = 0; i < obj.polygon.length; i++) {
-        polygonPoints[i] = new L.LatLng(obj.polygon[i].latitude, obj.polygon[i].longitude);
+    for (var i = 0; i < object.polygon.length; i++) {
+        polygonPoints[i] = new L.LatLng(object.polygon[i].latitude, object.polygon[i].longitude);
     }
     var polygon = new L.Polygon(polygonPoints);
     polygon.on('mouseover', function(e) {
 
-        Util.getJSON('http://176.112.215.104/osis/ReadOSI', {'id' : obj.uuid}, function (data) {
+        Util.getJSON('http://176.112.215.104/osis/ReadOSI', {'id' : object.uuid}, function (data) {
             var popup = L.popup({offset: new L.Point(0, -10), autoPan: false})
                 .setLatLng(e.latlng)
-                .setContent(data['Name'])
+                .setContent(createPassport(data['Name'], data['Avails']))
                 .openOn(map);
             console.log(data);
         });
@@ -405,6 +422,8 @@ function poly(obj, title) {
     map.addLayer(polygon);
     return polygon;
 }
+
+
 
 Util.getJSON('http://176.112.215.104/rest/v1/elements', {}, function (data) {
     for (var i = 0; i < data.length; i++) {
@@ -423,7 +442,7 @@ Util.getJSON('http://176.112.215.104/rest/v1/elements', {}, function (data) {
                     // other
                 }
             }
-            poly(obj, obj.fullName); // todo: include accessibility desc
+            poly(obj); // todo: include accessibility desc
         }
     }
 });
