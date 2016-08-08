@@ -27,6 +27,9 @@ public final class Element extends AbstractEntity {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "uuid")
+    private String uuid;
+
     @Column(name = "full_name")
     private String fullName;
 

@@ -30,6 +30,7 @@ import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import static ru.phi.modules.Constants.*;
 
@@ -110,6 +111,7 @@ public class DemoConfiguration {
         Element element;
         element = createElement(
                 pastor,
+                "6f414da8-2a75-4840-bc90-87e8422099d9",
                 "Станция скорой медицинской помощи",
                 "МБУЗ Химкинская станция скорой медицинской помощи",
                 "141400, МО, г. Химки, ул. Молодежная д. 9",
@@ -139,6 +141,7 @@ public class DemoConfiguration {
         );
         element = createElement(
                 pastor,
+                "ce758060-3116-4dea-bf72-95d63baf07f3",
                 "Центральная городская больница",
                 "МБУЗ \"Химкинская Центральная городская больница\", педиатрический корпус",
                 "МО, г. Химки, ул. Куркинское ш., д. 11",
@@ -173,6 +176,7 @@ public class DemoConfiguration {
         elementRepository.save(element);
         element = createElement(
                 pastor,
+                "d1b99e3f-184d-436f-ae2a-ac57ec8224f9",
                 "Центральная городская больница",
                 "МБУЗ \"Химкинская Центральная городская больница\", травмотолого-ортопедическое отделение полеклинники",
                 "МО, г. Химки, ул. Куркинское ш., д. 11",
@@ -194,6 +198,7 @@ public class DemoConfiguration {
         );
         element = createElement(
                 pastor,
+                "67e02cff-2634-4510-b8e2-ee16f7506853",
                 "Центральная городская больница",
                 "МБУЗ \"Химкинская Центральная городская больница\", хирургический корпус",
                 "МО, г. Химки, ул. Куркинское ш., д. 11",
@@ -219,6 +224,7 @@ public class DemoConfiguration {
         );
         element = createElement(
                 pastor,
+                UUID.randomUUID().toString(),
                 "Переход",
                 "",
                 "ул. Зои Космедемьянской, д. 9/12",
@@ -262,6 +268,7 @@ public class DemoConfiguration {
     }
 
     private Element createElement(User user,
+                                  String uuid,
                                   String name,
                                   String fullName,
                                   String address,
@@ -270,6 +277,7 @@ public class DemoConfiguration {
                                   ElementCategory category,
                                   AccessibilityProcess... processes) {
         final Element element = new Element();
+        element.setUuid(uuid);
         element.setUser(user);
         element.setName(name);
         element.setFullName(fullName);

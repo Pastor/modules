@@ -32,7 +32,7 @@ var defaultState = {
     center: L.latLng(55.889167, 37.445),
     waypoints: [],
     alternative: 0,
-    profile: 'car',
+    profile: 'foot',
     sight: 'eyes'
 };
 var services = {
@@ -48,6 +48,12 @@ var services = {
     },
     bicycle: {
          path: 'http://176.112.215.104:5002/route/v1'
+        //path: 'http://52.201.214.44:5000/route/v1'
+        // path: 'http://localhost:5000/route/v1'
+        // path: 'https://router.project-osrm.org/route/v1'
+    },
+    baby: {
+        path: 'http://176.112.215.104:5002/route/v1'
         //path: 'http://52.201.214.44:5000/route/v1'
         // path: 'http://localhost:5000/route/v1'
         // path: 'https://router.project-osrm.org/route/v1'
@@ -380,10 +386,18 @@ function poly(obj, title) {
     }
     var polygon = new L.Polygon(polygonPoints);
     polygon.on('mouseover', function(e) {
-        var popup = L.popup({offset: new L.Point(0, -10), autoPan: false})
-            .setLatLng(e.latlng)
-            .setContent(title)
-            .openOn(map);
+
+        Util.getJSON('http://176.112.215.104:8080/apt.osi/api/osis/ReadOSI?id=' + obj.uuid, {}, function (data) {
+            var popup = L.popup({offset: new L.Point(0, -10), autoPan: false})
+                .setLatLng(e.latlng)
+                .setContent(data['Name'])
+                .openOn(map);
+            console.log(data);
+        });
+        // var popup = L.popup({offset: new L.Point(0, -10), autoPan: false})
+        //     .setLatLng(e.latlng)
+        //     .setContent(title)
+        //     .openOn(map);
     });
     polygon.on('mouseout', function(e) {
         map.closePopup();

@@ -222,6 +222,18 @@ body {
     background-image: url(../images/wheelchair_h.png);
 }
 
+#babyProf .profButton {
+    background-image: url(../images/baby.png);
+}
+
+#babyProf.selectedChoice .profButton {
+    background-image: url(../images/baby_a.png);
+}
+
+#babyProf:hover .profButton {
+    background-image: url(../images/baby_h.png);
+}
+
 .leaflet-routing-container {
     display: none;
 }

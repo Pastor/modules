@@ -32,6 +32,8 @@ import ru.phi.modules.entity.*;
 import ru.phi.modules.oauth2.AuthorizationServerConfiguration;
 import ru.phi.modules.repository.*;
 
+import java.util.UUID;
+
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -322,6 +324,7 @@ public abstract class AbstractRestTest {
         element.setPoint(point(user, latitude, longitude));
         element.setCategories(Sets.newHashSet(category));
         element.setAccessibilityProcesses(Sets.newHashSet(processes));
+        element.setUuid(UUID.randomUUID().toString());
         return elementRepository.save(element);
     }
 
