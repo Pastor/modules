@@ -387,7 +387,7 @@ function poly(obj, title) {
     var polygon = new L.Polygon(polygonPoints);
     polygon.on('mouseover', function(e) {
 
-        Util.getJSON('http://176.112.215.104:8080/apt.osi/api/osis/ReadOSI?id=' + obj.uuid, {}, function (data) {
+        Util.getJSON('http://176.112.215.104/osis/ReadOSI', {'id' : obj.uuid}, function (data) {
             var popup = L.popup({offset: new L.Point(0, -10), autoPan: false})
                 .setLatLng(e.latlng)
                 .setContent(data['Name'])
