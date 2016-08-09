@@ -5,3 +5,4 @@ mail
 *.ppk
 osrm-backend/osm/khimky.osm
 npm-debug.log
+rest-demo/logs/*.log
