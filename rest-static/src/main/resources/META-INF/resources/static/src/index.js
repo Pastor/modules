@@ -432,7 +432,7 @@ function poly(object) {
     return polygon;
 }
 
-Util.getJSON('http://176.112.215.104/rest/v1/elements', {'id': 200}, function (data) {
+Util.getJSON('http://176.112.215.104/rest/v1/elements', {'size': 200}, function (data) {
     for (var i = 0; i < data.length; i++) {
         var obj = data[i];
         if (obj.polygon && obj.polygon.length > 0) {
