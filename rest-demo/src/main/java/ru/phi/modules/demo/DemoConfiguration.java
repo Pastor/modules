@@ -22,15 +22,16 @@ import ru.phi.modules.JpaConfiguration;
 import ru.phi.modules.entity.*;
 import ru.phi.modules.oauth2.AuthorizationServerConfiguration;
 import ru.phi.modules.oauth2.RestMvcConfiguration;
+import ru.phi.modules.osm.LoadObjects;
 import ru.phi.modules.repository.*;
 import ru.phi.modules.strong.StaticConfiguration;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import static ru.phi.modules.Constants.*;
 
@@ -87,7 +88,7 @@ public class DemoConfiguration {
 
     @Transactional
     @PostConstruct
-    private void construct() {
+    private void construct() throws IOException {
         log.info("Создание пользователей");
         final User pastor = createUser("pastor", "+79265943742", "123456",
                 "viruszold@mail.ru", UserRole.admin);
@@ -104,134 +105,32 @@ public class DemoConfiguration {
         createQuality(pastor, "Нормальный", "normal", Accessibility.normal);
         createQuality(pastor, "Слабовидещие", "eyeless", Accessibility.eyeless);
         log.info("Создание категорий");
-        final ElementCategory hospital = createCategory(pastor, "Поликлиника");
-        final ElementCategory emergency = createCategory(pastor, "Станция скорой медицинской помощи");
-        final ElementCategory underground = createCategory(pastor, "Подземный переход");
+        final ElementCategory unknown = createCategory(pastor, "Не известно");
         log.info("Создание объектов инфраструктуры");
         Element element;
-        element = createElement(
-                pastor,
-                "6f414da8-2a75-4840-bc90-87e8422099d9",
-                "Станция скорой медицинской помощи",
-                "МБУЗ Химкинская станция скорой медицинской помощи",
-                "141400, МО, г. Химки, ул. Молодежная д. 9",
-                55.88178,
-                37.41662,
-                emergency,
-                acp.findByAccessibilityAndType(Accessibility.baroow, AccessibilityType.condition),
-                acp.findByAccessibilityAndType(Accessibility.legless, AccessibilityType.condition),
-                acp.findByAccessibilityAndType(Accessibility.eyeless, AccessibilityType.condition),
-                acp.findByAccessibilityAndType(Accessibility.brainless, AccessibilityType.not_information)
-        );
-        registerPolygon(
-                element,
-                point(pastor, 55.88169479, 37.41653824),
-                point(pastor, 55.88175583, 37.41675186),
-                point(pastor, 55.88210678, 37.41642761),
-                point(pastor, 55.88205338, 37.41624069),
-                point(pastor, 55.88191605, 37.41636658),
-                point(pastor, 55.88187408, 37.41622162),
-                point(pastor, 55.88201904, 37.41609192),
-                point(pastor, 55.88194275, 37.4158287),
-                point(pastor, 55.88158798, 37.41615677),
-                point(pastor, 55.88166428, 37.41641998),
-                point(pastor, 55.88180161, 37.4162941),
-                point(pastor, 55.88183594, 37.41640854),
-                point(pastor, 55.88169479, 37.41653824)
-        );
-        element = createElement(
-                pastor,
-                "ce758060-3116-4dea-bf72-95d63baf07f3",
-                "Центральная городская больница",
-                "МБУЗ \"Химкинская Центральная городская больница\", педиатрический корпус",
-                "МО, г. Химки, ул. Куркинское ш., д. 11",
-                55.88182068,
-                37.41544724,
-                hospital,
-                acp.findByAccessibilityAndType(Accessibility.baroow, AccessibilityType.not_information),
-                acp.findByAccessibilityAndType(Accessibility.legless, AccessibilityType.not_information),
-                acp.findByAccessibilityAndType(Accessibility.eyeless, AccessibilityType.not_information),
-                acp.findByAccessibilityAndType(Accessibility.brainless, AccessibilityType.not_information)
-        );
-        registerPolygon(
-                element,
-                point(pastor, 55.88182068, 37.41544724),
-                point(pastor, 55.88146973, 37.41579819),
-                point(pastor, 55.88121414, 37.41498566),
-                point(pastor, 55.88156891, 37.41463089),
-                point(pastor, 55.88171387, 37.41509247),
-                point(pastor, 55.88158417, 37.41522217),
-                point(pastor, 55.88147736, 37.41487885),
-                point(pastor, 55.88138962, 37.41496658),
-                point(pastor, 55.8814888, 37.41528702),
-                point(pastor, 55.88142776, 37.41535187),
-                point(pastor, 55.88146973, 37.41548538),
-                point(pastor, 55.8817482, 37.41521072),
-                point(pastor, 55.88182068, 37.41544724)
-        );
-        final AccessibilityProcess standard = ru.phi.modules.Utilities.standard(acp);
-        final EndPoint point1 = createEndPoint(pastor, point(pastor, 34.00000, 76.000000), EndPointType.exit, standard);
-        final EndPoint point2 = createEndPoint(pastor, point(pastor, 34.60000, 76.009000), EndPointType.enter, standard);
-        element.setEndPoints(Sets.newHashSet(point1, point2));
-        elementRepository.save(element);
-        element = createElement(
-                pastor,
-                "d1b99e3f-184d-436f-ae2a-ac57ec8224f9",
-                "Центральная городская больница",
-                "МБУЗ \"Химкинская Центральная городская больница\", травмотолого-ортопедическое отделение полеклинники",
-                "МО, г. Химки, ул. Куркинское ш., д. 11",
-                55.88243103,
-                37.41345596,
-                hospital,
-                acp.findByAccessibilityAndType(Accessibility.baroow, AccessibilityType.not_information),
-                acp.findByAccessibilityAndType(Accessibility.legless, AccessibilityType.not_information),
-                acp.findByAccessibilityAndType(Accessibility.eyeless, AccessibilityType.not_information),
-                acp.findByAccessibilityAndType(Accessibility.brainless, AccessibilityType.not_information)
-        );
-        registerPolygon(
-                element,
-                point(pastor, 55.88243103, 37.41345596),
-                point(pastor, 55.88243103, 37.41405106),
-                point(pastor, 55.88291931, 37.41404724),
-                point(pastor, 55.88291931, 37.41344833),
-                point(pastor, 55.88243103, 37.41345596)
-        );
-        element = createElement(
-                pastor,
-                "67e02cff-2634-4510-b8e2-ee16f7506853",
-                "Центральная городская больница",
-                "МБУЗ \"Химкинская Центральная городская больница\", хирургический корпус",
-                "МО, г. Химки, ул. Куркинское ш., д. 11",
-                55.8832283,
-                37.41239166,
-                hospital,
-                acp.findByAccessibilityAndType(Accessibility.baroow, AccessibilityType.not_information),
-                acp.findByAccessibilityAndType(Accessibility.legless, AccessibilityType.not_information),
-                acp.findByAccessibilityAndType(Accessibility.eyeless, AccessibilityType.not_information),
-                acp.findByAccessibilityAndType(Accessibility.brainless, AccessibilityType.not_information)
-        );
-        registerPolygon(
-                element,
-                point(pastor, 55.8832283, 37.41239166),
-                point(pastor, 55.88344193, 37.41238785),
-                point(pastor, 55.88345337, 37.41345978),
-                point(pastor, 55.88323975, 37.41346359),
-                point(pastor, 55.88323593, 37.41310501),
-                point(pastor, 55.88320923, 37.41310501),
-                point(pastor, 55.88320923, 37.41294861),
-                point(pastor, 55.88323593, 37.41294861),
-                point(pastor, 55.8832283, 37.41239166)
-        );
-        element = createElement(
-                pastor,
-                UUID.randomUUID().toString(),
-                "Переход",
-                "",
-                "ул. Зои Космедемьянской, д. 9/12",
-                56.00000000,
-                53.00000000,
-                underground
-        );
+        for (LoadObjects.Element oe : LoadObjects.loadUpdated()) {
+            element = createElement(
+                    pastor,
+                    oe.id,
+                    "Не известно",
+                    oe.text,
+                    "Адрес",
+                    oe.latitude,
+                    oe.longitude,
+                    unknown,
+                    acp.findByAccessibilityAndType(Accessibility.baroow, AccessibilityType.not_information),
+                    acp.findByAccessibilityAndType(Accessibility.legless, AccessibilityType.not_information),
+                    acp.findByAccessibilityAndType(Accessibility.eyeless, AccessibilityType.not_information),
+                    acp.findByAccessibilityAndType(Accessibility.brainless, AccessibilityType.not_information)
+            );
+            if (oe.polygon == null || oe.polygon.length == 0)
+                continue;
+            final GeoPoint[] points = new GeoPoint[oe.polygon.length];
+            for (int i = 0; i < oe.polygon.length; i++) {
+                points[i] = point(pastor, oe.polygon[i].latitude, oe.polygon[i].longitude);
+            }
+            registerPolygon(element, points);
+        }
         log.info("Создание новостей");
         createNews(pastorProfile, "Первая версия API", "Первая версия API", "<h1>ПЕРВАЯ ВЕРСИЯ API</h1>");
         createNews(pastorProfile, "Вторая версия API", "Вторая версия API", "<h1>ВТОРАЯ ВЕРСИЯ API</h1>");
