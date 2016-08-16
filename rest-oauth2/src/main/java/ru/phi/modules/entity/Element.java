@@ -24,19 +24,19 @@ import java.util.Set;
 @Proxy(lazy = false)
 public final class Element extends AbstractEntity {
 
-    @Column(name = "name")
+    @Column(name = "name", length = Integer.MAX_VALUE)
     private String name;
 
     @Column(name = "uuid")
     private String uuid;
 
-    @Column(name = "full_name")
+    @Column(name = "full_name", length = Integer.MAX_VALUE)
     private String fullName;
 
     @NotNull(message = "Адрес не может быть пустым")
     @NonNull
     @NotEmpty
-    @Column(name = "address", nullable = false)
+    @Column(name = "address", nullable = false, length = Integer.MAX_VALUE)
     private String address;
 
     @JsonProperty("info")
