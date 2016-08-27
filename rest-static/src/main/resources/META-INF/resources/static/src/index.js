@@ -86,6 +86,9 @@ L.control.scale({
     position: 'bottomright'
 }).addTo(map);
 
+function showError(message) {
+    alert(message); // todo
+}
 var locate = L.control.locate({
     follow: false,
     setView: true,
@@ -93,10 +96,12 @@ var locate = L.control.locate({
     keepCurrentZoomLevel: true,
     stopFollowingOnDrag: false,
     onLocationError: function (err) {
-        alert(err.message)
+        console.error(err.message);
+        showError('К сожалению, текущее местоположение недоступно');
     },
     onLocationOutsideMapBounds: function (context) {
-        alert(context.options.strings.outsideMapBoundsMsg);
+        context.stop();
+        showError('Вы находитесь вне границ доступной карты');
     },
     showPopup: false,
     locateOptions: {},
