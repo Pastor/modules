@@ -336,7 +336,6 @@ lrmControl.on('alternateChosen', function (e) {
     }
 });
 map.on('click', function (e) {
-
     if (!state.doRoute)
         return;
     var length = lrmControl.getWaypoints().filter(function (pnt) {
@@ -437,9 +436,14 @@ function poly(object) {
         polygonPoints[i] = new L.LatLng(object.polygon[i].latitude, object.polygon[i].longitude);
     }
     var polygon = new L.Polygon(polygonPoints);
-    Util.getJSON('http://176.112.215.104/osis/ReadOSI', {'id': object.uuid}, function (data) {
-        console.log(data);
-        polygon.bindPopup(createPassport(data['Name'], data['Avails']))
+    polygon.bindPopup("Загрузка...");
+    polygon.on('click', function (e) {
+        var popup = e.target.getPopup();
+        Util.getJSON('http://176.112.215.104/osis/ReadOSI', {'id': object.uuid}, function (data) {
+            console.log(data);
+            popup.setContent(createPassport(data['Name'], data['Avails']));
+            popup.update();
+        });
     });
     map.addLayer(polygon);
     return polygon;
