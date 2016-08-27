@@ -4,6 +4,7 @@
 // todo: определение текущего местоположения???
 var links = require('./links');
 require('leaflet');
+require('./hinter');
 var locate = require('leaflet.locatecontrol');
 var myNominatim = require('./my_nominatim');
 require('leaflet-routing-machine');
@@ -95,7 +96,7 @@ var locate = L.control.locate({
     keepCurrentZoomLevel: true,
     stopFollowingOnDrag: false,
     onLocationError: function (err) {
-        alert("Ошибка определения координат")
+        $('body').hinter({ message: "Ошибка определения координат устройства", isSuccess: false, slideUp: 250, delay: 5000, width: window.innerWidth + "px"});
     },
     onLocationOutsideMapBounds: function (context) {
         alert(context.options.strings.outsideMapBoundsMsg);
