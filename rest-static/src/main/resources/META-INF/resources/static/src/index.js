@@ -8,6 +8,7 @@ var locate = require('leaflet.locatecontrol');
 var myNominatim = require('./my_nominatim');
 require('leaflet-routing-machine');
 var Util = require('leaflet-control-geocoder/src/util.js');
+require('sweetalert');
 
 var streets = L.tileLayer('https://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}@2x.png?access_token=pk.eyJ1IjoibXNsZWUiLCJhIjoiclpiTWV5SSJ9.P_h8r37vD8jpIH1A6i1VRg', {
         attribution: '<a href="https://www.mapbox.com/about/maps">© Mapbox</a> <a href="http://openstreetmap.org/copyright">© OpenStreetMap</a> | <a href="http://mapbox.com/map-feedback/">Improve this map</a>'
@@ -87,7 +88,8 @@ L.control.scale({
 }).addTo(map);
 
 function showError(message) {
-    alert(message); // todo
+    swal(message);
+    // alert(message); // todo
 }
 var locate = L.control.locate({
     follow: false,
