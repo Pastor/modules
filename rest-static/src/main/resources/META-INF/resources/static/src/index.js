@@ -418,15 +418,19 @@ function andUndefined(data, propertyName) {
     return typeof value == 'undefined' ? 'Нет' : access[parseInt(value)];
 }
 
-function createPassport(title, access) {
-    return title + '<br><table class="disabled-table">' +
-        '<tr><td>Все категории инвалидов и МГН</td><td>' + andUndefined(access, 'AllCats') + '</td></tr>' +
-        '<tr><td>в том числе инвалиды:</td><td>&nbsp;</td></tr>' +
-        '<tr><td>передвигающиеся на креслах-колясках</td><td>' + andUndefined(access, 'Trolley') + '</td></tr>' +
-        '<tr><td>с нарушениями опорно-двигательного аппарата</td><td>' + andUndefined(access, 'NoWalk') + '</td></tr>' +
-        '<tr><td>с нарушениями зрения</td><td>' + andUndefined(access, 'NoEyes') + '</td></tr>' +
-        '<tr><td>с нарушениями слуха</td><td>' + andUndefined(access, 'NoHear') + '</td></tr>' +
-        '<tr><td>с нарушениями умственного развития</td><td>' + andUndefined(access, 'Brain') + '</td></tr>' +
+function createPassport(data) {
+    return '<h3>' + data['Name'] + '</h3>' + '<br><table class="disabled-table">' +
+        '<tr><td>Как добраться:</td><td>' + andUndefined(data, 'Arrive') + '</td></tr>' +
+        '<tr><td>&nbsp;</td><td>&nbsp;</td></tr>' +
+        '<tr><td>График работы:</td><td>&nbsp;</td></tr>' +
+        '<tr><td>пн-чт:</td><td>08:00 - 18.00</td></tr>' +
+        '<tr><td>пт.:</td><td>08:00 - 17.00</td></tr>' +
+        '<tr><td>сб-вс.:</td><td>выходной</td></tr>' +
+        '<tr><td>&nbsp;</td><td>&nbsp;</td></tr>' +
+        '<tr><td>Контактный телефон:</td><td>8(000)000-00-00</td></tr>' +
+        '<tr><td>&nbsp;</td><td>&nbsp;</td></tr>' +
+        '<tr><td>Общественный транспорт:</td><td>10 метров по ул. Сталина, маршруты: 67м, 34, 102а</td></tr>' +
+        '<tr><td>&nbsp;</td><td>&nbsp;</td></tr>' +
         '</table>';
 }
 
@@ -441,7 +445,7 @@ function poly(object) {
         var popup = e.target._popup;
         Util.getJSON('http://176.112.215.104/osis/ReadOSI', {'id': object.uuid}, function (data) {
             console.log(data);
-            popup.setContent(createPassport(data['Name'], data['Avails']));
+            popup.setContent(createPassport(data));
             popup.update();
         });
     });
