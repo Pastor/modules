@@ -70,7 +70,7 @@ var map = L.map('map', {
     zoomControl: false,
     dragging: true,
     layers: layers,
-    maxZoom: 25
+    maxZoom: 18
 }).setView(state.center, state.zoom);
 
 L.control.zoom({
@@ -93,7 +93,7 @@ var locate = L.control.locate({
     keepCurrentZoomLevel: true,
     stopFollowingOnDrag: false,
     onLocationError: function (err) {
-        alert(err.message)
+        alert("Ошибка определения координат")
     },
     onLocationOutsideMapBounds: function (context) {
         alert(context.options.strings.outsideMapBoundsMsg);
@@ -103,7 +103,8 @@ var locate = L.control.locate({
 });
 locate.addTo(map);
 window.locateToCurrent = function () {
-    var shouldStop = (locate._event === undefined || locate._map.getBounds().contains(locate._event.latlng) || !locate.options.setView || locate._isOutsideMapBounds());
+    var shouldStop = (locate._event === undefined ||
+    locate._map.getBounds().contains(locate._event.latlng) || !locate.options.setView || locate._isOutsideMapBounds());
     if (!locate.options.remainActive && (locate._active && shouldStop)) {
         locate.stop();
     } else {
@@ -186,6 +187,15 @@ var ReversablePlan = L.Routing.Plan.extend({
         return container;
     }
 });
+
+(function () {
+    var routeBtn = document.getElementById('routeButton');
+    L.DomEvent.addListener(routeBtn, 'click', function () {
+        lrmControl.getPlan().setWaypoints(lrmControl.getPlan()._waypoints);
+        updateState();
+    }, this);
+})();
+
 var plan = new ReversablePlan(state.waypoints, {
     // geocoder: yandex.factory(),
     geocoder: myNominatim.factory({
@@ -300,7 +310,12 @@ lrmControl.getPlan().on('waypointgeocoded', function (e) {
     if (lrmControl.getPlan()._waypoints.filter(function (wp) {
             return !!wp.latLng;
         }).length < 2) {
+        //e.waypointIndex {0 - start, 1 - stop}
+        var ways = lrmControl.getPlan().getWaypoints();
+        ways[e.waypointIndex] = e.waypoint;
         map.panTo(e.waypoint.latLng);
+    } else {
+        lrmControl.getPlan().setWaypoints(lrmControl.getPlan()._waypoints);
     }
 });
 lrmControl.on('alternateChosen', function (e) {
@@ -313,17 +328,17 @@ lrmControl.on('alternateChosen', function (e) {
         directions[1].style.display = 'none';
     }
 });
-map.on('click', function (e) {
-    var length = lrmControl.getWaypoints().filter(function (pnt) {
-        return pnt.latLng;
-    }).length;
-    if (!length) {
-        lrmControl.spliceWaypoints(0, 1, e.latlng);
-    } else {
-        if (length === 1) length = length + 1;
-        lrmControl.spliceWaypoints(length - 1, 1, e.latlng);
-    }
-});
+// map.on('click', function (e) {
+//     var length = lrmControl.getWaypoints().filter(function (pnt) {
+//         return pnt.latLng;
+//     }).length;
+//     if (!length) {
+//         lrmControl.spliceWaypoints(0, 1, e.latlng);
+//     } else {
+//         if (length === 1) length = length + 1;
+//         lrmControl.spliceWaypoints(length - 1, 1, e.latlng);
+//     }
+// });
 
 function updateState() {
     var newParms = links.format(state);
@@ -411,22 +426,9 @@ function poly(object) {
         polygonPoints[i] = new L.LatLng(object.polygon[i].latitude, object.polygon[i].longitude);
     }
     var polygon = new L.Polygon(polygonPoints);
-    polygon.on('mouseover', function (e) {
-
-        Util.getJSON('http://176.112.215.104/osis/ReadOSI', {'id': object.uuid}, function (data) {
-            var popup = L.popup({offset: new L.Point(0, -10), autoPan: false})
-                .setLatLng(e.latlng)
-                .setContent(createPassport(data['Name'], data['Avails']))
-                .openOn(map);
-            console.log(data);
-        });
-        // var popup = L.popup({offset: new L.Point(0, -10), autoPan: false})
-        //     .setLatLng(e.latlng)
-        //     .setContent(title)
-        //     .openOn(map);
-    });
-    polygon.on('mouseout', function (e) {
-        map.closePopup();
+    Util.getJSON('http://176.112.215.104/osis/ReadOSI', {'id': object.uuid}, function (data) {
+        console.log(data);
+        polygon.bindPopup(createPassport(data['Name'], data['Avails']))
     });
     map.addLayer(polygon);
     return polygon;

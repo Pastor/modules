@@ -4,3 +4,4 @@ bundle*raw*
 bundle*map
 *.iml
 rest-demo.log
+debug.log
