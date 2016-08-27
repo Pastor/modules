@@ -429,8 +429,8 @@ function createPassport(data) {
         '<tr><td>&nbsp;</td><td>&nbsp;</td></tr>' +
         '<tr><td>Контактный телефон:</td><td>8(000)000-00-00</td></tr>' +
         '<tr><td>&nbsp;</td><td>&nbsp;</td></tr>' +
-        '<tr><td>Общественный транспорт:</td><td>10 метров по ул. Сталина, маршруты: 67м, 34, 102а</td></tr>' +
-        '<tr><td>&nbsp;</td><td>&nbsp;</td></tr>' +
+        // '<tr><td>Общественный транспорт:</td><td>10 метров по ул. Сталина, маршруты: 67м, 34, 102а</td></tr>' +
+        // '<tr><td>&nbsp;</td><td>&nbsp;</td></tr>' +
         '</table>';
 }
 
