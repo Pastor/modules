@@ -65,6 +65,8 @@ var queryOptions = links.parse(window.location.search.slice(1));
 var hashOptions = links.parse(window.location.hash.slice(1));
 var state = L.extend(defaultState, queryOptions, hashOptions);
 
+state.doRoute = false;
+
 var layers = allLayers[state.sight === 'glasses' ? 'openstreetmap.org' : 'Mapbox Streets'];
 var map = L.map('map', {
     zoomControl: false,
@@ -191,8 +193,11 @@ var ReversablePlan = L.Routing.Plan.extend({
 (function () {
     var routeBtn = document.getElementById('routeButton');
     L.DomEvent.addListener(routeBtn, 'click', function () {
-        lrmControl.getPlan().setWaypoints(lrmControl.getPlan()._waypoints);
-        updateState();
+        state.doRoute = true;
+
+        plan.spliceWaypoints(0, 1);
+        plan.spliceWaypoints(0, 1);
+
     }, this);
 })();
 
@@ -307,15 +312,17 @@ var lrmControl = L.Routing.control({
     routeDragInterval: plan.options.routeDragInterval
 }).addTo(map);
 lrmControl.getPlan().on('waypointgeocoded', function (e) {
-    if (lrmControl.getPlan()._waypoints.filter(function (wp) {
-            return !!wp.latLng;
-        }).length < 2) {
+    var length = lrmControl.getPlan()._waypoints.filter(function (wp) {
+        return !!wp.latLng;
+    }).length;
+    var ways = lrmControl.getPlan().getWaypoints();
+    ways[e.waypointIndex] = e.waypoint;
+    if (length < 2) {
         //e.waypointIndex {0 - start, 1 - stop}
-        var ways = lrmControl.getPlan().getWaypoints();
-        ways[e.waypointIndex] = e.waypoint;
         map.panTo(e.waypoint.latLng);
     } else {
         lrmControl.getPlan().setWaypoints(lrmControl.getPlan()._waypoints);
+        // lrmControl._updateMarkers();
     }
 });
 lrmControl.on('alternateChosen', function (e) {
@@ -328,17 +335,21 @@ lrmControl.on('alternateChosen', function (e) {
         directions[1].style.display = 'none';
     }
 });
-// map.on('click', function (e) {
-//     var length = lrmControl.getWaypoints().filter(function (pnt) {
-//         return pnt.latLng;
-//     }).length;
-//     if (!length) {
-//         lrmControl.spliceWaypoints(0, 1, e.latlng);
-//     } else {
-//         if (length === 1) length = length + 1;
-//         lrmControl.spliceWaypoints(length - 1, 1, e.latlng);
-//     }
-// });
+map.on('click', function (e) {
+
+    if (!state.doRoute)
+        return;
+    var length = lrmControl.getWaypoints().filter(function (pnt) {
+        return pnt.latLng;
+    }).length;
+    if (!length) {
+        lrmControl.spliceWaypoints(0, 1, e.latlng);
+    } else {
+        if (length === 1) length = length + 1;
+        lrmControl.spliceWaypoints(length - 1, 1, e.latlng);
+        state.doRoute = false;
+    }
+});
 
 function updateState() {
     var newParms = links.format(state);
