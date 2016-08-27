@@ -438,7 +438,7 @@ function poly(object) {
     var polygon = new L.Polygon(polygonPoints);
     polygon.bindPopup("Загрузка...");
     polygon.on('click', function (e) {
-        var popup = e.target.getPopup();
+        var popup = e.target._popup;
         Util.getJSON('http://176.112.215.104/osis/ReadOSI', {'id': object.uuid}, function (data) {
             console.log(data);
             popup.setContent(createPassport(data['Name'], data['Avails']));
