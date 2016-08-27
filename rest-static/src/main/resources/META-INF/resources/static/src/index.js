@@ -412,22 +412,17 @@ function poly(object) {
     }
     var polygon = new L.Polygon(polygonPoints);
     polygon.on('mouseover', function (e) {
-
         Util.getJSON('http://176.112.215.104/osis/ReadOSI', {'id': object.uuid}, function (data) {
-            var popup = L.popup({offset: new L.Point(0, -10), autoPan: false})
+            var popup = L.popup({offset: new L.Point(0, -10)})
                 .setLatLng(e.latlng)
                 .setContent(createPassport(data['Name'], data['Avails']))
                 .openOn(map);
-            console.log(data);
+            // console.log(data);
         });
-        // var popup = L.popup({offset: new L.Point(0, -10), autoPan: false})
-        //     .setLatLng(e.latlng)
-        //     .setContent(title)
-        //     .openOn(map);
     });
-    polygon.on('mouseout', function (e) {
-        map.closePopup();
-    });
+    // polygon.on('mouseout', function () {
+    //     map.closePopup();
+    // });
     map.addLayer(polygon);
     return polygon;
 }
