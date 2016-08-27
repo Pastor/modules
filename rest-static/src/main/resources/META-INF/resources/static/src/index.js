@@ -336,7 +336,8 @@ lrmControl.on('alternateChosen', function (e) {
         directions[1].style.display = 'none';
     }
 });
-map.on('click', function (e) {
+
+function set_point(e) {
     if (!state.doRoute)
         return;
     var length = lrmControl.getWaypoints().filter(function (pnt) {
@@ -349,6 +350,10 @@ map.on('click', function (e) {
         lrmControl.spliceWaypoints(length - 1, 1, e.latlng);
         state.doRoute = false;
     }
+}
+
+map.on('click', function (e) {
+    set_point(e);
 });
 
 function updateState() {
@@ -444,6 +449,11 @@ function poly(object) {
     polygon.bindPopup("Загрузка...");
     polygon.on('click', function (e) {
         var popup = e.target._popup;
+        if (state.doRoute) {
+            set_point(e);
+            popup._close();
+            return;
+        }        
         Util.getJSON('http://176.112.215.104/osis/ReadOSI', {'id': object.uuid}, function (data) {
             console.log(data);
             popup.setContent(createPassport(data));
