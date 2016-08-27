@@ -312,16 +312,16 @@ var lrmControl = L.Routing.control({
     routeDragInterval: plan.options.routeDragInterval
 }).addTo(map);
 lrmControl.getPlan().on('waypointgeocoded', function (e) {
-    var length = lrmControl.getPlan()._waypoints.filter(function (wp) {
+    var plan = lrmControl.getPlan();
+    var length = plan._waypoints.filter(function (wp) {
         return !!wp.latLng;
     }).length;
-    var ways = lrmControl.getPlan().getWaypoints();
-    ways[e.waypointIndex] = e.waypoint;
+    plan._waypoints[e.waypointIndex] = e.waypoint;
     if (length < 2) {
         //e.waypointIndex {0 - start, 1 - stop}
         map.panTo(e.waypoint.latLng);
     } else {
-        lrmControl.getPlan().setWaypoints(lrmControl.getPlan()._waypoints);
+        plan.setWaypoints(plan._waypoints);
         // lrmControl._updateMarkers();
     }
 });
