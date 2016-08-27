@@ -420,7 +420,7 @@ function andUndefined(data, propertyName) {
 
 function createPassport(data) {
     return '<h3>' + data['Name'] + '</h3>' + '<br><table class="disabled-table">' +
-        '<tr><td>Как добраться:</td><td>' + andUndefined(data, 'Arrive') + '</td></tr>' +
+        '<tr><td>Как добраться:</td><td>' + data['Arrive'] + '</td></tr>' +
         '<tr><td>&nbsp;</td><td>&nbsp;</td></tr>' +
         '<tr><td>График работы:</td><td>&nbsp;</td></tr>' +
         '<tr><td>пн-чт:</td><td>08:00 - 18.00</td></tr>' +
