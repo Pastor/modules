@@ -41,6 +41,10 @@ var services = {
         path: 'http://176.112.215.104:5003/route/v1'
         //path: 'https://router.project-osrm.org/route/v1'
     },
+    all: {
+        path: 'http://176.112.215.104:5003/route/v1'
+        //path: 'https://router.project-osrm.org/route/v1'
+    },
     foot: {
         path: 'http://176.112.215.104:5001/route/v1'
         //path: 'http://52.201.214.44:5000/route/v1'

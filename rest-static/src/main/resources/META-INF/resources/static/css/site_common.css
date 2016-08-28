@@ -198,6 +198,19 @@ body {
     background-image: url(../images/bus_h.png);
 }
 
+#allProf .profButton {
+    background-image: url(../images/bus2.png);
+}
+
+#allProf.selectedChoice .profButton {
+    background-image: url(../images/bus2_a.png);
+}
+
+#allProf:hover .profButton {
+    background-image: url(../images/bus2_h.png);
+}
+
+
 #footProf .profButton {
     background-image: url(../images/peop.png);
 }
