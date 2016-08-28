@@ -21,6 +21,7 @@
     "leaflet-control-geocoder": "^1.2.1",
     "leaflet-routing-machine": "^3.0.3",
     "leaflet.locatecontrol": "^0.44.0",
-    "qs": "^6.1.0"
+    "qs": "^6.1.0",
+    "sweetalert": "^1.1.3"
   }
 }
