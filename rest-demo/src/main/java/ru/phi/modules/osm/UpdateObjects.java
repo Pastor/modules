@@ -81,9 +81,11 @@ public final class UpdateObjects {
                         for (int i = 0; i < nodes.size(); i++) {
                             Nd nd = nodes.get(i);
                             final Node node = Resource.get(Resource.Type.NODE, nd.getRef().longValue(), Node.class);
-                            locations[i] = new LoadObjects.Location();
-                            locations[i].latitude = node.getLat();
-                            locations[i].longitude = node.getLon();
+                            if (node != null) {
+                                locations[i] = new LoadObjects.Location();
+                                locations[i].latitude = node.getLat();
+                                locations[i].longitude = node.getLon();
+                            }
                         }
                         return locations;
                     }
