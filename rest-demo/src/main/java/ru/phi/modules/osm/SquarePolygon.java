@@ -2,8 +2,7 @@ package ru.phi.modules.osm;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import ru.phi.modules.osm.generated.*;
 
 import javax.xml.bind.JAXBException;
@@ -27,7 +26,36 @@ public final class SquarePolygon {
     private static void readRel(long id) throws IOException {
         final String content = Files.toString(new File(format("{0}.json", id)), Charsets.UTF_8);
         final Area area = GSON.fromJson(content, Area.class);
+        writeGeoJson(id, area);
         System.out.println(area);
+    }
+
+    private static void writeGeoJson(long id, Area area) throws IOException {
+        JsonObject object = new JsonObject();
+        object.add("type", new JsonPrimitive("FeatureCollection"));
+        final JsonArray array = new JsonArray();
+
+        for (Line line : area.lines) {
+            final JsonObject element = new JsonObject();
+            element.addProperty("type", "Feature");
+            element.add("properties", new JsonObject());
+            final JsonObject geometry = new JsonObject();
+            geometry.addProperty("type", "Polygon");
+            final JsonArray coordinates = new JsonArray();
+            final JsonArray ways = new JsonArray();
+            for (Location location : line.locations) {
+                final JsonArray elements = new JsonArray();
+                elements.add(new JsonPrimitive(location.longitude));
+                elements.add(new JsonPrimitive(location.latitude));
+                ways.add(elements);
+            }
+            coordinates.add(ways);
+            geometry.add("coordinates", coordinates);
+            element.add("geometry", geometry);
+            array.add(element);
+        }
+        object.add("features", array);
+        Files.write(object.toString(), new File(format("{0}.geojson", id)), Charsets.UTF_8);
     }
 
     private static void writeRel(long id) throws Exception {
