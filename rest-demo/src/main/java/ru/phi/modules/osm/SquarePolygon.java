@@ -9,8 +9,7 @@ import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static java.text.MessageFormat.format;
 
@@ -27,6 +26,35 @@ public final class SquarePolygon {
         final String content = Files.toString(new File(format("{0}.json", id)), Charsets.UTF_8);
         final Area area = GSON.fromJson(content, Area.class);
         writeGeoJson(id, area);
+        Map<Location, Line> starts = new HashMap<>();
+        Map<Location, Line> ends = new HashMap<>();
+        for (Line line : area.lines) {
+            starts.put(line.locations.getFirst(), line);
+            ends.put(line.locations.getLast(), line);
+        }
+
+        Line it = starts.values().iterator().next();
+        starts.remove(it.locations.getFirst());
+        LinkedList<Location> locations = new LinkedList<>();
+        while (it != null) {
+            starts.remove(it.locations.getFirst());
+            ends.remove(it.locations.getLast());
+            if (locations.size() == 0) {
+                locations.addAll(it.locations);
+            }
+            Line fetcher = it;
+            it = ends.get(fetcher.locations.getFirst());
+            if (it != null) {
+                locations.addAll(it.locations);
+            } else {
+                it = starts.get(fetcher.locations.getLast());
+                if (it == null) {
+//
+                } else {
+                    //
+                }
+            }
+        }
         System.out.println(area);
     }
 
@@ -72,6 +100,20 @@ public final class SquarePolygon {
         Location(float latitude, float longitude) {
             this.latitude = latitude;
             this.longitude = longitude;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Location location = (Location) o;
+            return Float.compare(location.latitude, latitude) == 0 &&
+                    Float.compare(location.longitude, longitude) == 0;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(latitude, longitude);
         }
     }
 
